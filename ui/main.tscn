@@ -1,0 +1,536 @@
+[gd_scene load_steps=2 format=3]
+[ext_resource type="Script" path="res://ui/main.gd" id="1"]
+[node name="Duet" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Backdrop" type="Control" parent="."]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+
+[node name="Header" type="Control" parent="."]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+
+[node name="Brand" type="Label" parent="Header"]
+layout_mode = 0
+offset_left = 72.0
+offset_top = 42.0
+offset_right = 522.0
+offset_bottom = 107.0
+mouse_filter = 2
+text = "DUET"
+theme_override_font_sizes/font_size = 40
+
+[node name="Tag" type="Label" parent="Header"]
+layout_mode = 0
+offset_left = 254.0
+offset_top = 56.0
+offset_right = 674.0
+offset_bottom = 101.0
+mouse_filter = 2
+text = "双生节拍  /  TWO KEY RHYTHM"
+theme_override_font_sizes/font_size = 18
+
+[node name="Edition" type="Label" parent="Header"]
+layout_mode = 0
+offset_left = 1500.0
+offset_top = 55.0
+offset_right = 1840.0
+offset_bottom = 95.0
+mouse_filter = 2
+text = "01—03 / VISUAL COLLECTION"
+theme_override_font_sizes/font_size = 16
+
+[node name="Rule" type="HSeparator" parent="Header"]
+layout_mode = 0
+offset_left = 72.0
+offset_top = 129.0
+offset_right = 1848.0
+offset_bottom = 131.0
+
+[node name="Menu" type="Control" parent="."]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+
+[node name="Eyebrow" type="Label" parent="Menu"]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 255.0
+offset_right = 550.0
+offset_bottom = 300.0
+mouse_filter = 2
+text = "TWO KEYS. ONE MOMENT."
+theme_override_font_sizes/font_size = 19
+
+[node name="Title" type="Label" parent="Menu"]
+layout_mode = 0
+offset_left = 90.0
+offset_top = 304.0
+offset_right = 610.0
+offset_bottom = 524.0
+mouse_filter = 2
+text = "让节拍\n在指尖相遇"
+theme_override_font_sizes/font_size = 65
+
+[node name="Subtitle" type="Label" parent="Menu"]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 580.0
+offset_right = 510.0
+offset_bottom = 710.0
+mouse_filter = 2
+text = "两条轨道，三种世界。\n选择此刻的情绪，进入你的舞台。"
+theme_override_font_sizes/font_size = 23
+
+[node name="Instruction" type="Label" parent="Menu"]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 806.0
+offset_right = 530.0
+offset_bottom = 906.0
+mouse_filter = 2
+text = "D  左轨     K  右轨\n音符抵达光线时，轻按对应按键。"
+theme_override_font_sizes/font_size = 21
+
+[node name="SelectTitle" type="Label" parent="Menu"]
+layout_mode = 0
+offset_left = 630.0
+offset_top = 194.0
+offset_right = 1360.0
+offset_bottom = 258.0
+mouse_filter = 2
+text = "选择你的世界"
+theme_override_font_sizes/font_size = 35
+
+[node name="SelectHint" type="Label" parent="Menu"]
+layout_mode = 0
+offset_left = 630.0
+offset_top = 255.0
+offset_right = 1360.0
+offset_bottom = 291.0
+mouse_filter = 2
+text = "VISUAL STORIES  /  视觉篇章"
+theme_override_font_sizes/font_size = 17
+
+[node name="Style0" type="Button" parent="Menu"]
+layout_mode = 0
+offset_left = 630.0
+offset_top = 320.0
+offset_right = 1370.0
+offset_bottom = 446.0
+text = ""
+theme_override_font_sizes/font_size = 26
+
+[node name="Style1" type="Button" parent="Menu"]
+layout_mode = 0
+offset_left = 630.0
+offset_top = 464.0
+offset_right = 1370.0
+offset_bottom = 590.0
+text = ""
+theme_override_font_sizes/font_size = 26
+
+[node name="Style2" type="Button" parent="Menu"]
+layout_mode = 0
+offset_left = 630.0
+offset_top = 608.0
+offset_right = 1370.0
+offset_bottom = 734.0
+text = ""
+theme_override_font_sizes/font_size = 26
+
+[node name="DifficultyLabel" type="Label" parent="Menu"]
+layout_mode = 0
+offset_left = 630.0
+offset_top = 775.0
+offset_right = 790.0
+offset_bottom = 819.0
+mouse_filter = 2
+text = "谱面难度"
+theme_override_font_sizes/font_size = 19
+
+[node name="Easy" type="Button" parent="Menu"]
+layout_mode = 0
+offset_left = 802.0
+offset_top = 767.0
+offset_right = 1066.0
+offset_bottom = 827.0
+text = "漫步  /  WALK"
+theme_override_font_sizes/font_size = 20
+
+[node name="Hard" type="Button" parent="Menu"]
+layout_mode = 0
+offset_left = 1082.0
+offset_top = 767.0
+offset_right = 1370.0
+offset_bottom = 827.0
+text = "跃动  /  PULSE"
+theme_override_font_sizes/font_size = 20
+
+[node name="Begin" type="Button" parent="Menu"]
+layout_mode = 0
+offset_left = 630.0
+offset_top = 853.0
+offset_right = 1370.0
+offset_bottom = 941.0
+text = "进入舞台    →"
+theme_override_font_sizes/font_size = 30
+
+[node name="Duration" type="Label" parent="Menu"]
+layout_mode = 0
+offset_left = 1470.0
+offset_top = 820.0
+offset_right = 1820.0
+offset_bottom = 900.0
+mouse_filter = 2
+text = "48 SEC\n一首指尖短诗"
+theme_override_font_sizes/font_size = 24
+
+[node name="HUD" type="Control" parent="."]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+
+[node name="TrackEyebrow" type="Label" parent="HUD"]
+layout_mode = 0
+offset_left = 78.0
+offset_top = 200.0
+offset_right = 458.0
+offset_bottom = 240.0
+mouse_filter = 2
+text = "01  /  LUMINOUS"
+theme_override_font_sizes/font_size = 18
+
+[node name="TrackTitle" type="Label" parent="HUD"]
+layout_mode = 0
+offset_left = 72.0
+offset_top = 246.0
+offset_right = 472.0
+offset_bottom = 342.0
+mouse_filter = 2
+text = "霓虹回响"
+theme_override_font_sizes/font_size = 48
+
+[node name="TrackSub" type="Label" parent="HUD"]
+layout_mode = 0
+offset_left = 78.0
+offset_top = 344.0
+offset_right = 468.0
+offset_bottom = 414.0
+mouse_filter = 2
+text = "双键下落   /   48 秒"
+theme_override_font_sizes/font_size = 20
+
+[node name="ScoreLabel" type="Label" parent="HUD"]
+layout_mode = 0
+offset_left = 78.0
+offset_top = 495.0
+offset_right = 418.0
+offset_bottom = 540.0
+mouse_filter = 2
+text = "SCORE"
+theme_override_font_sizes/font_size = 17
+
+[node name="Score" type="Label" parent="HUD"]
+layout_mode = 0
+offset_left = 72.0
+offset_top = 546.0
+offset_right = 512.0
+offset_bottom = 636.0
+mouse_filter = 2
+text = "0000000"
+theme_override_font_sizes/font_size = 58
+
+[node name="Accuracy" type="Label" parent="HUD"]
+layout_mode = 0
+offset_left = 78.0
+offset_top = 650.0
+offset_right = 498.0
+offset_bottom = 715.0
+mouse_filter = 2
+text = "100.00%  ACCURACY"
+theme_override_font_sizes/font_size = 23
+
+[node name="Best" type="Label" parent="HUD"]
+layout_mode = 0
+offset_left = 78.0
+offset_top = 726.0
+offset_right = 498.0
+offset_bottom = 776.0
+mouse_filter = 2
+text = "BEST CHAIN   000"
+theme_override_font_sizes/font_size = 18
+
+[node name="ComboLabel" type="Label" parent="HUD"]
+layout_mode = 0
+offset_left = 1480.0
+offset_top = 322.0
+offset_right = 1820.0
+offset_bottom = 362.0
+mouse_filter = 2
+text = "CHAIN"
+theme_override_font_sizes/font_size = 20
+
+[node name="Combo" type="Label" parent="HUD"]
+layout_mode = 0
+offset_left = 1460.0
+offset_top = 355.0
+offset_right = 1850.0
+offset_bottom = 509.0
+mouse_filter = 2
+text = "0"
+theme_override_font_sizes/font_size = 110
+
+[node name="Judgment" type="Label" parent="HUD"]
+layout_mode = 0
+offset_left = 1480.0
+offset_top = 538.0
+offset_right = 1840.0
+offset_bottom = 603.0
+mouse_filter = 2
+text = "READY"
+theme_override_font_sizes/font_size = 33
+
+[node name="Progress" type="ProgressBar" parent="HUD"]
+layout_mode = 0
+offset_left = 1480.0
+offset_top = 680.0
+offset_right = 1800.0
+offset_bottom = 688.0
+
+[node name="Remaining" type="Label" parent="HUD"]
+layout_mode = 0
+offset_left = 1480.0
+offset_top = 710.0
+offset_right = 1830.0
+offset_bottom = 760.0
+mouse_filter = 2
+text = "00:48"
+theme_override_font_sizes/font_size = 20
+
+[node name="PauseButton" type="Button" parent="HUD"]
+layout_mode = 0
+offset_left = 1622.0
+offset_top = 188.0
+offset_right = 1800.0
+offset_bottom = 253.0
+text = "Ⅱ  暂停"
+theme_override_font_sizes/font_size = 23
+
+[node name="Countdown" type="Label" parent="HUD"]
+layout_mode = 0
+offset_left = 725.0
+offset_top = 432.0
+offset_right = 1195.0
+offset_bottom = 592.0
+mouse_filter = 2
+text = ""
+theme_override_font_sizes/font_size = 92
+
+[node name="Footer" type="Label" parent="."]
+layout_mode = 0
+offset_left = 72.0
+offset_top = 1007.0
+offset_right = 1848.0
+offset_bottom = 1045.0
+mouse_filter = 2
+text = "D / K   双键演奏                 ESC   暂停                 触屏：轻点左右轨道"
+theme_override_font_sizes/font_size = 18
+
+[node name="Modal" type="Control" parent="."]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+
+[node name="Shade" type="ColorRect" parent="Modal"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+color = Color(0.015, 0.021, 0.043, 0.92)
+mouse_filter = 0
+
+[node name="Pause" type="Control" parent="Modal"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+
+[node name="PauseEyebrow" type="Label" parent="Modal/Pause"]
+layout_mode = 0
+offset_left = 640.0
+offset_top = 272.0
+offset_right = 1280.0
+offset_bottom = 317.0
+mouse_filter = 2
+text = "TAKE A BREATH"
+theme_override_font_sizes/font_size = 22
+
+[node name="PauseTitle" type="Label" parent="Modal/Pause"]
+layout_mode = 0
+offset_left = 640.0
+offset_top = 335.0
+offset_right = 1280.0
+offset_bottom = 435.0
+mouse_filter = 2
+text = "把这一刻留住"
+theme_override_font_sizes/font_size = 52
+
+[node name="PauseText" type="Label" parent="Modal/Pause"]
+layout_mode = 0
+offset_left = 640.0
+offset_top = 460.0
+offset_right = 1280.0
+offset_bottom = 515.0
+mouse_filter = 2
+text = "准备好时，让节拍继续。"
+theme_override_font_sizes/font_size = 23
+
+[node name="Resume" type="Button" parent="Modal/Pause"]
+layout_mode = 0
+offset_left = 640.0
+offset_top = 565.0
+offset_right = 1280.0
+offset_bottom = 650.0
+text = "继续演奏   →"
+theme_override_font_sizes/font_size = 28
+
+[node name="Restart" type="Button" parent="Modal/Pause"]
+layout_mode = 0
+offset_left = 640.0
+offset_top = 676.0
+offset_right = 1280.0
+offset_bottom = 751.0
+text = "重新开始"
+theme_override_font_sizes/font_size = 25
+
+[node name="Back" type="Button" parent="Modal/Pause"]
+layout_mode = 0
+offset_left = 640.0
+offset_top = 777.0
+offset_right = 1280.0
+offset_bottom = 852.0
+text = "返回选曲"
+theme_override_font_sizes/font_size = 25
+
+[node name="Results" type="Control" parent="Modal"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+
+[node name="ResultEyebrow" type="Label" parent="Modal/Results"]
+layout_mode = 0
+offset_left = 530.0
+offset_top = 190.0
+offset_right = 1390.0
+offset_bottom = 235.0
+mouse_filter = 2
+text = "PERFORMANCE COMPLETE"
+theme_override_font_sizes/font_size = 21
+
+[node name="ResultTitle" type="Label" parent="Modal/Results"]
+layout_mode = 0
+offset_left = 530.0
+offset_top = 247.0
+offset_right = 1390.0
+offset_bottom = 329.0
+mouse_filter = 2
+text = "每一次触碰，都有回响。"
+theme_override_font_sizes/font_size = 44
+
+[node name="Grade" type="Label" parent="Modal/Results"]
+layout_mode = 0
+offset_left = 535.0
+offset_top = 355.0
+offset_right = 835.0
+offset_bottom = 545.0
+mouse_filter = 2
+text = "S"
+theme_override_font_sizes/font_size = 132
+
+[node name="FinalScore" type="Label" parent="Modal/Results"]
+layout_mode = 0
+offset_left = 865.0
+offset_top = 364.0
+offset_right = 1415.0
+offset_bottom = 459.0
+mouse_filter = 2
+text = "1000000"
+theme_override_font_sizes/font_size = 60
+
+[node name="FinalAccuracy" type="Label" parent="Modal/Results"]
+layout_mode = 0
+offset_left = 871.0
+offset_top = 472.0
+offset_right = 1421.0
+offset_bottom = 527.0
+mouse_filter = 2
+text = "100.00%  ACCURACY"
+theme_override_font_sizes/font_size = 23
+
+[node name="Stats" type="Label" parent="Modal/Results"]
+layout_mode = 0
+offset_left = 540.0
+offset_top = 601.0
+offset_right = 1410.0
+offset_bottom = 721.0
+mouse_filter = 2
+text = "PERFECT    00       GOOD    00       MISS    00\n最长连击  00"
+theme_override_font_sizes/font_size = 24
+
+[node name="Again" type="Button" parent="Modal/Results"]
+layout_mode = 0
+offset_left = 530.0
+offset_top = 790.0
+offset_right = 950.0
+offset_bottom = 872.0
+text = "再演奏一次"
+theme_override_font_sizes/font_size = 26
+
+[node name="Home" type="Button" parent="Modal/Results"]
+layout_mode = 0
+offset_left = 975.0
+offset_top = 790.0
+offset_right = 1390.0
+offset_bottom = 872.0
+text = "选择新世界"
+theme_override_font_sizes/font_size = 26
+
+[node name="Motion" type="Button" parent="Menu"]
+layout_mode = 0
+offset_left = 1470.0
+offset_top = 705.0
+offset_right = 1820.0
+offset_bottom = 767.0
+theme_override_font_sizes/font_size = 21
+text = "动态效果：完整"
