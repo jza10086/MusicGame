@@ -1,25 +1,13 @@
-# 实现与视觉编辑指南
+# MusicGame architecture
 
-## 运行模型
+- `music_game.tscn` / `music_game.gd`: menu, two-lane stage, chart selection, HUD, results and calibration entry.
+- `rhythm_prototype.gd`: shared playback clock, input edges, judgement, calibration and explicit settings persistence. Its `.tscn` is the calibration lab, not another visual theme.
+- `rhythm_timing.gd`: judgement windows, compensation, visual time and calibration statistics.
+- `rhythm_audio.gd`: original PCM metronome and practice audio.
+- `rhythm_chart.gd`: strict version 2 chart loading and validation; `charts/bad_apple/` contains the three converted charts, original SM and matching OGG.
+- `skins/neon.gd`: perspective rendering, continuous edges, full-width longitudinal lane highlight, consumed-note animation and hit effects. It never owns timing or score.
+- `convert_sm.py`: deterministic StepMania-to-2K conversion including BPM, stops, offset, simultaneous taps and hold heads.
 
-`RhythmSession` 是纯逻辑对象；每次 `start()` 生成固定谱面，输入只消费当前窗口内最近的同轨音符。UI 通过 `advance(delta)` 推进本地逻辑时间，暂停时不推进。判定采用浮点容差，确保精确 70ms / 150ms 边界一致。每个音符保留 hit/missed 标记，终局是完整的48秒逻辑时间。
+The audio player position plus time since mix minus output latency is the common clock. Input compensation and visual compensation remain independent. Visual travel is constant in track depth, perspective-projected on screen. Losing focus stops the round; restarting creates a fresh audio clock. Only Apply writes local configuration. No framework autoload, MCP plugin, network service or copied user settings is required.
 
-`main.gd` 管理 menu → playing ↔ paused → results。没有延迟场景回调、旧 Tween 或独立定时器残留：重开、返回直接清空效果、触控来源和输入状态。恢复使用短倒计时而不是突然推进谱面。
-
-每条轨道维护一组输入来源：D/F/←或K/J/→、各触点及鼠标。一个来源松开不会误释放另一仍按住的来源。只有从无输入转为有输入时进行判定，操作系统键盘重复被忽略。左右轨独立，可同时和弦。切窗口自动暂停。
-
-## 视觉分层
-
-主场景按 Backdrop → Header/Menu/HUD → Footer → Modal 分层。布局节点是可直接编辑的 Control、Label、Button、ProgressBar，而不是一张截图。样式在 `_apply_theme()` 集中配置，三套画面根节点分别提供可编辑的主色、背景或场景参数。美术使用原生 CanvasItem 绘制，不需要导入材质包或联网下载。
-
-三个renderer接收同一状态字典：mode、time、song_time、notes、effects、pressed、combo。它们分别拥有独立的环境、透视、音符与击打绘制，因此可以只替换一个风格而不影响判定逻辑。渲染不会修改核心模型。
-
-统一设计空间为1920×1080，判定线y=870、双轨底部中心x=830/1090、视觉提前量2.2秒。未来舞台轨道从上方向下展开；像素站台平行轨道强调仪表；浮光场景以光柱及珠体呈现。舒缓设置把环境time固定为0并关闭扩散效果，但必要的下落、按键亮起和判定文字保留。
-
-## 继续开发的推荐接点
-
-- 音频同步：用真实播放时钟替换UI推进来源，保留纯模型`advance()`与输入判定；必须另行设计暂停、延迟补偿与设备输出延迟。
-- 外部谱面：替换`start()`中的固定谱面生成，保留每音符time/lane/hit/missed字段。
-- 长按：新增独立持续状态和松开判定，不能简单把同一音符多次计分。
-- 其他分辨率：沿用16:9设计空间；若要竖屏需专门重排HUD，当前不声称提供原生竖屏布局。
-- Web：需要Godot官方Web导出模板并单独测试浏览器触控、焦点和性能；当前交付为源工程。
+Neon is the only current presentation. Earlier pixel/aurora skins and the old synthetic UI-only session implementation have been removed; Git history preserves them.
