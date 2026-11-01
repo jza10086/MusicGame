@@ -1,0 +1,110 @@
+[
+  {
+    "id": "kick",
+    "name": "底鼓",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/kick/mid_kick_snoff_vl3_rr1.flac",
+    "original": "Samples/mid/kick/mid_kick_snoff_vl3_rr1.flac",
+    "seconds": 2.161,
+    "use": "低频重击",
+    "bytes": 247412
+  },
+  {
+    "id": "snare",
+    "name": "军鼓",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/snare/mid_snare_center_vl24.flac",
+    "original": "Samples/mid/snare/mid_snare_center_vl24.flac",
+    "seconds": 1.671,
+    "use": "成功敲击主候选",
+    "bytes": 211972
+  },
+  {
+    "id": "cross_stick",
+    "name": "鼓边侧击",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/snare/mid_snare_crossstick_vl12.flac",
+    "original": "Samples/mid/snare/mid_snare_crossstick_vl12.flac",
+    "seconds": 2.823,
+    "use": "空按或清晰短击候选",
+    "bytes": 341116
+  },
+  {
+    "id": "high_tom",
+    "name": "高通鼓",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/htom/mid_htom_center_vl12.flac",
+    "original": "Samples/mid/htom/mid_htom_center_vl12.flac",
+    "seconds": 1.809,
+    "use": "有鼓腔共鸣的击打",
+    "bytes": 222272
+  },
+  {
+    "id": "low_tom",
+    "name": "低通鼓",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/ltom/mid_ltom_center_vl12.flac",
+    "original": "Samples/mid/ltom/mid_ltom_center_vl12.flac",
+    "seconds": 4.737,
+    "use": "较低沉的击打",
+    "bytes": 561706
+  },
+  {
+    "id": "closed_hat",
+    "name": "闭合踩镲",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/hh/mid_hh_closed_vl3_rr1.flac",
+    "original": "Samples/mid/hh/mid_hh_closed_vl3_rr1.flac",
+    "seconds": 0.696,
+    "use": "空按或密集敲击候选",
+    "bytes": 96320
+  },
+  {
+    "id": "open_hat",
+    "name": "开放踩镲",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/hh/mid_hh_open_vl3_rr1.flac",
+    "original": "Samples/mid/hh/mid_hh_open_vl3_rr1.flac",
+    "seconds": 9.562,
+    "use": "较亮的重击，留意尾音",
+    "bytes": 1187356
+  },
+  {
+    "id": "pedal_hat",
+    "name": "踩镲脚踏",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/hh/mid_hh_pedal_vl2_rr1.flac",
+    "original": "Samples/mid/hh/mid_hh_pedal_vl2_rr1.flac",
+    "seconds": 1.95,
+    "use": "较轻的空按候选",
+    "bytes": 240694
+  },
+  {
+    "id": "crash",
+    "name": "吊镲",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/crash/mid_crash_crash_vl2_rr1.flac",
+    "original": "Samples/mid/crash/mid_crash_crash_vl2_rr1.flac",
+    "seconds": 12.624,
+    "use": "段落重音，避免连续叠加长尾",
+    "bytes": 1609725
+  },
+  {
+    "id": "ride",
+    "name": "叮叮镲",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/ride/mid_ride_ride_vl2_rr1.flac",
+    "original": "Samples/mid/ride/mid_ride_ride_vl2_rr1.flac",
+    "seconds": 8.445,
+    "use": "金属节奏音色",
+    "bytes": 1085707
+  },
+  {
+    "id": "ride_bell",
+    "name": "叮叮镲帽",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/ride/mid_ride_bell_vl2_rr1.flac",
+    "original": "Samples/mid/ride/mid_ride_bell_vl2_rr1.flac",
+    "seconds": 5.828,
+    "use": "更有音高的金属重音",
+    "bytes": 744941
+  },
+  {
+    "id": "flat_ride",
+    "name": "平顶叮叮镲",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/flatride/mid_flatride_ride_vl2_rr1.flac",
+    "original": "Samples/mid/flatride/mid_flatride_ride_vl2_rr1.flac",
+    "seconds": 8.166,
+    "use": "另一种镲片音色对照",
+    "bytes": 1298176
+  }
+]

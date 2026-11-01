@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3]
 
-[ext_resource type="Script" path="res://skins/neon.gd" id="1_neon"]
+[ext_resource type="Script" uid="uid://cjjj80mu5g38k" path="neon.gd" id="1_neon"]
+
 
 [node name="PrismStage" type="Control"]
 layout_mode = 3

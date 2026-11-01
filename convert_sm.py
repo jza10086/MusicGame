@@ -1,4 +1,4 @@
-"""Convert one dance-single SM difficulty into the prototype's tap-only 2K JSON (left/down to left, up/right to right).
+"""Convert a dance-single SM difficulty to 2K taps or the original four lanes and holds.
 
 Timing is absolute audio time: integrate BPMs, add stops strictly before the
 note beat, subtract SM OFFSET. Unsupported timing extensions are rejected.
@@ -31,7 +31,7 @@ def beat_seconds(beat, bpms, stops, offset):
     return result + sum(duration for start, duration in stops if start < beat)
 
 
-def convert(text, difficulty='Easy'):
+def convert(text, difficulty='Easy', keys=2):
     text = re.sub(r'//[^\r\n]*', '', text)
     tags = re.findall(r'#([^:;]+):(.*?);', text, flags=re.S)
     header = {key.strip().upper(): value.strip() for key, value in tags if key.strip().upper() != 'NOTES'}
@@ -52,6 +52,8 @@ def convert(text, difficulty='Easy'):
     chart = matches[0]
     times = []
     lanes = []
+    durations = []
+    holds = {}
     stats = dict(source_heads=0, simultaneous_heads_merged=0, hold_heads_to_taps=0, ignored_tails=0, ignored_mines=0)
     for measure, data in enumerate(chart[5].split(',')):
         rows = [line.strip() for line in data.splitlines() if line.strip()]
@@ -62,6 +64,26 @@ def convert(text, difficulty='Easy'):
                 raise ValueError(f'Unsupported note row: {row}')
             heads = sum(char in '124' for char in row)
             stats['source_heads'] += heads
+            if keys == 4:
+                beat = measure * 4 + index * 4 / len(rows)
+                timestamp = round(beat_seconds(beat, bpms, stops, offset) * 1000, 3)
+                for lane, char in enumerate(row):
+                    if char in '124':
+                        if lane in holds:
+                            raise ValueError('Overlapping hold on the same lane')
+                        if char in '24':
+                            holds[lane] = len(times)
+                        times.append(timestamp)
+                        lanes.append(lane)
+                        durations.append(0)
+                    elif char == '3':
+                        if lane not in holds:
+                            raise ValueError('Hold tail without a head')
+                        head = holds.pop(lane)
+                        durations[head] = round(timestamp - times[head], 3)
+                    elif char != '0':
+                        raise ValueError(f'Unsupported 4K note type: {char}')
+                continue
             stats['hold_heads_to_taps'] += sum(char in '24' for char in row)
             stats['ignored_tails'] += row.count('3')
             stats['ignored_mines'] += row.count('M')
@@ -74,13 +96,15 @@ def convert(text, difficulty='Easy'):
                     raise ValueError('Negative or non-increasing converted note time')
                 times.extend([timestamp] * len(target_lanes))
                 lanes.extend(target_lanes)
+    if holds:
+        raise ValueError('Unterminated hold')
     if not times:
         raise ValueError('Empty chart')
     return {
-        'format_version': 2, 'key_count': 2, 'note_type': 'tap',
+        'format_version': 3, 'key_count': keys, 'note_type': 'tap_hold',
         'title': header['TITLE'], 'artist': header['ARTIST'],
-        'audio_file': 'bad_apple.ogg', 'difficulty': f'{difficulty} / 2K',
-        'notes_ms': times, 'lanes': lanes,
+        'audio_file': 'bad_apple.ogg', 'difficulty': ('Normal' if difficulty == 'Medium' else difficulty) if keys == 4 else f'{difficulty} / 2K',
+        'notes_ms': times, 'lanes': lanes, 'durations_ms': durations if keys == 4 else [0] * len(times), 'subs_ms': [[] for _ in times],
         'source': {'format': 'StepMania SM', 'difficulty': difficulty,
                    'meter': chart[3].strip(), 'offset_seconds': offset,
                    'bpms': bpms, 'stops': stops},
@@ -93,11 +117,13 @@ if __name__ == '__main__':
     parser.add_argument('source', type=Path)
     parser.add_argument('output', type=Path)
     parser.add_argument('--difficulty', default='Easy')
+    parser.add_argument('--keys', choices=(2, 4), type=int, default=2)
     parser.add_argument('--mapper', required=True)
     parser.add_argument('--source-url', required=True)
     args = parser.parse_args()
     raw = args.source.read_bytes()
-    chart = convert(raw.decode('utf-8-sig'), args.difficulty)
+    chart = convert(raw.decode('utf-8-sig'), args.difficulty, args.keys)
+    chart.update(project_name=args.output.stem, mapper=args.mapper)
     chart['source'].update(mapper=args.mapper, url=args.source_url)
     args.output.write_text(json.dumps(chart, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     print(json.dumps({'notes': len(chart['notes_ms']), 'first_ms': chart['notes_ms'][0],

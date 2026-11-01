@@ -1,6 +1,0 @@
-[gd_scene format=3 uid="uid://bxsajcuqmwtir"]
-
-[ext_resource type="Script" uid="uid://ompri51yapck" path="res://tests/rhythm_1k_test.gd" id="1_xxv8l"]
-
-[node name="RhythmTest" type="Node" unique_id=1954055832]
-script = ExtResource("1_xxv8l")

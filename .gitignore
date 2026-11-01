@@ -1,6 +1,15 @@
-.godot/
-export/
-*.tmp
-tmp/
+# Local recoverable copies created by the native chart editor.
+.editor_recovery/
+.native_editor_*.tmp
+
+# Python generation caches.
 __pycache__/
 *.pyc
+
+# Local-only songs and derived charts.
+/charts/bad_apple/
+/charts/bad_apple_full/
+.godot/
+*.tmp
+*.TMP
+/config/

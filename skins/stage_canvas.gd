@@ -1,3 +1,4 @@
+@tool
 extends Control
 ## Uniform artwork transforms: scenery covers the viewport; the playfield fits safely.
 const ART_SIZE: Vector2 = Vector2(1920.0, 1080.0)

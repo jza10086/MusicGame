@@ -1,8 +1,8 @@
 ## Pure timing and judgement rules for the standalone 1K calibration prototype.
 extends RefCounted
 
-const PERFECT_MS: float = 40.0
-const GOOD_MS: float = 90.0
+const PERFECT_MS: float = 50.0
+const GOOD_MS: float = 100.0
 const HIT_MS: float = 150.0
 
 static func note_times(bpm: float, calibration: bool) -> Array[float]:
@@ -39,3 +39,12 @@ static func median(values: Array[float]) -> float:
 	sorted.sort()
 	var middle: int = sorted.size() / 2
 	return sorted[middle] if sorted.size() % 2 else (sorted[middle - 1] + sorted[middle]) * 0.5
+
+
+## Keep the last valid audio time while the mixer is suspended or reports an invalid age.
+## Web occasionally reports ~2^64 microseconds instead of a small mix interval.
+## Normal samples retain playback position + mix age - output latency exactly.
+static func playback_time(position: float, mix_age: float, latency: float, previous: float) -> float:
+	if not is_finite(position) or not is_finite(mix_age) or not is_finite(latency) or mix_age < 0.0 or mix_age > 1.0:
+		return previous
+	return maxf(previous, position + mix_age - latency)

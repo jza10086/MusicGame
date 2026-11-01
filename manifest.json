@@ -1,0 +1,18 @@
+{
+  "manifest_version": 2,
+  "core_api_major": 4,
+  "package_version": "1.0.0",
+  "id": "gp_rhythm_game",
+  "name": "霓虹回响",
+  "kind": "minigame",
+  "entry": "party_round.tscn",
+  "introduction": "1–8 人同场演奏 原创双轨长按练习曲，以最终准确率排名。",
+  "player_counts": [1, 2, 3, 4, 5, 6, 7, 8],
+  "tags": ["original", "rhythm"],
+  "dependencies": {"godot_party_default_protocol": "1.0.0"},
+  "adapters": [{
+    "id": "standard",
+    "protocol": {"id": "godot_party_default_protocol", "api_major": 1, "min_api_minor": 0},
+    "entry": "adapter.gd"
+  }]
+}

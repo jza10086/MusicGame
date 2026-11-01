@@ -1,8 +1,26 @@
-extends "res://skins/stage_canvas.gd"
-## A compact two-key runway with crisp crystal impacts and restrained bloom. Visuals only.
-@export var cyan: Color = Color("74f5ff")
-@export var pink: Color = Color("d9a0ff")
-@export var stage_ink: Color = Color("080e2b")
+@tool
+extends "stage_canvas.gd"
+## A chart-driven runway with crisp crystal impacts and restrained bloom. Visuals only.
+@export var cyan: Color = Color("74f5ff"):
+	set(value):
+		cyan = value
+		queue_redraw()
+@export var pink: Color = Color("d9a0ff"):
+	set(value):
+		pink = value
+		queue_redraw()
+@export var stage_ink: Color = Color("080e2b"):
+	set(value):
+		stage_ink = value
+		queue_redraw()
+## Static authoring view only; runtime lanes always come from the chart.
+@export_enum("2K:2", "4K:4") var editor_key_count: int = 2:
+	set(value):
+		editor_key_count = value
+		if Engine.is_editor_hint() and is_node_ready():
+			key_count = value
+			_runway_edges = _make_runway_edges()
+			queue_redraw()
 const DESIGN: Vector2 = Vector2(1920.0, 1080.0)
 const TOP_Y: float = 125.0
 const HIT_Y: float = 880.0
@@ -12,6 +30,7 @@ const DEPTH_RATIO: float = NEAR_LANE_WIDTH / FAR_LANE_WIDTH
 const IMPACT_DURATION: float = 0.30
 const CONSUME_DURATION: float = 0.105
 var state: Dictionary = {}
+var key_count: int = 2
 var travel: float = 1.6
 var _hit_light: Node2D
 var _light_texture: GradientTexture2D
@@ -20,6 +39,10 @@ var _sheet_texture: ImageTexture
 var _runway_edges: ArrayMesh
 
 func set_state(data: Dictionary) -> void:
+	var count: int = int(data.get("key_count", 2))
+	if count != key_count:
+		key_count = count
+		_runway_edges = _make_runway_edges()
 	state = data
 	travel = float(data.get("approach", 1.6))
 	queue_redraw()
@@ -28,6 +51,9 @@ func set_state(data: Dictionary) -> void:
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	resized.connect(queue_redraw)
+	if Engine.is_editor_hint():
+		key_count = editor_key_count
 	var gradient: Gradient = Gradient.new()
 	gradient.offsets = PackedFloat32Array([0.0, 0.16, 0.38, 0.68, 1.0])
 	gradient.colors = PackedColorArray([Color(1, 1, 1, 1), Color(1, 1, 1, 0.72), Color(1, 1, 1, 0.27), Color(1, 1, 1, 0.035), Color(1, 1, 1, 0)])
@@ -64,10 +90,11 @@ func _make_lane_gradient() -> ImageTexture:
 
 ## Full-width lane fill below notes, with no lateral blur or additive brightness stacking.
 func _draw_lane_highlights() -> void:
-	var pressed: Array = state.get("pressed", [false, false])
+	var ages: Array = state.get("press_ages", [1.0, 1.0, 1.0, 1.0])
+	var pressed: Array = state.get("pressed", [false, false, false, false])
 	var uv: PackedVector2Array = PackedVector2Array([Vector2(0, 0), Vector2(1, 0), Vector2(1, 1), Vector2(0, 1)])
-	for lane: int in range(2):
-		var opacity: float = 0.20 if pressed.size() > lane and bool(pressed[lane]) else 0.0
+	for lane: int in range(key_count):
+		var opacity: float = maxf(0.20 if bool(pressed[lane]) else 0.0, press_flash(float(ages[lane])) * 0.12)
 		for effect: Dictionary in state.get("effects", []):
 			var age: float = float(effect.get("age", 0.0))
 			if int(effect.get("lane", 0)) != lane or age < 0.0 or age >= 0.25 or hit_note_geometry(effect).is_empty():
@@ -77,7 +104,7 @@ func _draw_lane_highlights() -> void:
 			opacity = maxf(opacity, (1.0 - smoothstep(0.035, 0.25, age)) * strength * 0.28)
 		if opacity > 0.004:
 			# V depends only on screen depth, so both triangles interpolate the same gradient.
-			draw_polygon(_lane_quad(lane, 0.0, 1.40), PackedColorArray([_a(cyan if lane == 0 else pink, opacity)]), uv, _beam_texture)
+			draw_polygon(_lane_quad(lane, 0.0, 1.40), PackedColorArray([_a(lane_color(lane), opacity)]), uv, _beam_texture)
 
 ## Small impact floor sheet; its feathering does not affect the lane highlight.
 func _make_soft_surface() -> ImageTexture:
@@ -105,7 +132,7 @@ func _lane_width(progress: float) -> float:
 	return lerpf(FAR_LANE_WIDTH, NEAR_LANE_WIDTH, progress)
 
 func _lane_x(lane: int, progress: float) -> float:
-	return 960.0 + (-0.5 if lane == 0 else 0.5) * _lane_width(progress)
+	return 960.0 + (float(lane) - float(key_count - 1) * 0.5) * _lane_width(progress)
 
 func _lane_point(lane: int, across: float, progress: float) -> Vector2:
 	return Vector2(_lane_x(lane, progress) + across * _lane_width(progress) * 0.5, lerpf(TOP_Y, HIT_Y, progress))
@@ -119,16 +146,15 @@ func lane_at_position(point: Vector2, mouse: bool = false) -> int:
 	if local.y < (HIT_Y - 115.0 if mouse else TOP_Y + 80.0) or local.y > HIT_Y + 80.0:
 		return -1
 	var progress: float = (local.y - TOP_Y) / (HIT_Y - TOP_Y)
-	if absf(local.x - 960.0) > _lane_width(progress):
-		return -1
-	return 0 if local.x < 960.0 else 1
+	var column: float = (local.x - 960.0) / _lane_width(progress) + float(key_count) * 0.5
+	return floori(column) if column >= 0.0 and column < key_count else -1
 
 func _draw() -> void:
 	if size.x < 1.0 or size.y < 1.0:
 		return
 	_begin_environment()
 	_draw_arena(float(state.get("time", 0.0)))
-	if str(state.get("mode", "menu")) in ["playing", "paused"]:
+	if Engine.is_editor_hint() or str(state.get("mode", "menu")) in ["playing", "paused"]:
 		_begin_playfield()
 		_draw_runway()
 		_draw_notes()
@@ -165,9 +191,8 @@ func _make_runway_edges() -> ArrayMesh:
 	var colors: PackedColorArray = PackedColorArray()
 	var indices: PackedInt32Array = PackedInt32Array()
 	var offsets: Array[float] = [-1.2, -0.25, 0.25, 1.2]
-	for edge: int in range(3):
-		# The middle line uses the inner edge of the left lane, exactly x=960.
-		var lane: int = 1 if edge == 2 else 0
+	for edge: int in range(key_count + 1):
+		var lane: int = maxi(0, edge - 1)
 		var across: float = -1.0 if edge == 0 else 1.0
 		var start: Vector2 = _lane_point(lane, across, 0.0)
 		var end: Vector2 = _lane_point(lane, across, 1.40)
@@ -176,9 +201,9 @@ func _make_runway_edges() -> ArrayMesh:
 		for row: int in range(65):
 			var fraction: float = float(row) / 64.0
 			var progress: float = fraction * 1.40
-			var alpha: float = smoothstep(0.0, 0.30, progress) * (1.0 - smoothstep(1.14, 1.40, progress)) * (0.13 if edge == 1 else 0.40)
+			var alpha: float = smoothstep(0.0, 0.30, progress) * (1.0 - smoothstep(1.14, 1.40, progress)) * (0.13 if edge > 0 and edge < key_count else 0.40)
 			for column: int in range(4):
-				var point: Vector2 = start.lerp(end, fraction) + normal * offsets[column] * (0.8 if edge == 1 else 1.0)
+				var point: Vector2 = start.lerp(end, fraction) + normal * offsets[column] * (0.8 if edge > 0 and edge < key_count else 1.0)
 				vertices.append(Vector3(point.x, point.y, 0.0))
 				colors.append(Color(0.72, 0.79, 1.0, alpha if column == 1 or column == 2 else 0.0))
 			if row < 64:
@@ -196,16 +221,31 @@ func _make_runway_edges() -> ArrayMesh:
 
 func _draw_runway() -> void:
 	# Both halves meet at exactly x=960: one translucent road, no central black gutter.
-	var road: PackedVector2Array = PackedVector2Array([_lane_point(0, -1, 0), _lane_point(1, 1, 0), _lane_point(1, 1, 1.40), _lane_point(0, -1, 1.40)])
+	var road: PackedVector2Array = PackedVector2Array([_lane_point(0, -1, 0), _lane_point(key_count - 1, 1, 0), _lane_point(key_count - 1, 1, 1.40), _lane_point(0, -1, 1.40)])
 	draw_polygon(road, PackedColorArray([Color(0.04, 0.06, 0.15, 0), Color(0.04, 0.06, 0.15, 0), Color(0.035, 0.045, 0.12, 0.72), Color(0.035, 0.045, 0.12, 0.72)]))
 	_draw_lane_highlights()
 	draw_mesh(_runway_edges, null)
-	var left: float = 960.0 - NEAR_LANE_WIDTH
-	var right: float = 960.0 + NEAR_LANE_WIDTH
-	# One continuous line with a cyan-to-lilac gradient; its centre has no gap.
-	draw_polygon(PackedVector2Array([Vector2(left, HIT_Y - 1.3), Vector2(right, HIT_Y - 1.3), Vector2(right, HIT_Y + 1.3), Vector2(left, HIT_Y + 1.3)]), PackedColorArray([_a(cyan, 0.80), _a(pink, 0.80), _a(pink, 0.80), _a(cyan, 0.80)]))
-	var apron: PackedVector2Array = PackedVector2Array([_lane_point(0, -1, 1.0), _lane_point(1, 1, 1.0), _lane_point(1, 1, 1.065), _lane_point(0, -1, 1.065)])
-	draw_polygon(apron, PackedColorArray([_a(cyan, 0.07), _a(pink, 0.07), _a(pink, 0), _a(cyan, 0)]))
+	for lane: int in range(key_count):
+		var color: Color = lane_color(lane)
+		var points: PackedVector2Array = receptor_polygon(lane)
+		draw_colored_polygon(points, _a(color, 0.13))
+		var outline: PackedVector2Array = points.duplicate()
+		outline.append(points[0])
+		draw_polyline(outline, _a(color, 0.72), 1.4, true)
+		var center: Vector2 = Vector2(_lane_x(lane, 1.0), HIT_Y)
+		draw_line(center - Vector2(NEAR_LANE_WIDTH * 0.42 - 8, 0), center + Vector2(NEAR_LANE_WIDTH * 0.42 - 8, 0), _a(color, 0.32), 1.0, true)
+		draw_circle(center, 2.2, _a(Color.WHITE, 0.70))
+
+## The judgement timestamp crosses the centre of the note-sized receptor.
+func receptor_polygon(lane: int) -> PackedVector2Array:
+	var center: Vector2 = Vector2(_lane_x(lane, 1.0), HIT_Y)
+	var half_width: float = NEAR_LANE_WIDTH * 0.42
+	var half_height: float = 11.5
+	return PackedVector2Array([center + Vector2(-half_width + 8, -half_height), center + Vector2(half_width - 8, -half_height), center + Vector2(half_width, 0), center + Vector2(half_width - 8, half_height), center + Vector2(-half_width + 8, half_height), center + Vector2(-half_width, 0)])
+
+## One press edge flashes for 220 ms regardless of release or continued holding.
+func press_flash(age: float) -> float:
+	return 0.0 if age < 0.0 else 1.0 - smoothstep(0.015, 0.22, age)
 
 func _draw_notes() -> void:
 	var now: float = float(state.get("song_time", 0.0))
@@ -215,7 +255,12 @@ func _draw_notes() -> void:
 		if bool(note.get("hit", false)) or bool(note.get("missed", false)):
 			continue
 		var dt: float = float(note.get("time", 0.0)) - now
-		if dt > travel or dt < -0.16:
+		var end_dt: float = float(note.get("end", note.get("time", 0.0))) - now
+		var holding: bool = bool(note.get("holding", false))
+		var is_hold: bool = float(note.get("end", 0.0)) > float(note.get("time", 0.0))
+		if holding:
+			dt = 0.0
+		if dt > travel or (not holding and dt < -0.16):
 			continue
 		var lane: int = int(note.get("lane", 0))
 		var p: float = project_progress(1.0 - dt / travel)
@@ -224,7 +269,26 @@ func _draw_notes() -> void:
 		var x: float = position.x
 		var w: float = _lane_width(p) * 0.84
 		var h: float = maxf(7.0, 23.0 * _lane_width(p) / NEAR_LANE_WIDTH)
-		var col: Color = cyan if lane == 0 else pink
+		var col: Color = lane_color(lane)
+		if is_hold:
+			var tail_p: float = project_progress(1.0 - clampf(end_dt, 0.0, travel) / travel)
+			var head_p: float = minf(p, 1.0)
+			var strip: PackedVector2Array = _lane_quad(lane, tail_p, head_p, 0.64)
+			if tail_p < head_p - 0.0001:
+				draw_colored_polygon(strip, _a(col, 0.62 if holding else 0.32))
+			draw_line(strip[0], strip[3], _a(col, 0.95), 2.5, true)
+			draw_line(strip[1], strip[2], _a(col, 0.95), 2.5, true)
+			if end_dt <= travel:
+				_draw_note_body(_lane_point(lane, 0.0, tail_p), _lane_width(tail_p) * 0.70, 8.0, col)
+			var subs: Array = note.get("subs", [])
+			for sub_index: int in range(int(note.get("sub_next", 0)), subs.size()):
+				var sub_dt: float = float(subs[sub_index]) - now
+				if sub_dt < 0.0 or sub_dt > travel:
+					continue
+				var sub_p: float = project_progress(1.0 - sub_dt / travel)
+				_draw_note_body(note_position(lane, sub_dt), _lane_width(sub_p) * 0.50, 6.0, Color.WHITE, 0.90)
+			if holding:
+				draw_texture_rect(_light_texture, Rect2(x - w * 0.60, HIT_Y - 45.0, w * 1.20, 90.0), false, _a(col, 0.50))
 		draw_texture_rect(_light_texture, Rect2(x - w * 0.56, y - h * 2.0, w * 1.12, h * 4.0), false, _a(col, 0.22))
 		_draw_note_body(position, w, h, col)
 
@@ -277,7 +341,7 @@ func _draw_impacts() -> void:
 			continue
 		var geometry: Dictionary = hit_note_geometry(effect)
 		if not geometry.is_empty():
-			_draw_consumed_note(geometry, lane, age, cyan if lane == 0 else pink)
+			_draw_consumed_note(geometry, lane, age, lane_color(lane))
 
 ## Soft textured quads replace hard-edged slab faces. UV alpha feathers all four edges.
 func _light_surface(points: PackedVector2Array, texture: Texture2D, color: Color, opacity: float) -> void:
@@ -320,14 +384,24 @@ func _draw_hit_light() -> void:
 	if size.x < 1.0 or size.y < 1.0 or str(state.get("mode", "menu")) not in ["playing", "paused"]:
 		return
 	_hit_light.draw_set_transform_matrix(playfield_transform())
-	_light_blob(Vector2(960, HIT_Y), Vector2(NEAR_LANE_WIDTH * 2.1, 12), Color(0.65, 0.75, 1.0), 0.13)
+	var ages: Array = state.get("press_ages", [1.0, 1.0, 1.0, 1.0])
+	for lane: int in range(key_count):
+		var flash: float = press_flash(float(ages[lane]))
+		if flash <= 0.004:
+			continue
+		var col: Color = lane_color(lane)
+		var center: Vector2 = Vector2(_lane_x(lane, 1.0), HIT_Y)
+		_hit_light.draw_colored_polygon(receptor_polygon(lane), _a(col.lightened(0.55), flash * 0.55))
+		_light_blob(center, Vector2(NEAR_LANE_WIDTH * 0.5, 27), col, flash * 0.30)
+		_light_blob(center, Vector2(36, 9), Color.WHITE, flash * 0.65)
+		_draw_crystal_sheet(lane, 0.45 + (1.0 - flash) * 0.18, 0.026, (1.0 - flash) * 18.0, col, flash * 0.55)
 	for effect: Dictionary in state.get("effects", []):
 		var age: float = float(effect.get("age", 0.0))
 		var quality: String = str(effect.get("quality", ""))
 		if age < 0.0 or age >= IMPACT_DURATION or quality == "MISS" or hit_note_geometry(effect).is_empty():
 			continue
 		var lane: int = int(effect["lane"])
-		var col: Color = cyan if lane == 0 else pink
+		var col: Color = lane_color(lane)
 		var center: Vector2 = Vector2(_lane_x(lane, 1.0), HIT_Y - 2.0)
 		var strength: float = 1.0 if quality == "PERFECT" else (0.82 if quality == "GOOD" else 0.62)
 		var expansion: float = 1.0 - pow(1.0 - clampf(age / 0.14, 0.0, 1.0), 3.0)
@@ -371,3 +445,6 @@ func project_progress(progress: float) -> float:
 func note_position(lane: int, seconds_until: float) -> Vector2:
 	var projected: float = project_progress(1.0 - seconds_until / travel)
 	return Vector2(_lane_x(lane, projected), TOP_Y + (HIT_Y - TOP_Y) * projected)
+
+func lane_color(lane: int) -> Color:
+	return cyan.lerp(pink, float(lane) / float(key_count - 1))

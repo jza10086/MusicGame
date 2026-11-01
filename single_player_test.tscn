@@ -1,0 +1,176 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="single_player_test.gd" id="1"]
+[ext_resource type="PackedScene" path="music_game.tscn" id="2"]
+
+[node name="SinglePlayerTest" type="Control" node_paths=PackedStringArray("game")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1")
+game = NodePath("Game")
+
+[node name="Game" parent="." instance=ExtResource("2")]
+layout_mode = 1
+auto_start = false
+show_return_button = true
+
+[node name="Header" type="Control" parent="." unique_id=843268340]
+anchors_preset = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+
+[node name="Brand" type="Label" parent="Header" unique_id=834947962]
+layout_mode = 0
+offset_left = 72.0
+offset_top = 42.0
+offset_right = 522.0
+offset_bottom = 107.0
+theme_override_font_sizes/font_size = 40
+text = "DUET"
+
+[node name="Tag" type="Label" parent="Header" unique_id=737834041]
+layout_mode = 0
+offset_left = 254.0
+offset_top = 56.0
+offset_right = 674.0
+offset_bottom = 101.0
+theme_override_font_sizes/font_size = 18
+text = "双生节拍  /  TWO KEY RHYTHM"
+
+[node name="Edition" type="Label" parent="Header" unique_id=1420504609]
+layout_mode = 0
+offset_left = 1500.0
+offset_top = 55.0
+offset_right = 1840.0
+offset_bottom = 95.0
+theme_override_font_sizes/font_size = 16
+text = "NEON / RHYTHM DEMO"
+
+[node name="Rule" type="HSeparator" parent="Header" unique_id=1562096975]
+layout_mode = 0
+offset_left = 72.0
+offset_top = 129.0
+offset_right = 1848.0
+offset_bottom = 131.0
+
+[node name="Menu" type="Control" parent="." unique_id=416961834]
+anchors_preset = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+
+[node name="Eyebrow" type="Label" parent="Menu" unique_id=2053229587]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 255.0
+offset_right = 550.0
+offset_bottom = 300.0
+theme_override_font_sizes/font_size = 19
+text = "TWO KEYS. ONE MOMENT."
+
+[node name="Title" type="Label" parent="Menu" unique_id=1984652174]
+layout_mode = 0
+offset_left = 90.0
+offset_top = 304.0
+offset_right = 610.0
+offset_bottom = 524.0
+theme_override_font_sizes/font_size = 65
+text = "让节拍
+在指尖相遇"
+
+[node name="Subtitle" type="Label" parent="Menu" unique_id=1644677486]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 580.0
+offset_right = 510.0
+offset_bottom = 710.0
+theme_override_font_sizes/font_size = 23
+text = "两条轨道，一次心跳。
+跟随节拍，进入霓虹舞台。"
+
+[node name="Instruction" type="Label" parent="Menu" unique_id=989036356]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 806.0
+offset_right = 530.0
+offset_bottom = 906.0
+theme_override_font_sizes/font_size = 21
+text = "A / ←  左轨    D / →  右轨
+音符抵达光线时，轻按对应按键。"
+
+[node name="SelectTitle" type="Label" parent="Menu" unique_id=1044695362]
+layout_mode = 0
+offset_left = 630.0
+offset_top = 194.0
+offset_right = 1360.0
+offset_bottom = 258.0
+theme_override_font_sizes/font_size = 35
+text = "霓虹回响"
+
+[node name="SelectHint" type="Label" parent="Menu" unique_id=2014740152]
+layout_mode = 0
+offset_left = 630.0
+offset_top = 255.0
+offset_right = 1360.0
+offset_bottom = 291.0
+theme_override_font_sizes/font_size = 17
+text = "LUMINOUS  /  TWO KEY RHYTHM"
+
+[node name="DifficultyLabel" type="Label" parent="Menu" unique_id=1013099613]
+layout_mode = 0
+offset_left = 630.0
+offset_top = 775.0
+offset_right = 790.0
+offset_bottom = 819.0
+theme_override_font_sizes/font_size = 19
+text = "谱面难度"
+
+[node name="Begin" type="Button" parent="Menu" unique_id=977629561]
+layout_mode = 0
+offset_left = 630.0
+offset_top = 853.0
+offset_right = 1370.0
+offset_bottom = 941.0
+theme_override_font_sizes/font_size = 30
+text = "进入舞台    →"
+
+[node name="Duration" type="Label" parent="Menu" unique_id=1585905552]
+layout_mode = 0
+offset_left = 1470.0
+offset_top = 820.0
+offset_right = 1820.0
+offset_bottom = 900.0
+theme_override_font_sizes/font_size = 24
+text = "48 SEC
+一首指尖短诗"
+
+[node name="StageDescription" type="Label" parent="Menu" unique_id=814953532]
+layout_mode = 0
+offset_left = 630.0
+offset_top = 340.0
+offset_right = 1370.0
+offset_bottom = 690.0
+theme_override_font_sizes/font_size = 26
+text = "霓虹回响
+
+选择曲目和难度
+随包双轨练习 · 支持同时按键
+
+跟随声音，在判定线处按下。
+可在「音画校准」中分别调节画面与按键偏移。"
+
+[node name="Footer" type="Label" parent="." unique_id=569678464]
+layout_mode = 0
+offset_left = 72.0
+offset_top = 1007.0
+offset_right = 1848.0
+offset_bottom = 1045.0
+theme_override_font_sizes/font_size = 18
+text = "D / K   双键演奏                 ESC   暂停                 触屏：轻点左右轨道"
+

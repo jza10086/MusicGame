@@ -1,0 +1,8 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="music_game.tscn" id="game"]
+[ext_resource type="Script" path="party_round.gd" id="round"]
+
+[node name="RhythmRound" instance=ExtResource("game")]
+script = ExtResource("round")
+auto_start = false

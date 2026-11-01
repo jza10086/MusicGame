@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="calibration_test.gd" id="1"]
+[ext_resource type="PackedScene" path="music_game.tscn" id="2"]
+
+[node name="CalibrationTest" type="Control" node_paths=PackedStringArray("game")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1")
+game = NodePath("Game")
+
+[node name="Game" parent="." instance=ExtResource("2")]
+layout_mode = 1
+auto_start = false
+show_return_button = false
+

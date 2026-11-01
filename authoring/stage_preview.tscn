@@ -1,0 +1,8 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="stage_preview.gd" id="1_ql713"]
+
+[node name="StagePreview" type="Control" unique_id=125904352]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_ql713")
