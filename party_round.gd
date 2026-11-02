@@ -3,7 +3,10 @@ extends "music_game.gd"
 
 const REPORT_INTERVAL: float = 0.4
 const FINISH_GRACE_SECONDS: float = 20.0
+const Pages = preload("res://games/protocols/godot_party_default_protocol/round_pages.gd")
+var pages: Pages
 var api: PartyAPI
+var request: Dictionary
 var request_id: String
 var local_player: String
 var players: Array[Dictionary]
@@ -18,6 +21,7 @@ var deadline_ms: int
 
 func party_setup(value: PartyAPI, config: Dictionary) -> void:
 	api = value
+	request = config.duplicate(true)
 	request_id = config.request_id
 	players = api.get_players()
 	for player: Dictionary in players:
@@ -48,7 +52,8 @@ func _ready() -> void:
 	$HUD/PauseButton.hide()
 	playback_failed.connect(_fail)
 	_build_round_board()
-	var error: Error = api.mark_ready()
+	pages = Pages.new()
+	var error: Error = pages.prepare(self, api, request, _start_gameplay)
 	if error != OK:
 		_fail(error_string(error))
 
@@ -73,6 +78,9 @@ func _build_round_board() -> void:
 	_render_board()
 
 func party_start() -> void:
+	pages.transport_started()
+
+func _start_gameplay() -> void:
 	running = true
 	deadline_ms = Time.get_ticks_msec() + ceili((song_length + preparation_seconds + FINISH_GRACE_SECONDS) * 1000.0)
 	if local_player.is_empty():
@@ -203,7 +211,7 @@ func _publish() -> void:
 			return
 		rankings.append({"player_id": id, "rank": _rank(id), "status": data.status, "metrics": {"accuracy": float(data.accuracy) / 100.0, "combo": data.combo}})
 	running = false
-	error = api.finish({"request_id": request_id, "reason": "completed", "rankings": rankings, "columns": [{"key": "accuracy", "title": "准确率 (%)", "format": "decimal"}, {"key": "combo", "title": "最长连击", "format": "integer"}]})
+	error = pages.present({"request_id": request_id, "reason": "completed", "rankings": rankings, "columns": [{"key": "accuracy", "title": "准确率 (%)", "format": "decimal"}, {"key": "combo", "title": "最长连击", "format": "integer"}]})
 	if error != OK:
 		_fail(error_string(error))
 
