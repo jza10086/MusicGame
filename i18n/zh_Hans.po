@@ -1,0 +1,11 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: zh_Hans\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "1–8 人同场演奏 原创双轨长按练习曲，以最终准确率排名。"
+msgstr "1–8 人同场演奏 原创双轨长按练习曲，以最终准确率排名。"
+
+msgid "霓虹回响"
+msgstr "霓虹回响"
