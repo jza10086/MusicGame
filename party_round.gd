@@ -1,5 +1,5 @@
 ## Standard original-protocol round. Each participant judges against their own audio clock.
-extends "music_game.gd"
+extends "res://games/minigame/gp_rhythm_game/music_game.gd"
 
 const REPORT_INTERVAL: float = 0.4
 const FINISH_GRACE_SECONDS: float = 20.0
@@ -51,6 +51,29 @@ func _ready() -> void:
 			combo_limit += 1 + chart.subs[i].size()
 	$HUD/PauseButton.hide()
 	playback_failed.connect(_fail)
+	add_to_group(&"party_minimal_hud")
+	leaderboard_expanded = local_player.is_empty()
+	var standings_toggle: Button = Button.new()
+	$HUD.add_child(standings_toggle)
+	standings_toggle.text = "本轮排名"
+	standings_toggle.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+	standings_toggle.offset_left = -220
+	standings_toggle.offset_right = -28
+	standings_toggle.offset_top = 145
+	standings_toggle.offset_bottom = 195
+	standings_toggle.pressed.connect(func() -> void: leaderboard_expanded = not leaderboard_expanded)
+	var menu_hint: Label = Label.new()
+	menu_hint.name = "MenuHint"
+	$HUD.add_child(menu_hint)
+	menu_hint.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
+	menu_hint.offset_left = -220
+	menu_hint.offset_right = -28
+	menu_hint.offset_top = -60
+	menu_hint.offset_bottom = -28
+	menu_hint.text = "Esc：菜单"
+	menu_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	menu_hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	menu_hint.add_theme_font_size_override("font_size", 22)
 	_build_round_board()
 	pages = Pages.new()
 	var error: Error = pages.prepare(self, api, request, _start_gameplay)
@@ -85,7 +108,7 @@ func _start_gameplay() -> void:
 	deadline_ms = Time.get_ticks_msec() + ceili((song_length + preparation_seconds + FINISH_GRACE_SECONDS) * 1000.0)
 	if local_player.is_empty():
 		for child: Control in $HUD.get_children():
-			child.visible = child == _leaderboard
+			child.visible = child == _leaderboard or child.name == &"MenuHint"
 		$HUD.show()
 	else:
 		start_game()
@@ -99,7 +122,7 @@ func party_stop(_reason: StringName) -> void:
 	set_process_input(false)
 
 func _input(event: InputEvent) -> void:
-	if not running or local_player.is_empty() or (event is InputEventKey and event.physical_keycode == KEY_ESCAPE):
+	if not running or api.input.input_blocked or local_player.is_empty() or (event is InputEventKey and event.physical_keycode == KEY_ESCAPE):
 		return
 	super(event)
 
@@ -119,6 +142,8 @@ func finish_game() -> void:
 func _process(delta: float) -> void:
 	if not running:
 		return
+	if api.input.input_blocked:
+		pause_game()
 	super(delta)
 	if not running:
 		return

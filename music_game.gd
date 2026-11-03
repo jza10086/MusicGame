@@ -3,7 +3,7 @@ extends Control
 ## Only the embedded authoring preview may continue when its canvas loses focus.
 var editor_preview: bool = false
 var preview_end: float = INF
-const Backend = preload("rhythm_backend.gd")
+const Backend = preload("res://games/minigame/gp_rhythm_game/rhythm_backend.gd")
 const ACCENT: Color = Color("73f5eb")
 var backend: Backend
 @onready var skin: Control = $Backdrop/NeonStage
@@ -33,6 +33,7 @@ var mouse_lane: int = -1
 var _tap_streams: Dictionary[String, AudioStream] = {}
 var _hold_players: Array[Dictionary] = [{}, {}, {}, {}]
 var _tap_preview: AudioStreamPlayer
+var leaderboard_expanded: bool = true
 @onready var _leaderboard: CenterContainer = $HUD/Leaderboard
 @onready var _leaderboard_accuracy: Label = $HUD/Leaderboard/Panel/Rows/Self/Accuracy
 
@@ -295,7 +296,7 @@ func _update_skin() -> void:
 		view_notes[index].holding = backend._active_holds.has(index)
 		view_notes[index].sub_next = backend._sub_next[index]
 		visible_notes.append(view_notes[index])
-	_leaderboard.visible = not _calibration_mode
+	_leaderboard.visible = leaderboard_expanded and not _calibration_mode
 	auto_status.visible = _auto_active and mode in ["playing", "stopped"]
 	skin.set_state({"key_count": backend.key_count, "mode": "playing" if mode in ["playing", "stopped"] else "menu", "time": ambient, "song_time": song_time, "approach": backend.settings.approach, "notes": [] if _calibration_mode and backend._calibration else visible_notes, "effects": effects, "press_ages": press_ages.duplicate(), "pressed": backend.held_lanes.duplicate(), "combo": backend._combo})
 
