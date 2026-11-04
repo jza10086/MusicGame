@@ -16,6 +16,7 @@ text = "1"
 [node name="Player" type="Label" parent="."]
 layout_mode = 2
 size_flags_horizontal = 3
+text_overrun_behavior = 3
 theme_override_font_sizes/font_size = 21
 text = "小林"
 

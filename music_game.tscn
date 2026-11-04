@@ -341,13 +341,16 @@ text = "排行榜"
 layout_mode = 2
 modulate = Color(0.6, 0.7, 0.8, 1)
 theme_override_font_sizes/font_size = 16
-text = "占位"
+text = "单人"
 
 [node name="Separator" type="HSeparator" parent="HUD/Leaderboard/Panel/Rows"]
 layout_mode = 2
 mouse_filter = 2
 
 [node name="Self" parent="HUD/Leaderboard/Panel/Rows" instance=ExtResource("player_row")]
+
+[node name="Player" parent="HUD/Leaderboard/Panel/Rows/Self" index="1"]
+text = "你"
 
 [node name="Waiting1" parent="HUD/Leaderboard/Panel/Rows" instance=ExtResource("player_row")]
 modulate = Color(0.55,0.64,0.76,0.7)
