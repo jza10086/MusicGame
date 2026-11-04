@@ -1,0 +1,25 @@
+[gd_scene format=3]
+
+[node name="PlayerRow" type="HBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 34)
+mouse_filter = 2
+modulate = Color(0.45098, 0.960784, 0.921569, 1)
+theme_override_constants/separation = 12
+
+[node name="Rank" type="Label" parent="."]
+layout_mode = 2
+custom_minimum_size = Vector2(24, 0)
+theme_override_font_sizes/font_size = 24
+text = "1"
+
+[node name="Player" type="Label" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 21
+text = "小林"
+
+[node name="Accuracy" type="Label" parent="."]
+layout_mode = 2
+theme_override_font_sizes/font_size = 21
+text = "100.00%"

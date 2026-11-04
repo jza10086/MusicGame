@@ -9,3 +9,6 @@ msgstr "1–8 人同场演奏 原创双轨长按练习曲，以最终准确率�
 
 msgid "霓虹回响"
 msgstr "霓虹回响"
+
+msgid "hud.accuracy"
+msgstr "{accuracy}%"

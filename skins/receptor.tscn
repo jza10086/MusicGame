@@ -1,0 +1,23 @@
+[gd_scene format=3]
+
+[node name="Receptor" type="Node2D"]
+
+[node name="Face" type="Polygon2D" parent="."]
+color = Color(1,1,1,0.13)
+polygon = PackedVector2Array(-134.8,-11.5,134.8,-11.5,142.8,0,134.8,11.5,-134.8,11.5,-142.8,0)
+
+[node name="Outline" type="Line2D" parent="."]
+points = PackedVector2Array(-134.8,-11.5,134.8,-11.5,142.8,0,134.8,11.5,-134.8,11.5,-142.8,0,-134.8,-11.5)
+width = 1.4
+default_color = Color(1,1,1,0.72)
+antialiased = true
+
+[node name="TimingLine" type="Line2D" parent="."]
+points = PackedVector2Array(-134.8,0,134.8,0)
+width = 1.0
+default_color = Color(1,1,1,0.32)
+antialiased = true
+
+[node name="Center" type="Polygon2D" parent="."]
+color = Color(1,1,1,0.7)
+polygon = PackedVector2Array(2.200,0.000, 1.905,1.100, 1.100,1.905, 0.000,2.200, -1.100,1.905, -1.905,1.100, -2.200,0.000, -1.905,-1.100, -1.100,-1.905, -0.000,-2.200, 1.100,-1.905, 1.905,-1.100)

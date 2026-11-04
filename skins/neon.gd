@@ -68,14 +68,8 @@ func _ready() -> void:
 	_beam_texture = _make_lane_gradient()
 	_sheet_texture = _make_soft_surface()
 	_runway_edges = _make_runway_edges()
-	_hit_light = Node2D.new()
-	_hit_light.name = "HitLight"
-	var light_material: CanvasItemMaterial = CanvasItemMaterial.new()
-	light_material.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
-	_hit_light.material = light_material
-	_hit_light.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	_hit_light = $HitLight
 	_hit_light.draw.connect(_draw_hit_light)
-	add_child(_hit_light)
 
 ## One-dimensional half-float gradient, constant across the entire lane width.
 ## The judgement line is the brightest point; the foreground remains filled to the road end.
@@ -152,6 +146,13 @@ func lane_at_position(point: Vector2, mouse: bool = false) -> int:
 func _draw() -> void:
 	if size.x < 1.0 or size.y < 1.0:
 		return
+	$TargetLayout.transform = playfield_transform()
+	$TargetLayout.visible = Engine.is_editor_hint() or str(state.get("mode", "menu")) in ["playing", "paused"]
+	$TargetLayout/TwoKeys.visible = key_count == 2
+	$TargetLayout/FourKeys.visible = key_count == 4
+	var targets: Node2D = $TargetLayout/TwoKeys if key_count == 2 else $TargetLayout/FourKeys
+	for lane: int in key_count:
+		targets.get_child(lane).modulate = lane_color(lane)
 	_begin_environment()
 	_draw_arena(float(state.get("time", 0.0)))
 	if Engine.is_editor_hint() or str(state.get("mode", "menu")) in ["playing", "paused"]:
@@ -225,23 +226,12 @@ func _draw_runway() -> void:
 	draw_polygon(road, PackedColorArray([Color(0.04, 0.06, 0.15, 0), Color(0.04, 0.06, 0.15, 0), Color(0.035, 0.045, 0.12, 0.72), Color(0.035, 0.045, 0.12, 0.72)]))
 	_draw_lane_highlights()
 	draw_mesh(_runway_edges, null)
-	for lane: int in range(key_count):
-		var color: Color = lane_color(lane)
-		var points: PackedVector2Array = receptor_polygon(lane)
-		draw_colored_polygon(points, _a(color, 0.13))
-		var outline: PackedVector2Array = points.duplicate()
-		outline.append(points[0])
-		draw_polyline(outline, _a(color, 0.72), 1.4, true)
-		var center: Vector2 = Vector2(_lane_x(lane, 1.0), HIT_Y)
-		draw_line(center - Vector2(NEAR_LANE_WIDTH * 0.42 - 8, 0), center + Vector2(NEAR_LANE_WIDTH * 0.42 - 8, 0), _a(color, 0.32), 1.0, true)
-		draw_circle(center, 2.2, _a(Color.WHITE, 0.70))
-
 ## The judgement timestamp crosses the centre of the note-sized receptor.
 func receptor_polygon(lane: int) -> PackedVector2Array:
-	var center: Vector2 = Vector2(_lane_x(lane, 1.0), HIT_Y)
-	var half_width: float = NEAR_LANE_WIDTH * 0.42
-	var half_height: float = 11.5
-	return PackedVector2Array([center + Vector2(-half_width + 8, -half_height), center + Vector2(half_width - 8, -half_height), center + Vector2(half_width, 0), center + Vector2(half_width - 8, half_height), center + Vector2(-half_width + 8, half_height), center + Vector2(-half_width, 0)])
+	var group: Node2D = $TargetLayout/TwoKeys if key_count == 2 else $TargetLayout/FourKeys
+	var receptor: Node2D = group.get_child(lane)
+	var face: Polygon2D = receptor.get_node("Face")
+	return receptor.transform * (face.transform * face.polygon)
 
 ## One press edge flashes for 220 ms regardless of release or continued holding.
 func press_flash(age: float) -> float:

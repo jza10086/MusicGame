@@ -53,27 +53,7 @@ func _ready() -> void:
 	playback_failed.connect(_fail)
 	add_to_group(&"party_minimal_hud")
 	leaderboard_expanded = local_player.is_empty()
-	var standings_toggle: Button = Button.new()
-	$HUD.add_child(standings_toggle)
-	standings_toggle.text = "本轮排名"
-	standings_toggle.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
-	standings_toggle.offset_left = -220
-	standings_toggle.offset_right = -28
-	standings_toggle.offset_top = 145
-	standings_toggle.offset_bottom = 195
-	standings_toggle.pressed.connect(func() -> void: leaderboard_expanded = not leaderboard_expanded)
-	var menu_hint: Label = Label.new()
-	menu_hint.name = "MenuHint"
-	$HUD.add_child(menu_hint)
-	menu_hint.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
-	menu_hint.offset_left = -220
-	menu_hint.offset_right = -28
-	menu_hint.offset_top = -60
-	menu_hint.offset_bottom = -28
-	menu_hint.text = "Esc：菜单"
-	menu_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	menu_hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	menu_hint.add_theme_font_size_override("font_size", 22)
+	$HUD/StandingsToggle.pressed.connect(func() -> void: leaderboard_expanded = not leaderboard_expanded)
 	_build_round_board()
 	pages = Pages.new()
 	var error: Error = pages.prepare(self, api, request, _start_gameplay)
@@ -83,7 +63,7 @@ func _ready() -> void:
 func _build_round_board() -> void:
 	var templates: Array[HBoxContainer] = [board.get_node("Self"), board.get_node("Waiting1"), board.get_node("Waiting2"), board.get_node("Waiting3")]
 	while templates.size() < players.size():
-		var copy: HBoxContainer = templates[1].duplicate() as HBoxContainer
+		var copy: HBoxContainer = preload("ui/player_row.tscn").instantiate()
 		board.add_child(copy)
 		templates.append(copy)
 	for i: int in range(templates.size()):
@@ -218,10 +198,11 @@ func _render_board() -> void:
 	for i: int in range(ids.size()):
 		var id: String = ids[i]
 		var row: HBoxContainer = rows[id]
-		board.move_child(row, 2 + i)
+		if row.get_index() != 2 + i:
+			board.move_child(row, 2 + i)
 		var rank_value: int = _rank(id)
 		row.get_node("Rank").text = str(rank_value) if rank_value > 0 else "—"
-		row.get_node("Accuracy").text = "%.2f%%" % (float(reports[id].accuracy) / 100.0) if rank_value > 0 else "已退出"
+		row.get_node("Accuracy").text = api.i18n.text(&"hud.accuracy", {"accuracy": "%.2f" % (float(reports[id].accuracy) / 100.0)}) if rank_value > 0 else "已退出"
 
 func _publish() -> void:
 	_render_board()

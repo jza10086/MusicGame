@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://drp1q2jgpsqko"]
 
+[ext_resource type="PackedScene" path="ui/player_row.tscn" id="player_row"]
 [ext_resource type="Script" path="music_game.gd" id="1"]
 [ext_resource type="Theme" path="ui/rhythm_theme.tres" id="2_theme"]
 [ext_resource type="PackedScene" path="skins/neon.tscn" id="3_stage"]
@@ -346,100 +347,42 @@ text = "占位"
 layout_mode = 2
 mouse_filter = 2
 
-[node name="Self" type="HBoxContainer" parent="HUD/Leaderboard/Panel/Rows"]
-layout_mode = 2
-custom_minimum_size = Vector2(0, 34)
-mouse_filter = 2
-modulate = Color(0.45098, 0.960784, 0.921569, 1)
-theme_override_constants/separation = 12
+[node name="Self" parent="HUD/Leaderboard/Panel/Rows" instance=ExtResource("player_row")]
 
-[node name="Rank" type="Label" parent="HUD/Leaderboard/Panel/Rows/Self"]
-layout_mode = 2
-custom_minimum_size = Vector2(24, 0)
-theme_override_font_sizes/font_size = 24
+[node name="Waiting1" parent="HUD/Leaderboard/Panel/Rows" instance=ExtResource("player_row")]
+modulate = Color(0.55,0.64,0.76,0.7)
+
+[node name="Rank" parent="HUD/Leaderboard/Panel/Rows/Waiting1" index="0"]
 text = "—"
 
-[node name="Player" type="Label" parent="HUD/Leaderboard/Panel/Rows/Self"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 21
-text = "你"
-
-[node name="Accuracy" type="Label" parent="HUD/Leaderboard/Panel/Rows/Self"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 21
-text = "100.00%"
-
-[node name="Waiting1" type="HBoxContainer" parent="HUD/Leaderboard/Panel/Rows"]
-layout_mode = 2
-custom_minimum_size = Vector2(0, 34)
-mouse_filter = 2
-modulate = Color(0.55, 0.64, 0.76, 0.7)
-theme_override_constants/separation = 12
-
-[node name="Rank" type="Label" parent="HUD/Leaderboard/Panel/Rows/Waiting1"]
-layout_mode = 2
-custom_minimum_size = Vector2(24, 0)
-theme_override_font_sizes/font_size = 24
-text = "—"
-
-[node name="Player" type="Label" parent="HUD/Leaderboard/Panel/Rows/Waiting1"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 21
+[node name="Player" parent="HUD/Leaderboard/Panel/Rows/Waiting1" index="1"]
 text = "等待玩家"
 
-[node name="Accuracy" type="Label" parent="HUD/Leaderboard/Panel/Rows/Waiting1"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 21
+[node name="Accuracy" parent="HUD/Leaderboard/Panel/Rows/Waiting1" index="2"]
 text = "—"
 
-[node name="Waiting2" type="HBoxContainer" parent="HUD/Leaderboard/Panel/Rows"]
-layout_mode = 2
-custom_minimum_size = Vector2(0, 34)
-mouse_filter = 2
-modulate = Color(0.55, 0.64, 0.76, 0.7)
-theme_override_constants/separation = 12
+[node name="Waiting2" parent="HUD/Leaderboard/Panel/Rows" instance=ExtResource("player_row")]
+modulate = Color(0.55,0.64,0.76,0.7)
 
-[node name="Rank" type="Label" parent="HUD/Leaderboard/Panel/Rows/Waiting2"]
-layout_mode = 2
-custom_minimum_size = Vector2(24, 0)
-theme_override_font_sizes/font_size = 24
+[node name="Rank" parent="HUD/Leaderboard/Panel/Rows/Waiting2" index="0"]
 text = "—"
 
-[node name="Player" type="Label" parent="HUD/Leaderboard/Panel/Rows/Waiting2"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 21
+[node name="Player" parent="HUD/Leaderboard/Panel/Rows/Waiting2" index="1"]
 text = "等待玩家"
 
-[node name="Accuracy" type="Label" parent="HUD/Leaderboard/Panel/Rows/Waiting2"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 21
+[node name="Accuracy" parent="HUD/Leaderboard/Panel/Rows/Waiting2" index="2"]
 text = "—"
 
-[node name="Waiting3" type="HBoxContainer" parent="HUD/Leaderboard/Panel/Rows"]
-layout_mode = 2
-custom_minimum_size = Vector2(0, 34)
-mouse_filter = 2
-modulate = Color(0.55, 0.64, 0.76, 0.7)
-theme_override_constants/separation = 12
+[node name="Waiting3" parent="HUD/Leaderboard/Panel/Rows" instance=ExtResource("player_row")]
+modulate = Color(0.55,0.64,0.76,0.7)
 
-[node name="Rank" type="Label" parent="HUD/Leaderboard/Panel/Rows/Waiting3"]
-layout_mode = 2
-custom_minimum_size = Vector2(24, 0)
-theme_override_font_sizes/font_size = 24
+[node name="Rank" parent="HUD/Leaderboard/Panel/Rows/Waiting3" index="0"]
 text = "—"
 
-[node name="Player" type="Label" parent="HUD/Leaderboard/Panel/Rows/Waiting3"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 21
+[node name="Player" parent="HUD/Leaderboard/Panel/Rows/Waiting3" index="1"]
 text = "等待玩家"
 
-[node name="Accuracy" type="Label" parent="HUD/Leaderboard/Panel/Rows/Waiting3"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 21
+[node name="Accuracy" parent="HUD/Leaderboard/Panel/Rows/Waiting3" index="2"]
 text = "—"
 
 [node name="Modal" type="Control" parent="."]

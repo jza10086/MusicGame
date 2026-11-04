@@ -6,3 +6,26 @@
 [node name="RhythmRound" instance=ExtResource("game")]
 script = ExtResource("round")
 auto_start = false
+
+[node name="StandingsToggle" type="Button" parent="HUD"]
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -220.0
+offset_right = -28.0
+offset_top = 145.0
+offset_bottom = 195.0
+text = "本轮排名"
+
+[node name="MenuHint" type="Label" parent="HUD"]
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -220.0
+offset_right = -28.0
+offset_top = -60.0
+offset_bottom = -28.0
+text = "Esc：菜单"
+horizontal_alignment = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 22

@@ -3,6 +3,11 @@
 [ext_resource type="Script" uid="uid://cjjj80mu5g38k" path="neon.gd" id="1_neon"]
 
 
+[ext_resource type="PackedScene" path="receptor.tscn" id="receptor"]
+
+[sub_resource type="CanvasItemMaterial" id="LightMaterial"]
+blend_mode = 1
+
 [node name="PrismStage" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -12,3 +17,32 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_neon")
+
+[node name="TargetLayout" type="Node2D" parent="."]
+
+[node name="TwoKeys" type="Node2D" parent="TargetLayout"]
+
+[node name="Lane1" parent="TargetLayout/TwoKeys" instance=ExtResource("receptor")]
+position = Vector2(790.0,880)
+
+[node name="Lane2" parent="TargetLayout/TwoKeys" instance=ExtResource("receptor")]
+position = Vector2(1130.0,880)
+
+[node name="FourKeys" type="Node2D" parent="TargetLayout"]
+visible = false
+
+[node name="Lane1" parent="TargetLayout/FourKeys" instance=ExtResource("receptor")]
+position = Vector2(450.0,880)
+
+[node name="Lane2" parent="TargetLayout/FourKeys" instance=ExtResource("receptor")]
+position = Vector2(790.0,880)
+
+[node name="Lane3" parent="TargetLayout/FourKeys" instance=ExtResource("receptor")]
+position = Vector2(1130.0,880)
+
+[node name="Lane4" parent="TargetLayout/FourKeys" instance=ExtResource("receptor")]
+position = Vector2(1470.0,880)
+
+[node name="HitLight" type="Node2D" parent="."]
+texture_filter = 2
+material = SubResource("LightMaterial")
