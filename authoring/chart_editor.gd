@@ -64,7 +64,6 @@ var _audition_player: AudioStreamPlayer
 var _audition_serial: int = 0
 var _audition_tween: Tween
 var _last_audition: int = 0
-var _paused: bool = false
 var _status_until: int = 0
 var _sync_controls: bool = false
 var _view_interaction_until: int = 0
@@ -181,6 +180,7 @@ func _build_ui() -> void:
 	_button(header,"工程信息",func() -> void: show_metadata("edit"))
 	_button(header,"音效与同步",show_settings)
 	_button(header,"快捷键 F1",show_help)
+	_button(header,"退出编辑器",request_exit)
 	var files: HBoxContainer = _row(layout)
 	_library_picker = _option(files,[],func(index: int) -> void: _guard(func() -> void: _open(str(_library_picker.get_item_metadata(index)))))
 	_library_picker.custom_minimum_size.x = 320
@@ -236,7 +236,7 @@ func _build_ui() -> void:
 	var preview_box: VBoxContainer = _panel(right)
 	preview_box.get_parent().size_flags_vertical = Control.SIZE_EXPAND_FILL
 	var transport: HBoxContainer = _row(preview_box)
-	_play_picker = _option(transport,["从光标","起止区间","从头（5s）"],func(_index: int) -> void: pause(); _paused=false)
+	_play_picker = _option(transport,["从光标","起止区间","从头（5s）"],func(_index: int) -> void: pause())
 	_loop = _check(transport,"循环",false,func(_value: bool) -> void: _update_range())
 	_label(transport,"起")
 	_range_start = _number(transport,0,100000,0.25,0,func(value: float) -> void: set_marker(false,value))
@@ -356,7 +356,6 @@ func _open(next_path: String) -> void:
 	view_span = minf(16.0,document.maximum()-document.minimum())
 	range_start = 0.0
 	range_end = 0.0
-	_paused = false
 	_sync_document()
 	seek_beat(cursor,false)
 	_refresh_references()
@@ -543,23 +542,21 @@ func play() -> void:
 	if document==null: return
 	if preview.playing:
 		pause()
-		_paused = true
 		return
 	_stop_audition()
 	if not _update_range(): return
 	var start: float = cursor
 	var prepare: bool = false
-	# A range launch always starts at its blue marker, including after a pause.
+	# Explicit start modes always restart from their own origin, including after a pause.
 	if _play_picker.selected==1:
 		start = range_start
-	elif not _paused and _play_picker.selected==2:
+	elif _play_picker.selected==2:
 		start = document.minimum()
 		prepare = true
 	if document.seconds(start)>=preview.range_end:
 		status("播放位置已到终点",true)
 		return
 	preview.seek_to(document.seconds(start),true,prepare)
-	_paused = false
 
 func resume_cursor() -> void:
 	_stop_audition()
@@ -902,7 +899,7 @@ func _input(event: InputEvent) -> void:
 	if document==null: return
 	var mod: bool = key.ctrl_pressed or key.meta_pressed
 	if key.keycode==KEY_ESCAPE:
-		timeline.cancel_gesture(); overview.cancel_gesture(); pause(); document.selected.clear(); _paused=false
+		timeline.cancel_gesture(); overview.cancel_gesture(); pause(); document.selected.clear()
 	elif not timeline.drag.is_empty() or not overview.drag.is_empty():
 		return
 	elif mod:
@@ -956,9 +953,13 @@ func _edit(action: Callable) -> void:
 	action.call()
 	commit(before)
 
+func request_exit() -> void:
+	pause()
+	_guard(func() -> void: get_tree().quit())
+
 func _notification(what: int) -> void:
 	if what==NOTIFICATION_WM_CLOSE_REQUEST:
-		_guard(func() -> void: get_tree().quit())
+		request_exit()
 
 func _exit_tree() -> void:
 	_stop_audition()
