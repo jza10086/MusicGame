@@ -21,6 +21,7 @@ func _ready() -> void:
 	get_tree().process_frame.connect(_before_frame)
 	game = STAGE_SCENE.instantiate() as Stage
 	game.editor_preview = true
+	game.get_node("Audio/AudioBackend").editor_preview = true
 	add_child(game)
 	game.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	game.set_auto_play(true)

@@ -5,7 +5,8 @@ extends Node
 var editor_preview: bool = false
 
 const Paths = preload("rhythm_paths.gd")
-const JsonConfig = preload("res://core/config/party_json_config.gd")
+const Preferences = preload("settings.gd")
+var party_config: PartyConfig
 const Timing = preload("rhythm_timing.gd")
 const Scoring = preload("rhythm_scoring.gd")
 var scoring: Scoring = Scoring.new()
@@ -13,7 +14,6 @@ const Synth = preload("rhythm_audio.gd")
 const Chart = preload("rhythm_chart.gd")
 const DEFAULT_CHART: String = "charts/hold_test/chart.json"
 const BGM_GAIN: float = 0.4
-const SETTINGS_PATH: String = "user://party/prototypes/rhythm_1k.json"
 const DEFAULT_CHART_ORDER: Array[String] = [DEFAULT_CHART,
 	"charts/bad_apple/Bad_Apple_4K_Normal.json",
 	"charts/bad_apple/chart.json",
@@ -23,7 +23,7 @@ const DEFAULT_CHART_ORDER: Array[String] = [DEFAULT_CHART,
 	"charts/bad_apple/authored_easy.json"]
 var chart_paths: Array[String] = []
 var chart_names: Array[String] = []
-const DEFAULTS: Dictionary = {"keys_2k": [KEY_D, KEY_F, KEY_J, KEY_K], "keys_4k": [KEY_D, KEY_F, KEY_J, KEY_K], "use_chart_sounds": true, "visual_ms": 0.0, "input_ms": 0.0, "approach": 1.6, "bpm": 120.0, "volume": 0.65, "success_volume": 0.65, "empty_volume": 0.50, "success_sound": "synth", "empty_sound": "synth", "hold_start_sound": "drum_snare", "hold_sub_sound": "drum_closed_hat", "hold_end_sound": "drum_cross_stick", "hold_start_volume": 0.65, "hold_sub_volume": 0.45, "hold_end_volume": 0.65}
+const DEFAULTS: Dictionary = Preferences.DEFAULTS
 ## seconds_until captures the consumed note against the visual clock at the input edge.
 signal press_feedback(lane: int, hit: bool)
 signal hold_feedback(lane: int, kind: String)
@@ -70,9 +70,7 @@ var last_error: String = ""
 
 func _ready() -> void:
 	refresh_chart_library()
-	_audio = AudioStreamPlayer.new()
-	_audio.name = "Track"
-	add_child(_audio)
+	_audio = $Track
 	_audio.finished.connect(_on_audio_finished)
 	if not editor_preview and _load_settings() != OK:
 		return
@@ -396,60 +394,84 @@ static func validate_play_keys(value: Variant) -> bool:
 func _apply_volume() -> void:
 	_audio.volume_linear = float(settings.volume) * BGM_GAIN
 
-func _load_settings(path: String = SETTINGS_PATH) -> Error:
-	var config: JsonConfig = JsonConfig.new()
-	var error: Error = config.load(path)
-	if error == ERR_FILE_NOT_FOUND:
+## Formal values are supplied by the active scope; authoring persistence is opt-in and separate.
+func _load_settings() -> Error:
+	if party_config != null:
+		return apply_preferences(party_config.snapshot_effective().own)
+	var path: String = preview_settings_path()
+	if not FileAccess.file_exists(path):
 		return OK
-	if error != OK:
-		last_error = "无法读取音游本地设置：%s (%s)" % [config.last_error, error_string(error)]
-		return error
-	return apply_settings_config(config)
+	var file: FileAccess = FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		var open_error: Error = FileAccess.get_open_error()
+		last_error = "无法读取作者工具设置：%s (%s)" % [path, error_string(open_error)]
+		return open_error
+	var parser: JSON = JSON.new()
+	var error: Error = parser.parse(file.get_as_text())
+	if error != OK or not parser.data is Dictionary or not parser.data.get("local") is Dictionary:
+		last_error = "作者工具设置无效：" + path
+		return ERR_INVALID_DATA
+	return apply_preferences(parser.data.local)
 
-## Shared parsing for game and native editor local settings.
-## Missing/invalid numeric fields use game defaults; callers refresh live controls/audio.
+static func preview_settings_path() -> String:
+	return PartyInput.installation_directory().path_join("minigame/gp_rhythm_game/config/authoring.json")
 
-func apply_settings_config(config: JsonConfig) -> Error:
-	var bindings: Dictionary = {}
-	for mode: String in ["keys_2k", "keys_4k"]:
-		var value: Variant = config.get_value("local", mode, DEFAULTS[mode])
-		if not validate_play_keys(value):
-			last_error = "演奏按键设置无效：" + mode
+func apply_preferences(values: Dictionary) -> Error:
+	var next: Dictionary = DEFAULTS.duplicate(true)
+	var fields: Dictionary = Preferences.schema().fields
+	for key: String in values:
+		if not fields.has(key):
+			last_error = "未知音游设置：" + key
 			return ERR_INVALID_DATA
-		bindings[mode] = value.duplicate()
-	settings = DEFAULTS.duplicate(true)
-	settings.merge(bindings, true)
+		var value: Variant = values[key]
+		var field: Dictionary = fields[key]
+		var valid: bool
+		if field.type == "array":
+			# JSON numbers are floats; convert only exact integer key codes at this boundary.
+			if value is Array:
+				value = value.duplicate()
+				for index: int in range(value.size()):
+					if value[index] is float and is_finite(value[index]) and value[index] == floor(value[index]):
+						value[index] = int(value[index])
+			valid = validate_play_keys(value)
+		elif field.type == "bool":
+			valid = value is bool
+		elif field.type == "string":
+			valid = value is String and Synth.TAP_FILES.has(value)
+		else:
+			valid = (value is float or value is int) and is_finite(float(value)) and value >= field.min and value <= field.max
+		if not valid:
+			last_error = "音游设置值无效：" + key
+			return ERR_INVALID_DATA
+		next[key] = value
+	settings = next
 	last_error = ""
-	var chart_sound_setting: Variant = config.get_value("local", "use_chart_sounds", true)
-	settings.use_chart_sounds = chart_sound_setting if chart_sound_setting is bool else true
-	for key: String in ["visual_ms", "input_ms", "approach", "bpm", "volume", "success_volume", "empty_volume", "hold_start_volume", "hold_sub_volume", "hold_end_volume"]:
-		var value: Variant = config.get_value("local", key, DEFAULTS[key])
-		if (value is float or value is int) and is_finite(float(value)):
-			settings[key] = float(value)
-	for key: String in ["success_sound", "empty_sound", "hold_start_sound", "hold_sub_sound", "hold_end_sound"]:
-		var value: Variant = config.get_value("local", key, DEFAULTS[key])
-		settings[key] = value if value is String and Synth.TAP_FILES.has(value) else "synth"
-	settings.visual_ms = clampf(settings.visual_ms, -250.0, 250.0)
-	settings.input_ms = clampf(settings.input_ms, -250.0, 250.0)
-	settings.approach = clampf(settings.approach, 0.5, 3.0)
-	settings.bpm = clampf(settings.bpm, 60.0, 180.0)
-	settings.volume = clampf(settings.volume, 0.0, 2.0)
-	settings.success_volume = clampf(settings.success_volume, 0.0, 2.0)
-	settings.empty_volume = clampf(settings.empty_volume, 0.0, 2.0)
-	for key: String in ["hold_start_volume", "hold_sub_volume", "hold_end_volume"]:
-		settings[key] = clampf(settings[key], 0.0, 2.0)
 	return OK
 
-func _save_settings(path: String = SETTINGS_PATH) -> Error:
-	var config: JsonConfig = JsonConfig.new()
-	for key: String in settings:
-		config.set_value("local", key, settings[key])
-	var result: Error = DirAccess.make_dir_recursive_absolute(path.get_base_dir())
-	if result == OK:
-		result = config.save(path)
-	return result
+func _save_settings() -> Error:
+	if party_config != null:
+		return ERR_UNAVAILABLE
+	var validation: Error = apply_preferences(settings)
+	if validation != OK:
+		return validation
+	var path: String = preview_settings_path()
+	var error: Error = DirAccess.make_dir_recursive_absolute(path.get_base_dir())
+	if error != OK:
+		return error
+	var file: FileAccess = FileAccess.open(path, FileAccess.WRITE)
+	if file == null:
+		return FileAccess.get_open_error()
+	file.store_string(JSON.stringify({"local": settings}, "\t") + "\n")
+	return file.get_error()
 
+## Release physical sources and score an interrupted hold using the current audio time.
+func release_inputs() -> void:
+	for lane: int in range(key_count):
+		_key_sources[lane].clear()
+		press_lane(lane, false, false)
 
+func performance() -> Dictionary:
+	return {"accuracy": roundi(scoring.accuracy() * 10000.0), "combo": _best_combo}
 
 ## Audio-clock milestones catch up after frame stalls; no timers or release are required.
 

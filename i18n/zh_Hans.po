@@ -7,8 +7,92 @@ msgstr ""
 msgid "1–8 人同场演奏 原创双轨长按练习曲，以最终准确率排名。"
 msgstr "1–8 人同场演奏 原创双轨长按练习曲，以最终准确率排名。"
 
-msgid "霓虹回响"
-msgstr "霓虹回响"
+msgid "霓虹节拍"
+msgstr "霓虹节拍"
 
 msgid "hud.accuracy"
 msgstr "{accuracy}%"
+
+msgid "round.spectating"
+msgstr "观战"
+
+msgid "round.live"
+msgstr "实时"
+
+msgid "round.complete"
+msgstr "演奏完成"
+
+msgid "round.waiting"
+msgstr "等待本轮结算"
+
+msgid "round.withdrawn"
+msgstr "已退出"
+
+msgid "round.accuracy"
+msgstr "准确率 (%)"
+
+msgid "round.combo"
+msgstr "最长连击"
+
+msgid "settings.keys_2k"
+msgstr "2K 按键码"
+
+msgid "settings.keys_4k"
+msgstr "4K 按键码"
+
+msgid "settings.use_chart_sounds"
+msgstr "使用谱面音效"
+
+msgid "settings.visual_ms"
+msgstr "画面提前量 (ms)"
+
+msgid "settings.input_ms"
+msgstr "按压补偿 (ms)"
+
+msgid "settings.approach"
+msgstr "下落时间 (s)"
+
+msgid "settings.bpm"
+msgstr "校准 BPM"
+
+msgid "settings.volume"
+msgstr "音乐音量"
+
+msgid "settings.success_volume"
+msgstr "成功敲击音量"
+
+msgid "settings.empty_volume"
+msgstr "空敲音量"
+
+msgid "settings.hold_start_volume"
+msgstr "长按起点音量"
+
+msgid "settings.hold_sub_volume"
+msgstr "长按子音符音量"
+
+msgid "settings.hold_end_volume"
+msgstr "长按终点音量"
+
+msgid "settings.success_sound"
+msgstr "成功敲击音效"
+
+msgid "settings.empty_sound"
+msgstr "空敲音效"
+
+msgid "settings.hold_start_sound"
+msgstr "长按起点音效"
+
+msgid "settings.hold_sub_sound"
+msgstr "长按子音符音效"
+
+msgid "settings.hold_end_sound"
+msgstr "长按终点音效"
+
+msgid "%"
+msgstr "%"
+
+msgid "round.rankings"
+msgstr "本轮排名"
+
+msgid "round.menu_hint"
+msgstr "Esc：菜单"

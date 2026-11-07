@@ -32,7 +32,7 @@ var view_notes: Array[Dictionary] = []
 var mouse_lane: int = -1
 var _tap_streams: Dictionary[String, AudioStream] = {}
 var _hold_players: Array[Dictionary] = [{}, {}, {}, {}]
-var _tap_preview: AudioStreamPlayer
+@onready var _tap_preview: AudioStreamPlayer = $Audio/TapPreview
 var leaderboard_expanded: bool = true
 @onready var _leaderboard: CenterContainer = $HUD/Leaderboard
 @onready var _leaderboard_accuracy: Label = $HUD/Leaderboard/Panel/Rows/Self/Accuracy
@@ -50,10 +50,8 @@ signal playback_failed(message: String)
 func _ready() -> void:
 	# SceneTree emits this before node processing, so due inputs precede miss checks.
 	get_tree().process_frame.connect(_auto_frame)
-	backend = Backend.new()
+	backend = $Audio/AudioBackend
 	backend.editor_preview = editor_preview
-	backend.name = "AudioBackend"
-	add_child(backend)
 	if not backend.last_error.is_empty():
 		push_error(backend.last_error)
 		set_process(false)
@@ -68,29 +66,19 @@ func _ready() -> void:
 	for id: String in Backend.Synth.TAP_FILES:
 		if id != "synth":
 			_tap_streams[id] = load(Backend.Paths.resolve(Backend.Synth.TAP_ROOT + Backend.Synth.TAP_FILES[id])) as AudioStream
-	_tap_preview = AudioStreamPlayer.new()
-	_tap_preview.name = "TapPreview"
-	add_child(_tap_preview)
 	for lane: int in range(4):
-		var player: AudioStreamPlayer = AudioStreamPlayer.new()
-		player.name = "TapLane%d" % lane
+		var group: Node = $Audio.get_node("Lane%d" % lane)
+		var player: AudioStreamPlayer = group.get_node("Tap")
 		player.bus = _create_tap_bus(lane)
 		player.stream = tap
-		player.max_polyphony = 4
-		add_child(player)
 		_tap_players.append(player)
 		for voice_index: int in range(8):
-			var voice: AudioStreamPlayer = AudioStreamPlayer.new()
-			voice.name = "ChartSound%d_%d" % [lane, voice_index]
+			var voice: AudioStreamPlayer = group.get_node("Voice%d" % voice_index)
 			voice.bus = player.bus
-			add_child(voice)
 			_chart_players[lane].append(voice)
 		for kind: String in ["hold_start", "hold_sub", "hold_end"]:
-			var hold_player: AudioStreamPlayer = AudioStreamPlayer.new()
-			hold_player.name = kind + str(lane)
+			var hold_player: AudioStreamPlayer = group.get_node(kind.to_pascal_case())
 			hold_player.bus = player.bus
-			hold_player.max_polyphony = 8
-			add_child(hold_player)
 			_hold_players[lane][kind] = hold_player
 	$HUD/PauseButton.pressed.connect(pause_game)
 	$Modal/Pause/Resume.pressed.connect(start_game)
@@ -378,13 +366,20 @@ func stop_hit_sounds() -> void:
 		for player: AudioStreamPlayer in lane:
 			player.stop()
 
+func shutdown_playback() -> void:
+	stop_playback()
+	_tap_preview.stop()
+	set_process(false)
+	set_process_input(false)
+	backend.set_process(false)
+	if get_tree().process_frame.is_connected(_auto_frame):
+		get_tree().process_frame.disconnect(_auto_frame)
+
 func _exit_tree() -> void:
+	if get_tree().process_frame.is_connected(_auto_frame):
+		get_tree().process_frame.disconnect(_auto_frame)
 	stop_hit_sounds()
-	for lane_players: Dictionary in _hold_players:
-		for player: AudioStreamPlayer in lane_players.values():
-			player.stop()
-	for player: AudioStreamPlayer in _tap_players:
-		player.stop()
+	_tap_preview.stop()
 	for bus_name: StringName in _tap_buses:
 		var index: int = AudioServer.get_bus_index(bus_name)
 		if index >= 0:

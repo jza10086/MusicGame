@@ -1,0 +1,107 @@
+[gd_scene format=3]
+[ext_resource type="Script" path="../rhythm_backend.gd" id="backend"]
+[node name="Audio" type="Node"]
+[node name="AudioBackend" type="Node" parent="."]
+script = ExtResource("backend")
+[node name="Track" type="AudioStreamPlayer" parent="AudioBackend"]
+[node name="TapPreview" type="AudioStreamPlayer" parent="."]
+[node name="Lane0" type="Node" parent="."]
+[node name="Tap" type="AudioStreamPlayer" parent="Lane0"]
+max_polyphony = 4
+[node name="HoldStart" type="AudioStreamPlayer" parent="Lane0"]
+max_polyphony = 8
+[node name="HoldSub" type="AudioStreamPlayer" parent="Lane0"]
+max_polyphony = 8
+[node name="HoldEnd" type="AudioStreamPlayer" parent="Lane0"]
+max_polyphony = 8
+[node name="Voice0" type="AudioStreamPlayer" parent="Lane0"]
+max_polyphony = 1
+[node name="Voice1" type="AudioStreamPlayer" parent="Lane0"]
+max_polyphony = 1
+[node name="Voice2" type="AudioStreamPlayer" parent="Lane0"]
+max_polyphony = 1
+[node name="Voice3" type="AudioStreamPlayer" parent="Lane0"]
+max_polyphony = 1
+[node name="Voice4" type="AudioStreamPlayer" parent="Lane0"]
+max_polyphony = 1
+[node name="Voice5" type="AudioStreamPlayer" parent="Lane0"]
+max_polyphony = 1
+[node name="Voice6" type="AudioStreamPlayer" parent="Lane0"]
+max_polyphony = 1
+[node name="Voice7" type="AudioStreamPlayer" parent="Lane0"]
+max_polyphony = 1
+[node name="Lane1" type="Node" parent="."]
+[node name="Tap" type="AudioStreamPlayer" parent="Lane1"]
+max_polyphony = 4
+[node name="HoldStart" type="AudioStreamPlayer" parent="Lane1"]
+max_polyphony = 8
+[node name="HoldSub" type="AudioStreamPlayer" parent="Lane1"]
+max_polyphony = 8
+[node name="HoldEnd" type="AudioStreamPlayer" parent="Lane1"]
+max_polyphony = 8
+[node name="Voice0" type="AudioStreamPlayer" parent="Lane1"]
+max_polyphony = 1
+[node name="Voice1" type="AudioStreamPlayer" parent="Lane1"]
+max_polyphony = 1
+[node name="Voice2" type="AudioStreamPlayer" parent="Lane1"]
+max_polyphony = 1
+[node name="Voice3" type="AudioStreamPlayer" parent="Lane1"]
+max_polyphony = 1
+[node name="Voice4" type="AudioStreamPlayer" parent="Lane1"]
+max_polyphony = 1
+[node name="Voice5" type="AudioStreamPlayer" parent="Lane1"]
+max_polyphony = 1
+[node name="Voice6" type="AudioStreamPlayer" parent="Lane1"]
+max_polyphony = 1
+[node name="Voice7" type="AudioStreamPlayer" parent="Lane1"]
+max_polyphony = 1
+[node name="Lane2" type="Node" parent="."]
+[node name="Tap" type="AudioStreamPlayer" parent="Lane2"]
+max_polyphony = 4
+[node name="HoldStart" type="AudioStreamPlayer" parent="Lane2"]
+max_polyphony = 8
+[node name="HoldSub" type="AudioStreamPlayer" parent="Lane2"]
+max_polyphony = 8
+[node name="HoldEnd" type="AudioStreamPlayer" parent="Lane2"]
+max_polyphony = 8
+[node name="Voice0" type="AudioStreamPlayer" parent="Lane2"]
+max_polyphony = 1
+[node name="Voice1" type="AudioStreamPlayer" parent="Lane2"]
+max_polyphony = 1
+[node name="Voice2" type="AudioStreamPlayer" parent="Lane2"]
+max_polyphony = 1
+[node name="Voice3" type="AudioStreamPlayer" parent="Lane2"]
+max_polyphony = 1
+[node name="Voice4" type="AudioStreamPlayer" parent="Lane2"]
+max_polyphony = 1
+[node name="Voice5" type="AudioStreamPlayer" parent="Lane2"]
+max_polyphony = 1
+[node name="Voice6" type="AudioStreamPlayer" parent="Lane2"]
+max_polyphony = 1
+[node name="Voice7" type="AudioStreamPlayer" parent="Lane2"]
+max_polyphony = 1
+[node name="Lane3" type="Node" parent="."]
+[node name="Tap" type="AudioStreamPlayer" parent="Lane3"]
+max_polyphony = 4
+[node name="HoldStart" type="AudioStreamPlayer" parent="Lane3"]
+max_polyphony = 8
+[node name="HoldSub" type="AudioStreamPlayer" parent="Lane3"]
+max_polyphony = 8
+[node name="HoldEnd" type="AudioStreamPlayer" parent="Lane3"]
+max_polyphony = 8
+[node name="Voice0" type="AudioStreamPlayer" parent="Lane3"]
+max_polyphony = 1
+[node name="Voice1" type="AudioStreamPlayer" parent="Lane3"]
+max_polyphony = 1
+[node name="Voice2" type="AudioStreamPlayer" parent="Lane3"]
+max_polyphony = 1
+[node name="Voice3" type="AudioStreamPlayer" parent="Lane3"]
+max_polyphony = 1
+[node name="Voice4" type="AudioStreamPlayer" parent="Lane3"]
+max_polyphony = 1
+[node name="Voice5" type="AudioStreamPlayer" parent="Lane3"]
+max_polyphony = 1
+[node name="Voice6" type="AudioStreamPlayer" parent="Lane3"]
+max_polyphony = 1
+[node name="Voice7" type="AudioStreamPlayer" parent="Lane3"]
+max_polyphony = 1

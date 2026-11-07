@@ -111,7 +111,7 @@ offset_top = 194.0
 offset_right = 1360.0
 offset_bottom = 258.0
 theme_override_font_sizes/font_size = 35
-text = "霓虹回响"
+text = "霓虹节拍"
 
 [node name="SelectHint" type="Label" parent="Menu" unique_id=2014740152]
 layout_mode = 0
@@ -157,7 +157,7 @@ offset_top = 340.0
 offset_right = 1370.0
 offset_bottom = 690.0
 theme_override_font_sizes/font_size = 26
-text = "霓虹回响
+text = "霓虹节拍
 
 选择曲目和难度
 随包双轨练习 · 支持同时按键

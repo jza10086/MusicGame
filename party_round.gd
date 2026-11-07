@@ -21,6 +21,7 @@ var deadline_ms: int
 
 func party_setup(value: PartyAPI, config: Dictionary) -> void:
 	api = value
+	$Audio/AudioBackend.party_config = api.config
 	request = config.duplicate(true)
 	request_id = config.request_id
 	players = api.get_players()
@@ -35,7 +36,7 @@ func party_setup(value: PartyAPI, config: Dictionary) -> void:
 func _ready() -> void:
 	super()
 	if api == null:
-		push_error("请从小游戏轮换启动霓虹回响")
+		push_error("请从小游戏轮换启动霓虹节拍")
 		return
 	if not backend.last_error.is_empty():
 		_fail(backend.last_error)
@@ -50,6 +51,8 @@ func _ready() -> void:
 		if chart.ends[i] > chart.notes[i]:
 			combo_limit += 1 + chart.subs[i].size()
 	$HUD/PauseButton.hide()
+	$HUD/StandingsToggle.text = api.i18n.text(&"round.rankings")
+	$HUD/MenuHint.text = api.i18n.text(&"round.menu_hint")
 	playback_failed.connect(_fail)
 	add_to_group(&"party_minimal_hud")
 	leaderboard_expanded = local_player.is_empty()
@@ -77,7 +80,7 @@ func _build_round_board() -> void:
 		row.modulate = ACCENT if player.is_local else Color.WHITE
 		if player.is_local:
 			_leaderboard_accuracy = row.get_node("Accuracy")
-	board.get_node("Heading/Placeholder").text = "观战" if local_player.is_empty() else "实时"
+	board.get_node("Heading/Placeholder").text = api.i18n.text(&"round.spectating") if local_player.is_empty() else api.i18n.text(&"round.live")
 	_render_board()
 
 func party_start() -> void:
@@ -97,9 +100,13 @@ func _start_gameplay() -> void:
 func party_stop(_reason: StringName) -> void:
 	running = false
 	if is_node_ready() and backend != null:
-		stop_playback()
-	set_process(false)
-	set_process_input(false)
+		shutdown_playback()
+	if pages != null:
+		pages.stop()
+	if api.net.message_received.is_connected(_receive):
+		api.net.message_received.disconnect(_receive)
+	if api.players_changed.is_connected(_players_changed):
+		api.players_changed.disconnect(_players_changed)
 
 func _input(event: InputEvent) -> void:
 	if not running or api.input.input_blocked or local_player.is_empty() or (event is InputEventKey and event.physical_keycode == KEY_ESCAPE):
@@ -109,14 +116,12 @@ func _input(event: InputEvent) -> void:
 ## Losing focus releases held lanes while the shared round continues.
 func pause_game() -> void:
 	if mode == "playing":
-		for lane: int in range(backend.key_count):
-			backend._key_sources[lane].clear()
-			backend.press_lane(lane, false, false)
+		backend.release_inputs()
 
 func finish_game() -> void:
 	mode = "stopped"
-	$HUD/Judgment.text = "演奏完成"
-	timing_error.text = "等待本轮结算"
+	$HUD/Judgment.text = api.i18n.text(&"round.complete")
+	timing_error.text = api.i18n.text(&"round.waiting")
 	_report(true)
 
 func _process(delta: float) -> void:
@@ -141,7 +146,8 @@ func _process(delta: float) -> void:
 		_publish()
 
 func _report(done: bool) -> void:
-	var data: Dictionary = {"accuracy": roundi(backend.scoring.accuracy() * 10000.0), "combo": backend._best_combo, "status": "completed" if done else "playing"}
+	var data: Dictionary = backend.performance()
+	data.status = "completed" if done else "playing"
 	if api.is_host():
 		reports[local_player] = data
 	else:
@@ -202,7 +208,7 @@ func _render_board() -> void:
 			board.move_child(row, 2 + i)
 		var rank_value: int = _rank(id)
 		row.get_node("Rank").text = str(rank_value) if rank_value > 0 else "—"
-		row.get_node("Accuracy").text = api.i18n.text(&"hud.accuracy", {"accuracy": "%.2f" % (float(reports[id].accuracy) / 100.0)}) if rank_value > 0 else "已退出"
+		row.get_node("Accuracy").text = api.i18n.text(&"hud.accuracy", {"accuracy": "%.2f" % (float(reports[id].accuracy) / 100.0)}) if rank_value > 0 else api.i18n.text(&"round.withdrawn")
 
 func _publish() -> void:
 	_render_board()
@@ -217,10 +223,10 @@ func _publish() -> void:
 			return
 		rankings.append({"player_id": id, "rank": _rank(id), "status": data.status, "metrics": {"accuracy": float(data.accuracy) / 100.0, "combo": data.combo}})
 	running = false
-	error = pages.present({"request_id": request_id, "reason": "completed", "rankings": rankings, "columns": [{"key": "accuracy", "title": "准确率 (%)", "format": "decimal"}, {"key": "combo", "title": "最长连击", "format": "integer"}]})
+	error = pages.present({"request_id": request_id, "reason": "completed", "rankings": rankings, "columns": [{"key": "accuracy", "title": api.i18n.text(&"round.accuracy"), "format": "decimal"}, {"key": "combo", "title": api.i18n.text(&"round.combo"), "format": "integer"}]})
 	if error != OK:
 		_fail(error_string(error))
 
 func _fail(message: String) -> void:
-	running = false
+	party_stop(&"failed")
 	api.fail("rhythm_round_failed", message)

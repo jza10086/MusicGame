@@ -3,7 +3,7 @@
   "core_api_major": 4,
   "package_version": "1.0.0",
   "id": "gp_rhythm_game",
-  "name": "霓虹回响",
+  "name": "霓虹节拍",
   "kind": "minigame",
   "entry": "party_round.tscn",
   "introduction": "1–8 人同场演奏 原创双轨长按练习曲，以最终准确率排名。",
@@ -43,5 +43,6 @@
     "translations": {
       "zh_Hans": "i18n/zh_Hans.po"
     }
-  }
+  },
+  "config_schema": "settings.gd"
 }

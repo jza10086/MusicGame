@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="skins/neon.tscn" id="3_stage"]
 [ext_resource type="PackedScene" path="ui/pause.tscn" id="4_pause"]
 [ext_resource type="PackedScene" path="ui/results.tscn" id="5_results"]
+[ext_resource type="PackedScene" path="ui/playback_audio.tscn" id="audio"]
 
 [sub_resource type="StyleBoxFlat" id="ProgressTrack"]
 bg_color = Color(1, 1, 1, 0.08)
@@ -94,6 +95,7 @@ corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
+
 [node name="MusicGame" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -137,7 +139,7 @@ offset_right = 428.0
 offset_bottom = 88.0
 mouse_filter = 2
 theme_override_font_sizes/font_size = 32
-text = "霓虹回响"
+text = "霓虹节拍"
 horizontal_alignment = 0
 
 [node name="AutoStatus" type="Label" parent="HUD"]
@@ -414,3 +416,5 @@ visible = false
 [node name="Results" parent="Modal" instance=ExtResource("5_results")]
 layout_mode = 1
 visible = false
+
+[node name="Audio" parent="." instance=ExtResource("audio")]
