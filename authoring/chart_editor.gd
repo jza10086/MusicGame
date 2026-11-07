@@ -48,6 +48,8 @@ var _loop: CheckBox
 var _audition: CheckBox
 var _stage_visible: CheckBox
 var _title: Label
+var _save_status: Label
+var _save_button: Button
 var _status: Label
 var _clock: Label
 var _bpm: SpinBox
@@ -175,6 +177,7 @@ func _build_ui() -> void:
 	brand.add_theme_font_size_override("font_size",28)
 	_title = _label(header,"原生制谱工作台")
 	_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_save_status = _label(header,"未打开工程")
 	_button(header,"工程信息",func() -> void: show_metadata("edit"))
 	_button(header,"音效与同步",show_settings)
 	_button(header,"快捷键 F1",show_help)
@@ -188,6 +191,9 @@ func _build_ui() -> void:
 	_button(files,"更换音乐",func() -> void: show_metadata("audio"))
 	_button(files,"导入音乐",func() -> void: _file_dialog.popup_centered_ratio(0.75))
 	_button(files,"删除工程",delete_chart)
+	_save_button = _button(files,"保存",save)
+	_save_button.tooltip_text = "保存当前工程（Ctrl+S）"
+	_save_button.disabled = true
 	_button(files,"导出",export_chart)
 	_split = HSplitContainer.new()
 	_split.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -543,9 +549,12 @@ func play() -> void:
 	if not _update_range(): return
 	var start: float = cursor
 	var prepare: bool = false
-	if not _paused:
-		if _play_picker.selected==1: start=range_start
-		elif _play_picker.selected==2: start=document.minimum(); prepare=true
+	# A range launch always starts at its blue marker, including after a pause.
+	if _play_picker.selected==1:
+		start = range_start
+	elif not _paused and _play_picker.selected==2:
+		start = document.minimum()
+		prepare = true
 	if document.seconds(start)>=preview.range_end:
 		status("播放位置已到终点",true)
 		return
@@ -613,8 +622,14 @@ func _audition_cursor() -> void:
 	_audition_tween.tween_callback(func() -> void: _audition_player.stop())
 
 func update_status() -> void:
-	if document==null: return
-	_title.text = "%s · %dK%s" % [document.data.get("project_name",document.data.get("title","")),document.key_count()," ●" if document.dirty else ""]
+	_save_button.disabled = document==null
+	if document==null:
+		_save_status.text = "未打开工程"
+		_save_status.modulate = Color.WHITE
+		return
+	_save_status.text = "未保存修改" if document.dirty else "已保存"
+	_save_status.modulate = Color("#ffd18a") if document.dirty else Color("#73f5eb")
+	_title.text = "%s · %dK" % [document.data.get("project_name",document.data.get("title","")),document.key_count()]
 	if Time.get_ticks_msec()<_status_until: return
 	var counts: Array[int] = [0,0,0,0]
 	var subs: int = 0
@@ -711,6 +726,7 @@ func delete_chart() -> void:
 		if not result.ok: status(result.error,true); return
 		document = null
 		path = ""
+		update_status()
 		refresh_library()
 		if not library.charts.is_empty(): _open(library.charts[0].path)
 		else: status("谱面已移入恢复目录："+result.path)
