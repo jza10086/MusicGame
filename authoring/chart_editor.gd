@@ -40,6 +40,7 @@ var _metadata_keys: OptionButton
 var _metadata_mode: String = ""
 var _pending: Callable
 var _confirm: ConfirmationDialog
+var _exit_dialog: ConfirmationDialog
 var _library_picker: OptionButton
 var _reference_picker: OptionButton
 var _play_picker: OptionButton
@@ -281,6 +282,17 @@ func _build_dialogs() -> void:
 	add_child(_confirm)
 	_confirm.confirmed.connect(func() -> void:
 		if _pending.is_valid(): _pending.call())
+	_exit_dialog = ConfirmationDialog.new()
+	_exit_dialog.transparent_bg = true
+	_exit_dialog.title = "退出编辑器"
+	_exit_dialog.ok_button_text = "保存并退出"
+	_exit_dialog.cancel_button_text = "取消"
+	_exit_dialog.dialog_hide_on_ok = false
+	_exit_dialog.add_button("放弃修改退出",false,"discard")
+	_exit_dialog.confirmed.connect(_save_and_exit)
+	_exit_dialog.custom_action.connect(func(action: StringName) -> void:
+		if action==&"discard": get_tree().quit())
+	add_child(_exit_dialog)
 	_metadata_dialog = ConfirmationDialog.new()
 	_metadata_dialog.transparent_bg = true
 	_metadata_dialog.title = "工程信息"
@@ -704,16 +716,19 @@ func _apply_metadata() -> void:
 	_metadata_dialog.hide()
 	_sync_document()
 
-func save() -> void:
-	if document==null: return
+func save() -> bool:
+	if document==null: return false
 	pause()
 	var result: Dictionary = library.save(document,path,audio_path,file_revision,false)
-	if not result.ok: status(result.error,true); return
+	if not result.ok:
+		status(result.error,true)
+		return false
 	path = result.path
 	file_revision = result.revision
 	refresh_library()
 	update_status()
 	status("已保存："+path.get_file())
+	return true
 
 func delete_chart() -> void:
 	if document==null: return
@@ -955,7 +970,17 @@ func _edit(action: Callable) -> void:
 
 func request_exit() -> void:
 	pause()
-	_guard(func() -> void: get_tree().quit())
+	if document!=null and document.dirty:
+		_exit_dialog.dialog_text = "当前工程有未保存修改，请选择保存并退出、放弃修改退出或取消。"
+		_exit_dialog.popup_centered()
+	else:
+		get_tree().quit()
+
+func _save_and_exit() -> void:
+	if save():
+		get_tree().quit()
+	else:
+		_exit_dialog.dialog_text = "保存失败，编辑器未退出。\n%s\n可取消退出后处理问题，再尝试保存。" % _status.text
 
 func _notification(what: int) -> void:
 	if what==NOTIFICATION_WM_CLOSE_REQUEST:
