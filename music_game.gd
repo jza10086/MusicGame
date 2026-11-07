@@ -386,6 +386,11 @@ func _exit_tree() -> void:
 			AudioServer.remove_bus(index)
 	_tap_buses.clear()
 
+## Mute this instance's entire lane bus, including tap, hold and chart voices.
+## The authoring preview uses this without changing the audio clock or judgment.
+func set_lane_audio_muted(lane: int, muted: bool) -> void:
+	AudioServer.set_bus_mute(AudioServer.get_bus_index(_tap_buses[lane]),muted)
+
 ## Reuse four sound players; reset only lane presentation on chart switches.
 
 func configure_lane_feedback() -> void:

@@ -25,6 +25,7 @@ var hidden_divisions: Dictionary = {}
 var range_start: float = 0.0
 var range_end: float = 0.0
 var reference_chart: Variant = null
+var _reference_path: String = ""
 var analysis: Dictionary = {}
 var show_onsets: bool = false
 var visible_points: Array[int] = []
@@ -48,6 +49,7 @@ var _snap_picker: OptionButton
 var _loop: CheckBox
 var _audition: CheckBox
 var _stage_visible: CheckBox
+var _lane_mutes: Array[CheckBox] = []
 var _title: Label
 var _save_status: Label
 var _save_button: Button
@@ -247,6 +249,14 @@ func _build_ui() -> void:
 	_audition = _check(options,"光标试听",true,func(value: bool) -> void:
 		if not value: _stop_audition())
 	_stage_visible = _check(options,"舞台",true,func(value: bool) -> void: _viewport_container.visible=value)
+	_label(options,"屏蔽音效")
+	for lane: int in range(4):
+		var apply_mute: Callable = func(muted: bool, index: int) -> void:
+			preview.game.set_lane_audio_muted(index,muted)
+		var toggle: CheckBox = _check(options,"%d轨" % (lane+1),false,apply_mute.bind(lane))
+		toggle.tooltip_text = "勾选后屏蔽该轨敲击、长按和 Sub 音效；BGM 与判定不受影响"
+		toggle.visible = false
+		_lane_mutes.append(toggle)
 	_viewport_container = SubViewportContainer.new()
 	_viewport_container.name = "StageViewport"
 	_viewport_container.stretch = true
@@ -386,16 +396,26 @@ func _install_audio(audio: AudioStream) -> void:
 func _refresh_references() -> void:
 	if _reference_picker==null:
 		return
+	var selected_path: String = _reference_path
+	var selected_index: int = 0
 	_reference_picker.clear()
 	_reference_picker.add_item("无参考")
-	reference_chart = null
 	for entry: Dictionary in library.charts:
 		if entry.path!=path and str(entry.path).get_base_dir().path_join(str(entry.data.get("audio_file","")))==audio_path:
 			_reference_picker.add_item(str(entry.name))
-			_reference_picker.set_item_metadata(_reference_picker.item_count-1,entry.data)
+			_reference_picker.set_item_metadata(_reference_picker.item_count-1,entry)
+			if str(entry.path)==selected_path:
+				selected_index = _reference_picker.item_count-1
+	_reference_picker.select(selected_index)
+	_select_reference(selected_index)
 
 func _select_reference(index: int) -> void:
-	reference_chart = null if index==0 else _reference_picker.get_item_metadata(index)
+	_reference_path = ""
+	reference_chart = null
+	if index>0:
+		var entry: Dictionary = _reference_picker.get_item_metadata(index)
+		_reference_path = str(entry.path)
+		reference_chart = entry.data
 	timeline.queue_redraw()
 	update_status()
 
@@ -407,6 +427,8 @@ func _sync_document() -> void:
 		_install_audio(Library.load_audio(audio_path))
 		_refresh_references()
 	document.rebuild()
+	for lane: int in range(_lane_mutes.size()):
+		_lane_mutes[lane].visible = lane<document.key_count()
 	_preview_revision += 1
 	var result: Dictionary = preview.update_chart(document.compile(),_preview_revision,audio_path.trim_prefix(library.root+"/"))
 	if not result.ok:
