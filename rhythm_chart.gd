@@ -3,7 +3,8 @@
 extends RefCounted
 const Paths = preload("rhythm_paths.gd")
 
-static func read_chart(path: String) -> Dictionary:
+## A song resource supplies its shared music; authoring JSON loads its own audio when omitted.
+static func read_chart(path: String, music: AudioStream = null) -> Dictionary:
 	if not path.is_absolute_path():
 		path = Paths.resolve(path)
 	if not FileAccess.file_exists(path):
@@ -14,7 +15,7 @@ static func read_chart(path: String) -> Dictionary:
 		return report
 	var data: Dictionary = parsed
 	var audio_path: String = path.get_base_dir().path_join(data.audio_file)
-	var audio: AudioStream = load_audio(audio_path)
+	var audio: AudioStream = music if music != null else load_audio(audio_path)
 	if audio == null:
 		return {"ok": false, "error": "无法加载谱面音源：" + audio_path}
 	var notes: Array[float] = report.notes

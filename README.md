@@ -1,10 +1,20 @@
 # 霓虹节拍 · 2K / 4K 音游
 
+## 曲目 Resource
+
+`RhythmSong`（`rhythm_song.gd`）保存一份 `music: AudioStream` 和 `charts: Array[RhythmSongChart]`。每个列表项填写 `difficulty`（例如 Easy / Normal / Hard）和 `chart_path`（原生编辑器导出的 JSON）。可在 Inspector 新建、展开编辑并保存为 `.tres`；Resource 的 `resource_name` 可填写曲目显示名。谱面可各自采用 2K 或 4K。
+
+默认示例为 `charts/hold_test/song.tres`。选中 `music_game.tscn` 根节点，将 `.tres` 拖到 `Song`，`Difficulty` 填列表中完全一致的难度名称。`party_round.tscn` 继承这份配置，正式回合的音乐时长、连击上限和实际播放都读取同一曲目；也可在继承场景根节点覆盖曲目和难度。
+
+曲目绑定的音乐与难度用于实际播放和计分，优先于 JSON 中的音乐文件名与难度；不会改写 JSON，音符时间和音画补偿不变。难度重复、缺少音乐/谱面、所选难度不存在或音乐过短都会明确报错，不会自动换曲。`chart_path` 可使用 Inspector 选择的 `res://` 路径，或相对音游包根目录的路径。发布时需一并包含 `.tres`、音乐和引用的 JSON（字符串路径不会自动把 JSON 变成 Godot 资源依赖）。
+
+单机测试仍可扫描原生编辑器的 JSON 谱面库，并将所选谱面及其音乐组成临时曲目 Resource，不需要先制作 `.tres`。
+
 ## 单人计分
 
 判定窗口为 PERFECT ±50 ms、GOOD ±100 ms、OK ±150 ms，包含边界；超出窗口为 MISS。判定质量分别为 1.00、0.65、0.30、0。
 
-最终分数为 `round(1,000,000 × 难度倍率 × 准确率²)`，准确率在公式中取 0～1。Easy 倍率 0.90，Normal / Medium 为 1.00，Hard 为 1.10；其他自定义难度和测试谱面为 1.00。倍率读取谱面的 difficulty 字段，不依赖选曲下标、轨道数量或音符数量。菜单保留实际倍率；HUD 与结算页的主数值显示准确率百分比，不再显示换算分数。
+最终分数为 `round(1,000,000 × 难度倍率 × 准确率²)`，准确率在公式中取 0～1。Easy 倍率 0.90，Normal / Medium 为 1.00，Hard 为 1.10；其他自定义难度和测试谱面为 1.00。主游戏倍率读取曲目 Resource 所选条目的 difficulty，单机测试读取谱面的 difficulty 字段，不依赖选曲下标、轨道数量或音符数量。菜单保留实际倍率；HUD 与结算页的主数值显示准确率百分比，不再显示换算分数。
 
 普通音符总权重为 1，获得其判定质量；长按总权重为 1.5，头部获得判定质量，完整按到尾部再获得头部质量的 0.5 倍，中断则不获得尾部权重。Sub 保持连击、判定反馈和音效，但不参与准确率权重；连击不加分。空敲击不得分。
 
@@ -42,7 +52,7 @@ HUD、排行榜与结算显示实时准确率：已获得权重 / 已判定权�
 
 三个独立场景均可在编辑器中直接 F6：
 
-- `music_game.tscn`：主游戏界面，仅包含霓虹舞台、HUD、排行榜占位和停止／结算界面。通过 Inspector 的 `chart_path` 指定谱面，独立运行时自动开始；被其他场景嵌入时由调用方控制开始。
+- `music_game.tscn`：主游戏界面，仅包含霓虹舞台、HUD、排行榜占位和停止／结算界面。通过 Inspector 的 `song` 绑定曲目 Resource、`difficulty` 选择其难度，独立运行时自动开始；被其他场景嵌入时由调用方控制开始。
 - `single_player_test.tscn`：单机测试界面，负责谱面选择、刷新、Auto、跳过前奏、音效与改键设置，嵌入主游戏界面完成演奏。
 - `calibration_test.tscn`：音画校准测试界面，复用主游戏舞台并提供听音采样、补偿调整和保存。可从单机测试进入，也可单独运行。
 

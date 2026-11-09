@@ -38,7 +38,10 @@ var leaderboard_expanded: bool = true
 @onready var _leaderboard_accuracy: Label = $HUD/Leaderboard/Panel/Rows/Self/Accuracy
 
 @export var auto_start: bool = true
-@export_file("*.json") var chart_path: String = Backend.DEFAULT_CHART
+@export var song: RhythmSong
+@export var difficulty: String = "Normal"
+## Explicit standalone synthetic exercise; ordinary gameplay requires a song resource.
+var synthetic_test: bool = false
 @export var show_return_button: bool = false
 var skip_intro: bool = false
 var listen_calibration: bool = false
@@ -93,6 +96,12 @@ func _ready() -> void:
 		start_game()
 
 
+## Read the same song/difficulty for gameplay and the party round duration/combination limit.
+func read_selected_chart() -> Dictionary:
+	if song == null:
+		return {"ok": false, "error": "主游戏未绑定曲目 Resource"}
+	return song.read_chart(difficulty)
+
 func start_game() -> void:
 	_begin_playback(false)
 
@@ -107,18 +116,15 @@ func _begin_playback(calibration: bool = false) -> void:
 	_auto_release_at.fill(-INF)
 	backend.set_process_input(false)
 	backend._set_calibration(calibration and listen_calibration)
-	var track: int = 0
-	if not calibration and not chart_path.is_empty():
-		var resolved: String = chart_path if chart_path.begins_with("res://") else Backend.Paths.resolve(chart_path)
-		track = backend.chart_paths.find(resolved) + 1
-		if track == 0:
+	var chart: Dictionary = {}
+	if not calibration and not synthetic_test:
+		chart = read_selected_chart()
+		if not chart.ok:
 			stop_playback()
-			var message: String = "谱面不在当前谱面库中：" + chart_path
-			push_error(message)
-			playback_failed.emit(message)
+			push_error(chart.error)
+			playback_failed.emit(chart.error)
 			return
-	backend._select_track(track)
-	backend._start(false if calibration else skip_intro, preparation_seconds, calibration)
+	backend._start(chart, false if calibration else skip_intro, preparation_seconds, calibration)
 	configure_lane_feedback()
 	if backend.state != Backend.State.PLAYING:
 		var message: String = backend.last_error
@@ -137,7 +143,7 @@ func _begin_playback(calibration: bool = false) -> void:
 	$Modal.hide()
 	$HUD/Judgment.text = "READY"
 	timing_error.text = ""
-	$HUD/TrackTitle.text = "音画校准" if calibration else ("双轨合成测试" if track == 0 else backend.chart_names[track - 1])
+	$HUD/TrackTitle.text = "音画校准" if calibration else ("双轨合成测试" if chart.is_empty() else "%s / %s" % [chart.data.title, chart.data.difficulty])
 	judgment_age = 0.0
 	_update_hud()
 	_update_skin()

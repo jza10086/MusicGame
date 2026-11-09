@@ -90,7 +90,21 @@ func show_menu() -> void:
 	refresh_chart_library()
 
 func start_game() -> void:
-	game.chart_path = str(track_choice.get_item_metadata(difficulty))
+	var path: String = str(track_choice.get_item_metadata(difficulty))
+	game.synthetic_test = path.is_empty()
+	if not game.synthetic_test:
+		var chart: Dictionary = Backend.Chart.read_chart(path)
+		if not chart.ok:
+			$Menu/Duration.text = chart.error
+			return
+		var entry: RhythmSongChart = RhythmSongChart.new()
+		entry.difficulty = chart.data.difficulty
+		entry.chart_path = path
+		game.song = RhythmSong.new()
+		game.song.resource_name = str(chart.data.get("project_name", chart.data.title))
+		game.song.music = chart.audio
+		game.song.charts = [entry]
+		game.difficulty = entry.difficulty
 	game.skip_intro = skip_intro.button_pressed
 	$Header.hide()
 	$Menu.hide()

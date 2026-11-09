@@ -8,6 +8,8 @@
 [ext_resource type="PackedScene" path="ui/results.tscn" id="5_results"]
 [ext_resource type="PackedScene" path="ui/playback_audio.tscn" id="audio"]
 
+[ext_resource type="Resource" path="charts/hold_test/song.tres" id="song"]
+
 [sub_resource type="StyleBoxFlat" id="ProgressTrack"]
 bg_color = Color(1, 1, 1, 0.08)
 
@@ -105,6 +107,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("2_theme")
 script = ExtResource("1")
+song = ExtResource("song")
 
 [node name="Backdrop" type="Control" parent="."]
 layout_mode = 1

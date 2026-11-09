@@ -69,13 +69,12 @@ var last_error: String = ""
 
 
 func _ready() -> void:
-	refresh_chart_library()
 	_audio = $Track
 	_audio.finished.connect(_on_audio_finished)
 	if not editor_preview and _load_settings() != OK:
 		return
 	_apply_volume()
-	_select_track(_selected_track)
+	configure_lanes(2)
 
 func refresh_chart_library() -> void:
 	var found: Array[String] = Chart.discover_paths()
@@ -114,7 +113,7 @@ func _select_track(index: int) -> void:
 			return
 		configure_lanes(int(chart.data.key_count))
 
-func _start(skip_intro: bool = false, lead_in_seconds: float = 0.0, calibration_track: bool = false) -> void:
+func _start(chart: Dictionary, skip_intro: bool = false, lead_in_seconds: float = 0.0, calibration_track: bool = false) -> void:
 	_stop()
 	last_error = ""
 	_note_subs.clear()
@@ -124,8 +123,7 @@ func _start(skip_intro: bool = false, lead_in_seconds: float = 0.0, calibration_
 	_note_lanes.clear()
 	_note_ends.clear()
 	chart_sounds.clear()
-	if _selected_track > 0 and not _calibration:
-		var chart: Dictionary = Chart.read_chart(chart_paths[_selected_track - 1])
+	if not chart.is_empty() and not _calibration:
 		if not chart.ok:
 			last_error = chart.error
 			return

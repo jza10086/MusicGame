@@ -41,7 +41,7 @@ func _ready() -> void:
 	if not backend.last_error.is_empty():
 		_fail(backend.last_error)
 		return
-	var chart: Dictionary = Backend.Chart.read_chart(Backend.DEFAULT_CHART)
+	var chart: Dictionary = read_selected_chart()
 	if not chart.ok:
 		_fail(chart.error)
 		return
