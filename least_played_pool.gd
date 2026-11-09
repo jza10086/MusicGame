@@ -110,4 +110,3 @@ func _save(next: Dictionary[String, int]) -> Error:
 	if error != OK:
 		return error
 	return DirAccess.rename_absolute(pending, _path)
-
