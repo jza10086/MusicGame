@@ -15,7 +15,7 @@ var rows: Dictionary[String, HBoxContainer] = {}
 var running: bool = false
 var publish_in: float = 0.0
 var song_length: float
-var combo_limit: int
+var _combo_limits: Dictionary[String, int] = {}
 var deadline_ms: int
 @onready var board: VBoxContainer = $HUD/Leaderboard/Panel/Rows
 
@@ -46,10 +46,18 @@ func _ready() -> void:
 		_fail(chart.error)
 		return
 	song_length = chart.duration
-	combo_limit = chart.notes.size()
-	for i: int in range(chart.notes.size()):
-		if chart.ends[i] > chart.notes[i]:
-			combo_limit += 1 + chart.subs[i].size()
+	var options: Array[String] = []
+	for entry: RhythmSongChart in song.charts:
+		var variant_chart: Dictionary = song.read_chart(entry.difficulty)
+		if not variant_chart.ok:
+			_fail(variant_chart.error)
+			return
+		var limit: int = variant_chart.notes.size()
+		for i: int in range(variant_chart.notes.size()):
+			if variant_chart.ends[i] > variant_chart.notes[i]:
+				limit += 1 + variant_chart.subs[i].size()
+		_combo_limits[entry.difficulty] = limit
+		options.append(entry.difficulty)
 	$HUD/PauseButton.hide()
 	$HUD/StandingsToggle.text = api.i18n.text(&"round.rankings")
 	$HUD/MenuHint.text = api.i18n.text(&"round.menu_hint")
@@ -59,7 +67,9 @@ func _ready() -> void:
 	$HUD/StandingsToggle.pressed.connect(func() -> void: leaderboard_expanded = not leaderboard_expanded)
 	_build_round_board()
 	pages = Pages.new()
-	var error: Error = pages.prepare(self, api, request, _start_gameplay)
+	var error: Error = pages.prepare(self, api, request, _start_gameplay, {
+		"choice_label": "难度", "choice_options": options, "choice_default": difficulty,
+		"introduction": "%s\n每位玩家选择自己的难度，准备后锁定。以最终准确率排名。" % chart.data.title})
 	if error != OK:
 		_fail(error_string(error))
 
@@ -94,6 +104,7 @@ func _start_gameplay() -> void:
 			child.visible = child == _leaderboard or child.name == &"MenuHint"
 		$HUD.show()
 	else:
+		difficulty = pages.briefing.get_choice(local_player)
 		start_game()
 	_players_changed()
 
@@ -155,17 +166,18 @@ func _report(done: bool) -> void:
 		if error != OK:
 			_fail(error_string(error))
 
-func _valid_report(data: Variant) -> bool:
-	return data is Dictionary and data.get("accuracy") is int and data.accuracy >= 0 and data.accuracy <= 10000 and data.get("combo") is int and data.combo >= 0 and data.combo <= combo_limit
+func _valid_report(data: Variant, player_id: String) -> bool:
+	var limit: int = _combo_limits[pages.briefing.get_choice(player_id)]
+	return data is Dictionary and data.get("accuracy") is int and data.accuracy >= 0 and data.accuracy <= 10000 and data.get("combo") is int and data.combo >= 0 and data.combo <= limit
 
 func _receive(sender: Dictionary, topic: StringName, payload: Variant) -> void:
 	if not running:
 		return
 	if topic == &"performance" and api.is_host():
-		if not _valid_report(payload) or payload.get("status") not in ["playing", "completed"]:
+		if not payload is Dictionary or payload.get("status") not in ["playing", "completed"]:
 			return
 		for id: String in sender.player_ids:
-			if reports.has(id) and reports[id].status == "playing":
+			if reports.has(id) and reports[id].status == "playing" and _valid_report(payload, id):
 				reports[id] = payload
 				return
 	elif topic == &"standings" and not api.is_host() and sender.peer_id == 1:
@@ -173,7 +185,7 @@ func _receive(sender: Dictionary, topic: StringName, payload: Variant) -> void:
 			return
 		for id: String in reports:
 			var data: Variant = payload.get(id)
-			if not _valid_report(data) or data.get("status") not in ["playing", "completed", "withdrawn"]:
+			if not _valid_report(data, id) or data.get("status") not in ["playing", "completed", "withdrawn"]:
 				return
 		reports = payload
 		_render_board()
