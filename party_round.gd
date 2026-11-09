@@ -4,6 +4,16 @@ extends "res://games/minigame/gp_rhythm_game/music_game.gd"
 const REPORT_INTERVAL: float = 0.4
 const FINISH_GRACE_SECONDS: float = 20.0
 const Pages = preload("res://games/protocols/godot_party_default_protocol/round_pages.gd")
+const RandomPool = preload("least_played_pool.gd")
+const SONG_TOPIC: StringName = &"rhythm/song"
+const SONG_REQUEST_TOPIC: StringName = &"rhythm/song_request"
+## The inherited Song is the first pool entry. Save every extra song as a package-local resource.
+@export var additional_songs: Array[RhythmSong] = []
+var _songs: Dictionary[String, RhythmSong] = {}
+var _song_pool: RandomPool
+var _selected_song: String = ""
+var _started: bool = false
+var _stopped: bool = false
 var pages: Pages
 var api: PartyAPI
 var request: Dictionary
@@ -30,7 +40,6 @@ func party_setup(value: PartyAPI, config: Dictionary) -> void:
 		if player.is_local:
 			local_player = id
 		reports[id] = {"accuracy": 10000, "combo": 0, "status": "playing"}
-	api.net.message_received.connect(_receive)
 	api.players_changed.connect(_players_changed)
 
 func _ready() -> void:
@@ -41,6 +50,68 @@ func _ready() -> void:
 	if not backend.last_error.is_empty():
 		_fail(backend.last_error)
 		return
+	if not _prepare_song_pool():
+		return
+	api.net.message_received.connect(_receive)
+	if api.is_host():
+		var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+		rng.seed = api.get_seed()
+		_select_song(_song_pool.choose(rng))
+		if not _stopped:
+			_broadcast_song()
+	else:
+		var error: Error = api.net.send_to_host(SONG_REQUEST_TOPIC, _song_envelope())
+		if error != OK:
+			_fail("无法请求本轮曲目：" + error_string(error))
+
+## Initialize device-local counts before selection. No history is written until play begins.
+func _prepare_song_pool() -> bool:
+	var entries: Array[RhythmSong] = [song]
+	entries.append_array(additional_songs)
+	var root_path: String = Backend.Paths.root_directory() + "/"
+	var ids: Array[String] = []
+	for entry: RhythmSong in entries:
+		if entry == null or not entry.resource_path.begins_with(root_path) or entry.resource_path.get_extension() not in ["tres", "res"]:
+			_fail("曲目池必须绑定已保存到音游包目录内的曲目 Resource")
+			return false
+		var id: String = entry.resource_path.trim_prefix(root_path)
+		if _songs.has(id):
+			_fail("曲目池重复：" + id)
+			return false
+		_songs[id] = entry
+		ids.append(id)
+	_song_pool = RandomPool.new(ids)
+	var path: String = api.input.storage_directory().path_join("minigame/%s/config/song_pool_stats.json" % api.package_id)
+	var error: Error = _song_pool.open_file(path)
+	if error != OK:
+		_fail("无法读取曲目游玩统计：%s · %s" % [path, error_string(error)])
+		return false
+	return true
+
+func _song_envelope() -> Dictionary:
+	return {"session": api.session_id, "scope": api.scope_id}
+
+func _broadcast_song() -> void:
+	var payload: Dictionary = _song_envelope()
+	payload.song = _selected_song
+	var error: Error = api.net.broadcast(SONG_TOPIC, payload)
+	if error != OK:
+		_fail("无法同步本轮曲目：" + error_string(error))
+
+## One authoritative selection per activation; duplicate delivery cannot rebuild the ready page.
+func _select_song(id: String) -> void:
+	if not _songs.has(id):
+		_fail("本机曲目池中不存在房主选择的曲目：" + id)
+		return
+	if not _selected_song.is_empty():
+		if _selected_song != id:
+			_fail("房主在同一轮中更换了已选曲目")
+		return
+	_selected_song = id
+	song = _songs[id]
+	_prepare_song()
+
+func _prepare_song() -> void:
 	var chart: Dictionary = read_selected_chart()
 	if not chart.ok:
 		_fail(chart.error)
@@ -97,6 +168,13 @@ func party_start() -> void:
 	pages.transport_started()
 
 func _start_gameplay() -> void:
+	if _stopped or _started:
+		return
+	var error: Error = _song_pool.accept_history([_selected_song])
+	if error != OK:
+		_fail("无法保存曲目游玩统计：" + error_string(error))
+		return
+	_started = true
 	running = true
 	deadline_ms = Time.get_ticks_msec() + ceili((song_length + preparation_seconds + FINISH_GRACE_SECONDS) * 1000.0)
 	if local_player.is_empty():
@@ -109,6 +187,7 @@ func _start_gameplay() -> void:
 	_players_changed()
 
 func party_stop(_reason: StringName) -> void:
+	_stopped = true
 	running = false
 	if is_node_ready() and backend != null:
 		shutdown_playback()
@@ -171,6 +250,19 @@ func _valid_report(data: Variant, player_id: String) -> bool:
 	return data is Dictionary and data.get("accuracy") is int and data.accuracy >= 0 and data.accuracy <= 10000 and data.get("combo") is int and data.combo >= 0 and data.combo <= limit
 
 func _receive(sender: Dictionary, topic: StringName, payload: Variant) -> void:
+	if _stopped:
+		return
+	if topic == SONG_REQUEST_TOPIC or topic == SONG_TOPIC:
+		if not payload is Dictionary or payload.get("session") != api.session_id or payload.get("scope") != api.scope_id:
+			return
+		if topic == SONG_REQUEST_TOPIC and api.is_host():
+			_broadcast_song()
+		elif topic == SONG_TOPIC and not api.is_host() and sender.peer_id == 1:
+			if not payload.get("song") is String:
+				_fail("房主发送了无效的曲目选择")
+				return
+			_select_song(payload.song)
+		return
 	if not running:
 		return
 	if topic == &"performance" and api.is_host():
