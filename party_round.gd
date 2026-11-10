@@ -27,6 +27,10 @@ var publish_in: float = 0.0
 var song_length: float
 var _combo_limits: Dictionary[String, int] = {}
 var deadline_ms: int
+var _negative_lead: float = 0.0
+var _last_report: Dictionary = {}
+var _published_reports: Dictionary = {}
+var _final_reported: bool = false
 @onready var board: VBoxContainer = $HUD/Leaderboard/Panel/Rows
 
 func party_setup(value: PartyAPI, config: Dictionary) -> void:
@@ -123,6 +127,9 @@ func _prepare_song() -> void:
 		if not variant_chart.ok:
 			_fail(variant_chart.error)
 			return
+		_negative_lead = maxf(_negative_lead, maxf(0.0, -float(variant_chart.notes[0])))
+		var editor_data: Dictionary = variant_chart.data.get("editor", {})
+		_negative_lead = maxf(_negative_lead, maxf(0.0, -float(editor_data.get("offset_ms", 0.0)) / 1000.0))
 		var limit: int = variant_chart.notes.size()
 		for i: int in range(variant_chart.notes.size()):
 			if variant_chart.ends[i] > variant_chart.notes[i]:
@@ -175,15 +182,29 @@ func _start_gameplay() -> void:
 		_fail("无法保存曲目游玩统计：" + error_string(error))
 		return
 	_started = true
+	if api.is_host():
+		var audio_zero: int = api.net.host_time_msec() + ceili((preparation_seconds + _negative_lead) * 1000.0)
+		var send_error: Error = api.net.broadcast(&"rhythm/start", {"audio_zero_msec": audio_zero,
+			"deadline_msec": audio_zero + ceili((song_length + FINISH_GRACE_SECONDS) * 1000.0)})
+		if send_error != OK:
+			_fail(error_string(send_error))
+
+func _begin_scheduled_play(payload: Dictionary) -> void:
+	if running or not _started or not payload.get("audio_zero_msec") is int or not payload.get("deadline_msec") is int:
+		return
+	deadline_ms = payload.deadline_msec
 	running = true
-	deadline_ms = Time.get_ticks_msec() + ceili((song_length + preparation_seconds + FINISH_GRACE_SECONDS) * 1000.0)
 	if local_player.is_empty():
 		for child: Control in $HUD.get_children():
 			child.visible = child == _leaderboard or child.name == &"MenuHint"
 		$HUD.show()
 	else:
 		difficulty = pages.briefing.get_choice(local_player)
+		skip_intro = false
 		start_game()
+		if not running:
+			return
+		backend.schedule_audio_zero(float(payload.audio_zero_msec - api.net.host_time_msec()) / 1000.0)
 	_players_changed()
 
 func party_stop(_reason: StringName) -> void:
@@ -229,7 +250,7 @@ func _process(delta: float) -> void:
 	if mode == "playing" and not local_player.is_empty():
 		_report(false)
 	if api.is_host() and running:
-		if Time.get_ticks_msec() >= deadline_ms:
+		if api.net.host_time_msec() >= deadline_ms:
 			for data: Dictionary in reports.values():
 				if data.status == "playing":
 					data.status = "withdrawn"
@@ -238,6 +259,10 @@ func _process(delta: float) -> void:
 func _report(done: bool) -> void:
 	var data: Dictionary = backend.performance()
 	data.status = "completed" if done else "playing"
+	if _final_reported or data == _last_report:
+		return
+	_last_report = data.duplicate()
+	_final_reported = done
 	if api.is_host():
 		reports[local_player] = data
 	else:
@@ -251,6 +276,10 @@ func _valid_report(data: Variant, player_id: String) -> bool:
 
 func _receive(sender: Dictionary, topic: StringName, payload: Variant) -> void:
 	if _stopped:
+		return
+	if topic == &"rhythm/start" and sender.peer_id == 1:
+		if payload is Dictionary:
+			_begin_scheduled_play(payload)
 		return
 	if topic == SONG_REQUEST_TOPIC or topic == SONG_TOPIC:
 		if not payload is Dictionary or payload.get("session") != api.session_id or payload.get("scope") != api.scope_id:
@@ -273,13 +302,15 @@ func _receive(sender: Dictionary, topic: StringName, payload: Variant) -> void:
 				reports[id] = payload
 				return
 	elif topic == &"standings" and not api.is_host() and sender.peer_id == 1:
-		if not payload is Dictionary or payload.size() != reports.size():
+		if not payload is Dictionary or payload.size() > reports.size():
 			return
-		for id: String in reports:
-			var data: Variant = payload.get(id)
+		for id: String in payload:
+			if not reports.has(id):
+				return
+			var data: Variant = payload[id]
 			if not _valid_report(data, id) or data.get("status") not in ["playing", "completed", "withdrawn"]:
 				return
-		reports = payload
+		reports.merge(payload, true)
 		_render_board()
 
 func _players_changed() -> void:
@@ -316,10 +347,17 @@ func _render_board() -> void:
 
 func _publish() -> void:
 	_render_board()
-	var error: Error = api.net.broadcast(&"standings", reports)
-	if error != OK:
-		_fail(error_string(error))
-		return
+	var changes: Dictionary = {}
+	for id: String in reports:
+		if not _published_reports.has(id) or _published_reports[id] != reports[id]:
+			changes[id] = reports[id]
+	var error: Error = OK
+	if not changes.is_empty():
+		error = api.net.broadcast(&"standings", changes)
+		if error != OK:
+			_fail(error_string(error))
+			return
+		_published_reports.merge(changes.duplicate(true), true)
 	var rankings: Array[Dictionary] = []
 	for id: String in reports:
 		var data: Dictionary = reports[id]

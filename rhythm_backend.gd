@@ -516,3 +516,14 @@ func _miss_note(index: int) -> void:
 			_record("MISS", 0.0, _note_lanes[index])
 		_record("MISS", 0.0, _note_lanes[index])
 		_sub_next[index] = _note_subs[index].size()
+
+## Called once immediately after _start by the party entry. Later judgment uses only the audio clock.
+## A late arrival seeks forward once; never rescale playback speed or repeatedly reset song time.
+func schedule_audio_zero(delay_seconds: float) -> void:
+	_audio.stop()
+	_lead_in_from = -delay_seconds
+	_lead_in_origin_usec = Time.get_ticks_usec()
+	_last_time = _lead_in_from
+	_playback_start = maxf(0.0, _lead_in_from)
+	_lead_in_active = true
+	_audio_clock_pending = false
