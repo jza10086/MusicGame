@@ -1,10 +1,11 @@
 {
   "manifest_version": 2,
   "core_api_major": 5,
-  "package_version": "1.0.7",
+  "package_version": "1.0.8",
   "id": "gp_rhythm_game",
   "name": "霓虹节拍",
   "kind": "minigame",
+  "supported_systems": ["windows"],
   "entry": "party_round.tscn",
   "introduction": "1–8 人同场演奏，各自选择难度，以最终准确率排名。",
   "player_counts": [
@@ -22,7 +23,7 @@
     "rhythm"
   ],
   "dependencies": {
-    "godot_party_default_protocol": "1.0.6"
+    "godot_party_default_protocol": "1.0.7"
   },
   "adapters": [
     {
