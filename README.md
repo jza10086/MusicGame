@@ -1,5 +1,7 @@
 # 霓虹节拍 · 2K / 4K 音游
 
+支持 Windows 和 Android。触屏直接点击霓虹轨道，按谱面自动采用 2K / 4K，支持多指同时敲击、同轨交替连打和长按（含 sub 与尾判定）。每个手指绑定按下时的轨道，滑出轨道不切换，抬起或系统取消触摸才释放；同轨其他手指或键盘仍按住时保持长按。菜单、失焦及停止演奏会清理按压状态。触屏复用现有音频时钟、输入补偿、判定、敲击音效和高亮；Auto 不接收手动敲击。Android 实机延迟仍需在音画校准中按设备调节。
+
 ## 曲目 Resource
 
 `RhythmSong`（`rhythm_song.gd`）保存一份 `music: AudioStream` 和 `charts: Array[RhythmSongChart]`。每个列表项填写 `difficulty`（例如 Easy / Normal / Hard）和 `chart_path`（原生编辑器导出的 JSON）。可在 Inspector 新建、展开编辑并保存为 `.tres`；Resource 的 `resource_name` 可填写曲目显示名。谱面可各自采用 2K 或 4K。

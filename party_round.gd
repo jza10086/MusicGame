@@ -224,6 +224,11 @@ func _input(event: InputEvent) -> void:
 		return
 	super(event)
 
+func _gui_input(event: InputEvent) -> void:
+	if not running or api.input.input_blocked or local_player.is_empty():
+		return
+	super(event)
+
 ## Losing focus releases held lanes while the shared round continues.
 func pause_game() -> void:
 	if mode == "playing":

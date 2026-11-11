@@ -295,13 +295,32 @@ func _update_skin() -> void:
 	skin.set_state({"key_count": backend.key_count, "mode": "playing" if mode in ["playing", "stopped"] else "menu", "time": ambient, "song_time": song_time, "approach": backend.settings.approach, "notes": [] if _calibration_mode and backend._calibration else visible_notes, "effects": effects, "press_ages": press_ages.duplicate(), "pressed": backend.held_lanes.duplicate(), "combo": backend._combo})
 
 func _input(event: InputEvent) -> void:
-	if event is InputEventKey:
+	# Captured releases must arrive even when the finger ends over a HUD control.
+	if event is InputEventScreenTouch and (not event.pressed or event.canceled):
+		if backend.end_touch(event.index):
+			get_viewport().set_input_as_handled()
+			_update_skin()
+	elif event is InputEventKey:
 		if event.pressed and not event.echo and event.physical_keycode == KEY_ESCAPE:
 			pause_game()
 			get_viewport().set_input_as_handled()
 		elif mode == "playing" and not _auto_active:
 			backend._input(event)
 			_update_skin()
+
+## The stage receives touches through GUI routing, after its HUD buttons.
+func _gui_input(event: InputEvent) -> void:
+	if not event is InputEventScreenTouch or not event.pressed or event.canceled:
+		return
+	if mode != "playing" or _auto_active:
+		return
+	var point: Vector2 = skin.get_global_transform_with_canvas().affine_inverse() * event.position
+	var lane: int = skin.lane_at_position(point)
+	if lane < 0:
+		return
+	backend.begin_touch(event.index, lane)
+	get_viewport().set_input_as_handled()
+	_update_skin()
 
 func _on_press_feedback(lane: int, hit: bool) -> void:
 	press_ages[lane] = 0.0

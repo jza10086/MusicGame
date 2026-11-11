@@ -61,6 +61,8 @@ var key_count: int = 2
 var held_lanes: Array[bool] = [false, false]
 var _note_lanes: Array[int] = []
 var _key_sources: Array[Dictionary] = [{}, {}]
+## Each finger owns its initial lane until release, even if it drifts across a boundary.
+var _touch_sources: Dictionary[int, int] = {}
 var _calibration: bool = false
 var _selected_track: int = 1
 var _duration: float = 1.0
@@ -258,9 +260,28 @@ func _input(event: InputEvent) -> void:
 		_key_sources[lane][key.physical_keycode] = true
 	else:
 		_key_sources[lane].erase(key.physical_keycode)
-	press_lane(lane, not _key_sources[lane].is_empty(), key.pressed)
+	press_lane(lane, _lane_has_input(lane), key.pressed)
 	if state == State.PLAYING:
 		get_viewport().set_input_as_handled()
+
+## Touch begins only in the stage's playable area; release uses the original finger ID.
+func begin_touch(index: int, lane: int) -> void:
+	if state != State.PLAYING or _touch_sources.has(index):
+		return
+	_touch_sources[index] = lane
+	press_lane(lane, true, true)
+
+## Release outside the runway and OS cancellation must still end the captured touch.
+func end_touch(index: int) -> bool:
+	if not _touch_sources.has(index):
+		return false
+	var lane: int = _touch_sources[index]
+	_touch_sources.erase(index)
+	press_lane(lane, _lane_has_input(lane), false)
+	return true
+
+func _lane_has_input(lane: int) -> bool:
+	return not _key_sources[lane].is_empty() or _touch_sources.values().has(lane)
 
 ## Each physical press may strike, even while its same-lane partner remains held.
 ## The lane stays held until all sources release; OS key repeat is filtered at input.
@@ -354,6 +375,7 @@ func configure_lanes(count: int) -> void:
 	reset_lane_state()
 
 func reset_lane_state() -> void:
+	_touch_sources.clear()
 	held_lanes.resize(key_count)
 	held_lanes.fill(false)
 	_active_holds.resize(key_count)
@@ -464,6 +486,7 @@ func _save_settings() -> Error:
 
 ## Release physical sources and score an interrupted hold using the current audio time.
 func release_inputs() -> void:
+	_touch_sources.clear()
 	for lane: int in range(key_count):
 		_key_sources[lane].clear()
 		press_lane(lane, false, false)
