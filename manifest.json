@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "core_api_major": 5,
-  "package_version": "1.0.9",
+  "package_version": "1.0.10",
   "id": "gp_rhythm_game",
   "name": "霓虹节拍",
   "kind": "minigame",
@@ -23,7 +23,7 @@
     "rhythm"
   ],
   "dependencies": {
-    "godot_party_default_protocol": "1.0.7"
+    "godot_party_default_protocol": "1.0.8"
   },
   "adapters": [
     {
