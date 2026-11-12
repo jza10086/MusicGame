@@ -4,7 +4,7 @@ extends "res://games/minigame/gp_rhythm_game/music_game.gd"
 const REPORT_INTERVAL: float = 0.4
 const FINISH_GRACE_SECONDS: float = 20.0
 const Pages = preload("res://games/protocols/godot_party_default_protocol/round_pages.gd")
-const RandomPool = preload("least_played_pool.gd")
+const RandomPool = preload("res://games/protocols/godot_party_default_protocol/random/least_played_pool.gd")
 const SONG_TOPIC: StringName = &"rhythm/song"
 const SONG_REQUEST_TOPIC: StringName = &"rhythm/song_request"
 ## The inherited Song is the first pool entry. Save every extra song as a package-local resource.
@@ -14,7 +14,7 @@ var _song_pool: RandomPool
 var _selected_song: String = ""
 var _started: bool = false
 var _stopped: bool = false
-var pages: Pages
+@export var pages: Pages
 var api: PartyAPI
 var request: Dictionary
 var request_id: String
@@ -146,7 +146,7 @@ func _prepare_song() -> void:
 	leaderboard_expanded = local_player.is_empty()
 	$HUD/StandingsToggle.pressed.connect(func() -> void: leaderboard_expanded = not leaderboard_expanded)
 	_build_round_board()
-	pages = Pages.new()
+	assert(pages != null, "Assign ProtocolPages in the game scene")
 	var error: Error = pages.prepare(self, api, request, _start_gameplay, {
 		"choice_label": "难度", "choice_options": options, "choice_default": difficulty,
 		"introduction": "%s\n每位玩家选择自己的难度，准备后锁定。按基准分数 × 准确率排名。" % chart.data.title})
