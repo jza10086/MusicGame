@@ -19,6 +19,8 @@ func read_chart(difficulty: String) -> Dictionary:
 	for entry: RhythmSongChart in charts:
 		if entry == null or entry.difficulty.strip_edges().is_empty() or entry.chart_path.is_empty():
 			return {"ok": false, "error": "曲目存在未填写的难度或谱面"}
+		if entry.base_score <= 0:
+			return {"ok": false, "error": "曲目基准分数必须大于 0：" + entry.difficulty}
 		if names.has(entry.difficulty):
 			return {"ok": false, "error": "曲目难度重复：" + entry.difficulty}
 		names.append(entry.difficulty)
@@ -29,6 +31,7 @@ func read_chart(difficulty: String) -> Dictionary:
 	var chart: Dictionary = Chart.read_chart(selected.chart_path, music)
 	if chart.ok:
 		chart.data.difficulty = selected.difficulty
+		chart.base_score = selected.base_score
 		if not resource_name.is_empty():
 			chart.data.title = resource_name
 	return chart

@@ -118,7 +118,7 @@ func _rebuild_at(audio_time: float, seeking: bool = false) -> void:
 	backend._combo = 0
 	backend._best_combo = 0
 	backend._total_units = 0
-	backend.scoring.reset(backend._notes, backend._note_ends, str(current_chart.get("difficulty", "Normal")), judged_time, range_end)
+	backend.scoring.reset(backend._notes, backend._note_ends, RhythmSongChart.DEFAULT_BASE_SCORE, judged_time, range_end)
 	backend._raw_errors.clear()
 	game._auto_next = count
 	game._auto_release_at.fill(-INF)

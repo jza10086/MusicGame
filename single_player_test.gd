@@ -154,10 +154,10 @@ func set_difficulty(value: int) -> void:
 	_update_binding_text()
 	var path: String = str(track_choice.get_item_metadata(difficulty))
 	if path.is_empty():
-		$Menu/Duration.text = "双轨练习 · 含长按\n计分 ×1.00"
+		$Menu/Duration.text = "双轨练习 · 含长按"
 	else:
 		var chart: Dictionary = Backend.Chart.read_chart(path)
-		$Menu/Duration.text = "%d 起点 · %s\n计分 ×%.2f" % [chart.notes.size(), chart.data.difficulty, Backend.Scoring.difficulty_multiplier(str(chart.data.difficulty))] if chart.ok else chart.error
+		$Menu/Duration.text = "%d 起点 · %s" % [chart.notes.size(), chart.data.difficulty] if chart.ok else chart.error
 
 func _update_binding_text() -> void:
 	var labels: PackedStringArray = []

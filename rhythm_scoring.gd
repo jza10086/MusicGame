@@ -1,13 +1,11 @@
 ## Accuracy-based single-player scoring. Sub judgments and combo never add weight.
-## Live accuracy counts only judged heads/tails; the internal score retains the full-chart denominator.
+## Live accuracy counts only judged heads/tails; chart resources supply the full-accuracy score.
 extends RefCounted
 
-const BASE_SCORE: float = 1000000.0
 const HOLD_BONUS: float = 0.5
 const QUALITY: Dictionary[String, float] = {"PERFECT": 1.0, "GOOD": 0.65, "OK": 0.30, "MISS": 0.0}
 
-var multiplier: float = 1.0
-var maximum_weight: float = 0.0
+var base_score: int = RhythmSongChart.DEFAULT_BASE_SCORE
 var earned_weight: float = 0.0
 var judged_weight: float = 0.0
 var _included: Array[bool] = []
@@ -17,9 +15,8 @@ var _tails: Array[bool] = []
 var _quality: Array[float] = []
 
 ## Preview counts only heads in its selected interval; crossing holds remain visual/audio only.
-func reset(notes: Array[float], ends: Array[float], difficulty: String, from_time: float = -INF, to_time: float = INF) -> void:
-	multiplier = difficulty_multiplier(difficulty)
-	maximum_weight = 0.0
+func reset(notes: Array[float], ends: Array[float], full_score: int, from_time: float = -INF, to_time: float = INF) -> void:
+	base_score = full_score
 	earned_weight = 0.0
 	judged_weight = 0.0
 	_included.resize(notes.size())
@@ -33,8 +30,6 @@ func reset(notes: Array[float], ends: Array[float], difficulty: String, from_tim
 	for index: int in range(notes.size()):
 		_included[index] = notes[index] >= from_time and notes[index] < to_time
 		_holds[index] = ends[index] > notes[index]
-		if _included[index]:
-			maximum_weight += 1.0 + (HOLD_BONUS if _holds[index] else 0.0)
 
 ## A hold's head quality also caps its completion bonus; no automatic PERFECT inflation.
 func record_head(index: int, grade: String) -> void:
@@ -58,17 +53,12 @@ func accuracy() -> float:
 	return clampf(earned_weight / judged_weight, 0.0, 1.0) if judged_weight > 0.0 else 1.0
 
 func score() -> int:
-	var full_chart_accuracy: float = earned_weight / maximum_weight if maximum_weight > 0.0 else 0.0
-	return roundi(BASE_SCORE * multiplier * pow(clampf(full_chart_accuracy, 0.0, 1.0), 2.0))
+	# Match the two-decimal percentage displayed locally and reported to the host.
+	return score_for_accuracy(base_score, float(roundi(accuracy() * 10000.0)) / 10000.0)
 
 func maximum_score() -> int:
-	return roundi(BASE_SCORE * multiplier)
+	return base_score
 
-## Only canonical difficulty labels carry a bonus. Custom/test labels stay neutral.
-static func difficulty_multiplier(difficulty: String) -> float:
-	match difficulty.strip_edges().to_lower():
-		"easy":
-			return 0.90
-		"hard":
-			return 1.10
-	return 1.0
+## Accuracy is a fraction (0..1), not a percentage (0..100).
+static func score_for_accuracy(full_score: int, accuracy_value: float) -> int:
+	return roundi(float(full_score) * accuracy_value)

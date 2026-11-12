@@ -4,8 +4,8 @@ msgstr ""
 "Language: zh_Hans\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-msgid "1–8 人同场演奏，各自选择难度，以最终准确率排名。"
-msgstr "1–8 人同场演奏，各自选择难度，以最终准确率排名。"
+msgid "1–8 人同场演奏，各自选择难度，按基准分数 × 准确率排名。"
+msgstr "1–8 人同场演奏，各自选择难度，按基准分数 × 准确率排名。"
 
 msgid "霓虹节拍"
 msgstr "霓虹节拍"
@@ -30,6 +30,9 @@ msgstr "已退出"
 
 msgid "round.accuracy"
 msgstr "准确率 (%)"
+
+msgid "round.score"
+msgstr "得分"
 
 msgid "round.combo"
 msgstr "最长连击"

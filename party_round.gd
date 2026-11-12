@@ -26,6 +26,7 @@ var running: bool = false
 var publish_in: float = 0.0
 var song_length: float
 var _combo_limits: Dictionary[String, int] = {}
+var _base_scores: Dictionary[String, int] = {}
 var deadline_ms: int
 var _negative_lead: float = 0.0
 var _last_report: Dictionary = {}
@@ -135,6 +136,7 @@ func _prepare_song() -> void:
 			if variant_chart.ends[i] > variant_chart.notes[i]:
 				limit += 1 + variant_chart.subs[i].size()
 		_combo_limits[entry.difficulty] = limit
+		_base_scores[entry.difficulty] = entry.base_score
 		options.append(entry.difficulty)
 	$HUD/PauseButton.hide()
 	$HUD/StandingsToggle.text = api.i18n.text(&"round.rankings")
@@ -147,7 +149,7 @@ func _prepare_song() -> void:
 	pages = Pages.new()
 	var error: Error = pages.prepare(self, api, request, _start_gameplay, {
 		"choice_label": "难度", "choice_options": options, "choice_default": difficulty,
-		"introduction": "%s\n每位玩家选择自己的难度，准备后锁定。以最终准确率排名。" % chart.data.title})
+		"introduction": "%s\n每位玩家选择自己的难度，准备后锁定。按基准分数 × 准确率排名。" % chart.data.title})
 	if error != OK:
 		_fail(error_string(error))
 
@@ -324,10 +326,15 @@ func _players_changed() -> void:
 			if not player.connected and reports[player.player_id].status == "playing":
 				reports[player.player_id].status = "withdrawn"
 
+## Difficulty choices are locked by the briefing; never trust a client-supplied score.
+func _player_score(id: String) -> int:
+	var selected_difficulty: String = pages.briefing.get_choice(id) if _started else difficulty
+	return Backend.Scoring.score_for_accuracy(_base_scores[selected_difficulty], float(reports[id].accuracy) / 10000.0)
+
 func _ahead(a: String, b: String) -> bool:
 	if (reports[a].status == "withdrawn") != (reports[b].status == "withdrawn"):
 		return reports[b].status == "withdrawn"
-	return reports[a].accuracy > reports[b].accuracy
+	return _player_score(a) > _player_score(b)
 
 func _rank(id: String) -> int:
 	if reports[id].status == "withdrawn":
@@ -368,9 +375,9 @@ func _publish() -> void:
 		var data: Dictionary = reports[id]
 		if data.status == "playing":
 			return
-		rankings.append({"player_id": id, "rank": _rank(id), "status": data.status, "metrics": {"accuracy": float(data.accuracy) / 100.0, "combo": data.combo}})
+		rankings.append({"player_id": id, "rank": _rank(id), "status": data.status, "metrics": {"score": _player_score(id), "accuracy": float(data.accuracy) / 100.0, "combo": data.combo}})
 	running = false
-	error = pages.present({"request_id": request_id, "reason": "completed", "rankings": rankings, "columns": [{"key": "accuracy", "title": api.i18n.text(&"round.accuracy"), "format": "decimal"}, {"key": "combo", "title": api.i18n.text(&"round.combo"), "format": "integer"}]})
+	error = pages.present({"request_id": request_id, "reason": "completed", "rankings": rankings, "columns": [{"key": "score", "title": api.i18n.text(&"round.score"), "format": "integer"}, {"key": "accuracy", "title": api.i18n.text(&"round.accuracy"), "format": "decimal"}, {"key": "combo", "title": api.i18n.text(&"round.combo"), "format": "integer"}]})
 	if error != OK:
 		_fail(error_string(error))
 

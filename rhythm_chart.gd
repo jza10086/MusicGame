@@ -21,7 +21,7 @@ static func read_chart(path: String, music: AudioStream = null) -> Dictionary:
 	var notes: Array[float] = report.notes
 	if audio.get_length() <= float(report.ends.max()) + 0.15:
 		return {"ok": false, "error": "音源长度不足，无法覆盖最后的音符判定窗口"}
-	return {"ok": true, "notes": notes, "lanes": report.lanes, "ends": report.ends, "subs": report.subs, "sounds": report.sounds, "audio": audio, "duration": audio.get_length(), "data": data}
+	return {"ok": true, "notes": notes, "lanes": report.lanes, "ends": report.ends, "subs": report.subs, "sounds": report.sounds, "audio": audio, "duration": audio.get_length(), "base_score": RhythmSongChart.DEFAULT_BASE_SCORE, "data": data}
 
 ## Load imported assets or newly copied authoring audio without requiring an editor import.
 static func load_audio(path: String) -> AudioStream:

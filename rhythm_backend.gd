@@ -121,7 +121,7 @@ func _start(chart: Dictionary, skip_intro: bool = false, lead_in_seconds: float 
 	_note_subs.clear()
 	var stream: AudioStream
 	var chart_start: float = 0.0
-	var score_difficulty: String = "Normal"
+	var base_score: int = RhythmSongChart.DEFAULT_BASE_SCORE
 	_note_lanes.clear()
 	_note_ends.clear()
 	chart_sounds.clear()
@@ -129,7 +129,7 @@ func _start(chart: Dictionary, skip_intro: bool = false, lead_in_seconds: float 
 		if not chart.ok:
 			last_error = chart.error
 			return
-		score_difficulty = str(chart.data.difficulty)
+		base_score = chart.base_score
 		configure_lanes(int(chart.data.key_count))
 		_notes = chart.notes
 		_note_lanes = chart.lanes
@@ -172,7 +172,7 @@ func _start(chart: Dictionary, skip_intro: bool = false, lead_in_seconds: float 
 	_sub_next.clear()
 	_sub_next.resize(_notes.size())
 	_sub_next.fill(0)
-	scoring.reset(_notes, _note_ends, score_difficulty)
+	scoring.reset(_notes, _note_ends, base_score)
 	_total_units = _notes.size()
 	for index: int in range(_notes.size()):
 		if _note_ends[index] > _notes[index]:
