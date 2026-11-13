@@ -1,11 +1,6 @@
 ## Standard original-protocol round. Each participant judges against their own audio clock.
 extends "res://games/minigame/gp_rhythm_game/music_game.gd"
 
-## Content-owned gameplay rules, independent of package compatibility.
-static func party_definition() -> Dictionary:
-	return {"player_counts": [1, 2, 3, 4, 5, 6, 7, 8], "tags": ["original", "rhythm"]}
-
-
 const REPORT_INTERVAL: float = 0.4
 const FINISH_GRACE_SECONDS: float = 20.0
 const Pages = preload("res://games/protocols/godot_party_default_protocol/round_pages.gd")
