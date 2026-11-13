@@ -46,9 +46,9 @@ HUD、排行榜与结算显示实时准确率：已获得权重 / 已判定权�
 
 本目录保存音游场景、字体、音效和可发行谱面；动态谱面/音效路径通过 `rhythm_paths.gd` 从包内脚本位置解析。运行仍依赖 GodotParty 的公开 API 和原版协议，不是另一个独立 Godot 工程；安装包 ID `gp_rhythm_game` 保持不变，显示名称为“霓虹节拍”。
 
-在 Godot 编辑器中打开 `single_player_test.tscn` 并 F6 可选曲试玩；谱面库递归发现本目录 `charts/` 中的可播放 2K/4K 谱面。新位置需要先由 Godot 完成正常资源导入。
+在 Godot 编辑器中打开 `authoring/single_player_test.tscn` 并 F6 可选曲试玩；谱面库递归发现本目录 `charts/` 中的可播放 2K/4K 谱面。新位置需要先由 Godot 完成正常资源导入。
 
-制谱时在 Godot 编辑器中打开 `authoring/chart_editor.tscn`，按 F6 运行当前场景；主游戏使用 `music_game.tscn`，选曲试玩使用 `single_player_test.tscn`，音画校准使用 `calibration_test.tscn`，均按 F6 运行。原生界面复用常驻霓虹舞台，编辑与游戏共享谱面、音效及校准配置，不需要外部启动脚本或 Web/Python 后端。操作见 [制谱说明](authoring/README.md)。原生保存恢复副本放在 `charts/.editor_recovery/`（不进入 Git）。
+制谱时在 Godot 编辑器中打开 `authoring/chart_editor.tscn`，按 F6 运行当前场景；主游戏使用 `music_game.tscn`，选曲试玩使用 `authoring/single_player_test.tscn`，音画校准使用 `authoring/calibration_test.tscn`，均按 F6 运行。原生界面复用常驻霓虹舞台，编辑与游戏共享谱面、音效及校准配置，不需要外部启动脚本或 Web/Python 后端。操作见 [制谱说明](authoring/README.md)。原生保存恢复副本放在 `charts/.editor_recovery/`（不进入 Git）。
 
 编辑和预览均由原生 Godot 场景完成，Web 页面、HTTP 后端和 Web 导出链路已移除。
 
@@ -62,13 +62,13 @@ HUD、排行榜与结算显示实时准确率：已获得权重 / 已判定权�
 
 `ui/playback_audio.tscn` 固定保存 Track、TapPreview、四轨 Tap / HoldStart / HoldSub / HoldEnd 和每轨八个谱面音效声部。动态创建的仅为本实例的四条声像总线；离开时回收。停止对局会停止全部音频，断开 Auto 的 process_frame 和本包网络/玩家信号；重复停止不会重新播放或重复提交。输入释放和成绩读取分别通过后端 `release_inputs()`、`performance()` 完成。
 
-共享协议回合页面 G01 和专用播放器的协议音量作用域 G03 尚待统一改造，本包没有复制协议混音器，也没有改用通用音频句柄驱动判定；目前本包音乐/敲击增益仍由自身音量控制。原生编辑器保留在 `authoring/`，校准仍是可发行的用户功能。
+共享协议回合页面 G01 和专用播放器的协议音量作用域 G03 尚待统一改造，本包没有复制协议混音器，也没有改用通用音频句柄驱动判定；目前本包音乐/敲击增益仍由自身音量控制。原生编辑器、单机测试和独立校准界面统一保留在 `authoring/`，仅用于开发；正式游戏继续共享音频、判定和设置实现。
 
 三个独立场景均可在编辑器中直接 F6：
 
 - `music_game.tscn`：主游戏界面，仅包含霓虹舞台、HUD、排行榜占位和停止／结算界面。通过 Inspector 的 `song` 绑定曲目 Resource、`difficulty` 选择其难度，独立运行时自动开始；被其他场景嵌入时由调用方控制开始。
-- `single_player_test.tscn`：单机测试界面，负责谱面选择、刷新、Auto、跳过前奏、音效与改键设置，嵌入主游戏界面完成演奏。
-- `calibration_test.tscn`：音画校准测试界面，复用主游戏舞台并提供听音采样、补偿调整和保存。可从单机测试进入，也可单独运行。
+- `authoring/single_player_test.tscn`：单机测试界面，负责谱面选择、刷新、Auto、跳过前奏、音效与改键设置，嵌入主游戏界面完成演奏。
+- `authoring/calibration_test.tscn`：音画校准测试界面，复用主游戏舞台并提供听音采样、补偿调整和保存。可从单机测试进入，也可单独运行。
 
 游戏、测试与原生编辑器统一显示完整动态效果；非完整效果开关和渲染分支已删除。`rhythm_backend.gd` 继续负责共用的音频时钟、判定和设置。正式轮换入口为 `party_round.tscn`，结算由原版协议交回大游戏。
 
@@ -88,7 +88,7 @@ HUD、排行榜与结算显示实时准确率：已获得权重 / 已判定权�
 
 ## 调校步骤
 
-1. 在单机测试菜单点击“音画校准”，或直接 F6 运行 `calibration_test.tscn`，默认用霓虹舞台显示均匀节拍音符。勾选“听音采样（隐藏音符）”后，使用实际游玩设备和音频输出，按左轨当前绑定（默认 D / F）跟随短音敲击至少 16 次；此模式不播放敲击音效。
+1. 在单机测试菜单点击“音画校准”，或直接 F6 运行 `authoring/calibration_test.tscn`，默认用霓虹舞台显示均匀节拍音符。勾选“听音采样（隐藏音符）”后，使用实际游玩设备和音频输出，按左轨当前绑定（默认 D / F）跟随短音敲击至少 16 次；此模式不播放敲击音效。
 2. 建议值使用最近最多 32 次有效敲击的原始误差中位数，显示中位绝对偏差衡量稳定性。采用建议后重开复测。
 3. 关闭听音校准，调画面提前量，使音符到线和听到短音重合。
 4. 调整下落时间，查看正式 HUD 的 EARLY/LATE 误差及面板的采样稳定性。点击“应用并保存”写入与游戏、原生编辑器共用的设置；停止或本轮结束后可直接重测，返回选曲不会自动保存。
@@ -158,3 +158,9 @@ Auto 用原音频时钟和输入补偿调度，在后端每帧漏判检查前按
 音效设置默认启用“使用谱面指定音效”，没有指定的节点仍按音符类型选择音效；关闭后全部回到按类型发声，空敲始终使用空敲设置。各类型音量和轨道声像仍生效。逐点音效用编辑点的可选 `sound` ID 保存，跟随移动、换轨和复制；运行谱面编译为 `hit_sounds: [{time_ms, lane, sound}]`，只允许对应实际判定节点，同节点不可重复。每轨使用 8 个轮换声音保留音尾；密集连击超过容量时替换最早轮换的声音。当前没有逐点音色选择面板，可用生成器或编辑工程 JSON 指定。
 
 1–8 人同场演奏，各自选择难度，按基准分数 × 准确率排名。
+
+### 开发文件与发布边界
+
+`authoring/.gdignore` 将整个开发目录排除于资源扫描、源码交付和 PCK 收集。谱面编辑器入口为 `authoring/chart_editor.tscn`，单机测试和独立校准场景也在同目录，SM 转换工具为 `authoring/convert_sm.py`。Godot 文件系统面板不列出被忽略目录；首次可从系统文件管理器把对应 `.tscn` 拖入 Godot 编辑区打开，之后从最近场景打开并按 F6。无需移除 `.gdignore`。
+
+已停用的 Kenney 候选和 Virtuosity 原始 FLAC 位于 `authoring/audio_candidates/`；运行时仅使用原路径的 WAV 和现用 FluidR3 音效，署名与许可证继续随正式素材发布。

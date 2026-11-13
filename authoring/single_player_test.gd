@@ -1,8 +1,8 @@
 ## Standalone single-player test menu. The child game owns playback and judgment.
 extends Control
-const Game = preload("music_game.gd")
+const Game = preload("../music_game.gd")
 const Backend = Game.Backend
-const KeySettings = preload("ui/rhythm_key_settings.gd")
+const KeySettings = preload("../ui/rhythm_key_settings.gd")
 @export var game: Game
 @onready var backend: Backend = game.backend
 var difficulty: int = 0
@@ -113,7 +113,7 @@ func start_game() -> void:
 
 func open_calibration() -> void:
 	game.stop_playback()
-	var error: Error = get_tree().change_scene_to_file(Backend.Paths.resolve("calibration_test.tscn"))
+	var error: Error = get_tree().change_scene_to_file(Backend.Paths.resolve("authoring/calibration_test.tscn"))
 	if error != OK:
 		push_error("无法打开音画校准：" + error_string(error))
 
@@ -170,7 +170,7 @@ func _update_binding_text() -> void:
 func _build_sound_settings() -> void:
 	_preview_bgm = AudioStreamPlayer.new()
 	_preview_bgm.name = "BgmPreview"
-	_preview_bgm.stream = preload("charts/hold_test/hold_test.wav")
+	_preview_bgm.stream = preload("../charts/hold_test/hold_test.wav")
 	add_child(_preview_bgm)
 	_sound_dialog = ConfirmationDialog.new()
 	_sound_dialog.transparent_bg = true

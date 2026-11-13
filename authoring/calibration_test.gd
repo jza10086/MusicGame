@@ -1,6 +1,6 @@
 ## Standalone audio/visual calibration UI; playback stays in the shared game scene.
 extends Control
-const Game = preload("music_game.gd")
+const Game = preload("../music_game.gd")
 const Backend = Game.Backend
 @export var game: Game
 @onready var backend: Backend = game.backend
@@ -34,7 +34,7 @@ func _process(_delta: float) -> void:
 
 func return_to_single_player() -> void:
 	game.stop_playback()
-	var error: Error = get_tree().change_scene_to_file(Backend.Paths.resolve("single_player_test.tscn"))
+	var error: Error = get_tree().change_scene_to_file(Backend.Paths.resolve("authoring/single_player_test.tscn"))
 	if error != OK:
 		push_error("无法打开单机测试：" + error_string(error))
 
