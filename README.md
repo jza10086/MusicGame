@@ -161,6 +161,6 @@ Auto 用原音频时钟和输入补偿调度，在后端每帧漏判检查前按
 
 ### 开发文件与发布边界
 
-`authoring/.gdignore` 将整个开发目录排除于资源扫描、源码交付和 PCK 收集。谱面编辑器入口为 `authoring/chart_editor.tscn`，单机测试和独立校准场景也在同目录，SM 转换工具为 `authoring/convert_sm.py`。Godot 文件系统面板不列出被忽略目录；首次可从系统文件管理器把对应 `.tscn` 拖入 Godot 编辑区打开，之后从最近场景打开并按 F6。无需移除 `.gdignore`。
+`authoring/` 按目录名由发布收集器排除于源码交付和 PCK 收集；不使用 `.gdignore`，在 Godot 中正常显示并导入。谱面编辑器入口为 `authoring/chart_editor.tscn`，单机测试和独立校准场景也在同目录，SM 转换工具为 `authoring/convert_sm.py`。直接在 Godot 文件系统面板打开对应 `.tscn`，按 F6 运行。
 
 已停用的 Kenney 候选和 Virtuosity 原始 FLAC 位于 `authoring/audio_candidates/`；运行时仅使用原路径的 WAV 和现用 FluidR3 音效，署名与许可证继续随正式素材发布。

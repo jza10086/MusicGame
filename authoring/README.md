@@ -1,6 +1,6 @@
 # DUET 制谱工作台
 
-在 Godot 编辑器中打开 **`chart_editor.tscn`，按 F6（运行当前场景）** 启动制谱工作台。同目录 **`single_player_test.tscn`** 用于选曲试玩，上一级 **`music_game.tscn`** 为主游戏界面，**`calibration_test.tscn`** 用于音画校准；均可按 F6。本目录带 `.gdignore`，不会进入发布包，也不会出现在 Godot 文件系统面板。首次可将 `.tscn` 从系统文件管理器拖入 Godot 编辑区，随后从最近场景打开并 F6。它们均为普通可运行场景，不需要外部启动脚本、Python 后端或 Web 导出。
+在 Godot 编辑器中打开 **`chart_editor.tscn`，按 F6（运行当前场景）** 启动制谱工作台。同目录 **`single_player_test.tscn`** 用于选曲试玩，上一级 **`music_game.tscn`** 为主游戏界面，**`calibration_test.tscn`** 用于音画校准；均可按 F6。本目录不放置 `.gdignore`，在 Godot 文件系统面板中正常显示，直接打开场景并 F6 运行。统一发布收集器按 `authoring` 目录名排除开发内容。它们均为普通可运行场景，不需要外部启动脚本、Python 后端或 Web 导出。
 
 原生界面使用 Control 绘制时间轴，SubViewport 内常驻同一个霓虹舞台。音符修改、跳转和循环只更新谱面与播放状态；复用游戏的音频时钟、Auto、判定、长按/Sub、WAV 音效库和配置解析。波形通过独立解码器分批生成，不读取或推进正在播放的音源实例。静止时只在内容/视野变化时重画时间轴；高密度点通过时间索引裁剪。
 

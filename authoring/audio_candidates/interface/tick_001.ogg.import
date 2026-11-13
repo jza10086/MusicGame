@@ -3,12 +3,12 @@
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
 uid="uid://du8exvhojeeb1"
-path="res://.godot/imported/tick_001.ogg-ad3e77d4c4ebb43068fde8818ab3fa10.oggvorbisstr"
+path="res://.godot/imported/tick_001.ogg-f76397ffdebc935cc4967b55035d5faa.oggvorbisstr"
 
 [deps]
 
-source_file="res://games/minigame/gp_rhythm_game/assets/audio_candidates/interface/tick_001.ogg"
-dest_files=["res://.godot/imported/tick_001.ogg-ad3e77d4c4ebb43068fde8818ab3fa10.oggvorbisstr"]
+source_file="res://games/minigame/gp_rhythm_game/authoring/audio_candidates/interface/tick_001.ogg"
+dest_files=["res://.godot/imported/tick_001.ogg-f76397ffdebc935cc4967b55035d5faa.oggvorbisstr"]
 
 [params]
 

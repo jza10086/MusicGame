@@ -3,12 +3,12 @@
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
 uid="uid://dloe6g88uoe64"
-path="res://.godot/imported/impactPlate_light_000.ogg-ae91dd474e2092fe9c07ed7465ac8a10.oggvorbisstr"
+path="res://.godot/imported/impactPlate_light_000.ogg-b586a082c48276f7eacefe3bfb45ec0b.oggvorbisstr"
 
 [deps]
 
-source_file="res://games/minigame/gp_rhythm_game/assets/audio_candidates/impact/impactPlate_light_000.ogg"
-dest_files=["res://.godot/imported/impactPlate_light_000.ogg-ae91dd474e2092fe9c07ed7465ac8a10.oggvorbisstr"]
+source_file="res://games/minigame/gp_rhythm_game/authoring/audio_candidates/impact/impactPlate_light_000.ogg"
+dest_files=["res://.godot/imported/impactPlate_light_000.ogg-b586a082c48276f7eacefe3bfb45ec0b.oggvorbisstr"]
 
 [params]
 
