@@ -1,53 +1,10 @@
 {
-  "manifest_version": 2,
-  "core_api_major": 6,
-  "package_version": "1.0.16",
-  "id": "gp_rhythm_game",
   "name": "霓虹节拍",
   "kind": "minigame",
-  "supported_systems": [
-    "windows",
-    "android"
-  ],
-  "entry": "party_round.tscn",
-  "introduction": "1–8 人同场演奏，各自选择难度，按基准分数 × 准确率排名。",
-  "player_counts": [
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8
-  ],
-  "tags": [
-    "original",
-    "rhythm"
-  ],
+  "package_version": "0.0.1",
+  "framework_version": "0.0.1",
+  "remark": "",
   "dependencies": {
-    "godot_party_default_protocol": "1.0.14"
-  },
-  "adapters": [
-    {
-      "id": "standard",
-      "protocol": {
-        "id": "godot_party_default_protocol",
-        "api_major": 1,
-        "min_api_minor": 0
-      },
-      "entry": "adapter.gd"
-    }
-  ],
-  "localization": {
-    "supported_locales": [
-      "zh_Hans"
-    ],
-    "fallback_locale": "zh_Hans",
-    "translations": {
-      "zh_Hans": "i18n/zh_Hans.po"
-    }
-  },
-  "config_schema": "settings.gd",
-  "cover": "assets/cover.png"
+    "godot_party_default_protocol": "~0.0.1"
+  }
 }
