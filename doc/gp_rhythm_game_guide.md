@@ -4,7 +4,7 @@
 
 ## 曲库资产包
 
-正式曲目来自独立资产包的 manifest.json：special_type 为 rhythm_library，songs 列出曲目 .tres/.res 的包内相对路径。music_game.tscn 不再预绑歌曲；正式回合按房主的候选曲库元数据构建随机池，再异步加载选中的一首。详见框架 [曲库制作与导出指南](../../../doc/api/external_resources.md)。
+正式曲目来自独立资产包的 manifest.json：special_type 为 rhythm_library，songs 列出曲目 .tres/.res 的包内相对路径。music_game.tscn 不再预绑歌曲；正式回合按房主的候选曲库元数据构建随机池，再异步加载选中的一首。详见框架 [曲库制作与导出指南](../../../../doc/api/external_resources.md)。
 
 推荐目录为 music/ 保存音源、charts/<曲目>/ 保存 song.tres、各难度 .tres 和 JSON。目录是制作规范，不做硬性结构检查；正式发现只读取声明列表。曲目使用公共 PartyMusicSong（core/api/music/party_music_song.gd），music 绑定一份 AudioStream，charts 绑定 PartyMusicChart 资源。每个谱面资源填写 difficulty、chart_path（res:// JSON 路径）、base_score（默认 1,000,000）。资源名 resource_name 是曲目显示名。
 
@@ -42,13 +42,13 @@ HUD、排行榜与结算显示实时准确率：已获得权重 / 已判定权�
 
 在 Godot 编辑器中打开 `authoring/single_player_test.tscn` 并 F6 可选曲试玩；制作工具扫描标记为 rhythm_library 的资产包中的 charts/ 与 music/。新位置需要先由 Godot 完成正常资源导入。
 
-制谱时在 Godot 编辑器中打开 `authoring/chart_editor.tscn`，按 F6 运行当前场景；主游戏使用 `music_game.tscn`，选曲试玩使用 `authoring/single_player_test.tscn`，音画校准使用 `authoring/calibration_test.tscn`，均按 F6 运行。原生界面复用常驻霓虹舞台，编辑与游戏共享谱面、音效及校准配置，不需要外部启动脚本或 Web/Python 后端。操作见 [制谱说明](authoring/README.md)。原生保存恢复副本放在 `charts/.editor_recovery/`（不进入 Git）。
+制谱时在 Godot 编辑器中打开 `authoring/chart_editor.tscn`，按 F6 运行当前场景；主游戏使用 `music_game.tscn`，选曲试玩使用 `authoring/single_player_test.tscn`，音画校准使用 `authoring/calibration_test.tscn`，均按 F6 运行。原生界面复用常驻霓虹舞台，编辑与游戏共享谱面、音效及校准配置，不需要外部启动脚本或 Web/Python 后端。操作见 [制谱说明](gp_rhythm_game_authoring_guide.md)。原生保存恢复副本放在 `charts/.editor_recovery/`（不进入 Git）。
 
 编辑和预览均由原生 Godot 场景完成，Web 页面、HTTP 后端和 Web 导出链路已移除。
 
 原版协议的小游戏轮换可选「霓虹节拍」。支持 1–8 名参赛者，加载当前曲目后由各玩家选择难度并准备，再直接进入演奏。客户端按本地音频时钟判定，成绩每 0.4 秒更新至排行榜。房主按最终准确率（百分数保留两位）排名，同分并列，最长连击作为展示指标。断线未完赛者退出排名，曲终 20 秒后仍未回报的玩家按退出处理。观战者可查看本轮排名。
 
-音效来源随包保存在 [音效来源](assets/audio_candidates/SOURCES.md)，字体与各音效许可证保留在对应资产目录；歌曲和谱面来源见 [Bad Apple 来源](charts/bad_apple/SOURCE.md)。
+音效来源随包保存在 [音效来源](gp_rhythm_game_assets_audio_candidates_sources.md)，字体与各音效许可证保留在对应资产目录；歌曲和谱面来源见 [Bad Apple 来源](../charts/bad_apple/SOURCE.md)。
 
 ## 配置与生命周期
 
@@ -101,9 +101,7 @@ HUD、排行榜与结算显示实时准确率：已获得权重 / 已判定权�
 
 ## 验证
 
-旧节奏自动测试已退役归档；后续按改动需要在项目根目录 tmp/test/ 验证判定与时钟行为。
-
-这些是逻辑与生命周期检查，不能证明实际扬声器、显示器、键盘端到端同步。人工验收需正常完成一轮、听音校准一轮，并分别确认画面提前量和按压补偿的调节方向。
+最近记录与未完成验收见 [gp_rhythm_game 开发记录](gp_rhythm_game_development.md)。按本次改动选取必要检查；旧测试命令不作为当前入口。
 
 ## 可选本地 Bad Apple!! 谱面测试
 
@@ -117,7 +115,7 @@ HUD、排行榜与结算显示实时准确率：已获得权重 / 已判定权�
 
 判定区与到线音符同宽，中心位于判定线；按压闪光约 220ms 后消退，轨道纵深渐变在长按期间持续显示。
 
-音效设置中的成功敲击与空敲击可独立选择默认合成音或 12 个 Virtuosity Drums CC0 架子鼓音效（长尾镲片单独标注），支持试听、取消恢复与应用保存；音效 ID 保存到本地配置，来源见 `assets/audio_candidates/SOURCES.md`。
+音效设置中的成功敲击与空敲击可独立选择默认合成音或 12 个 Virtuosity Drums CC0 架子鼓音效（长尾镲片单独标注），支持试听、取消恢复与应用保存；音效 ID 保存到本地配置，来源见 `doc/gp_rhythm_game_assets_audio_candidates_sources.md`。
 
 敲击素材统一混为居中单声道；左右轨分别采用 -0.15 / +0.15 的轻微声像偏移，试听居中，BGM 不受影响。
 
@@ -127,7 +125,7 @@ HUD、排行榜与结算显示实时准确率：已获得权重 / 已判定权�
 
 菜单第五项“长按专项测试 / Start · Sub · End”：独立原创 25 秒节拍音源与 JSON 谱面，16 条音符、66 个判定节点，包含单侧长按配异轨 tap、双轨同时长按、250ms 密集 sub。Bad Apple 原谱保持单击安排。
 
-“Bad Apple!! / 制谱初稿”：独立音频辅助编排，包含 tap、hold、sub。在 Godot 编辑器中运行 `authoring/chart_editor.tscn`，从谱面库选择打开、新建、删除、保存或另存为；保留波形、拍分吸附、拖动编辑、循环试听和同音源参考对比。保存后回到选曲菜单或点击“刷新”即可发现新谱面，重新开始该曲读取音符修改。空谱可保存为编辑草稿，但不会进入游戏选曲。操作说明见 [制谱工作台](authoring/README.md)。
+“Bad Apple!! / 制谱初稿”：独立音频辅助编排，包含 tap、hold、sub。在 Godot 编辑器中运行 `authoring/chart_editor.tscn`，从谱面库选择打开、新建、删除、保存或另存为；保留波形、拍分吸附、拖动编辑、循环试听和同音源参考对比。保存后回到选曲菜单或点击“刷新”即可发现新谱面，重新开始该曲读取音符修改。空谱可保存为编辑草稿，但不会进入游戏选曲。操作说明见 [制谱工作台](gp_rhythm_game_authoring_guide.md)。
 
 音量滑块现支持 0–200%，保存范围为 0–2；BGM / 校准节拍统一乘以 0.4 的基准增益，试听与游戏一致。已有音效补偿和独立音量保留。
 
@@ -135,17 +133,17 @@ HUD、排行榜与结算显示实时准确率：已获得权重 / 已判定权�
 
 选曲下拉菜单限制为 280 像素高度，超出时使用滚动条/滚轮选择。现有鼓点 Easy 加入镲片重音与 16 条短长按，不另增难度版本。
 
-制作统一在 Godot 编辑器中运行 [authoring/chart_editor.tscn](authoring/chart_editor.tscn)。当前辅助生成采用离线 MIDI 规则，说明见 [authoring/MIDI_RULES.md](authoring/MIDI_RULES.md)。A–E 旧实验工具及对应谱面已移除，手工谱面和当前 MIDI 试验保留；霓虹是唯一美术实现。
+制作统一在 Godot 编辑器中运行 [authoring/chart_editor.tscn](../authoring/chart_editor.tscn)。当前辅助生成采用离线 MIDI 规则，说明见 [authoring/MIDI_RULES.md](gp_rhythm_game_authoring_midi_rules.md)。A–E 旧实验工具及对应谱面已移除，手工谱面和当前 MIDI 试验保留；霓虹是唯一美术实现。
 
 菜单勾选 **AUTO 自动演奏（测试）** 后开始：自动处理单击、双押、长按 Start/Sub/End，使用当前音效选择、音量和左右声道设置，播放对应命中特效。Auto 默认关闭，不持久化；舞台与结果页标明 AUTO。可用 `set_auto_play(true/false)` 或启动前的导出属性 `auto_play` 设置，修改在下一局生效；取消勾选后重新开始即可恢复手动。
 
 Auto 用原音频时钟和输入补偿调度，在后端每帧漏判检查前按顺序注入音符的目标时间；校准、判定函数和谱面数据不变。卡帧时补齐跨过的头、sub、尾，不重复计数。音效仍在实际处理帧播放，因此 Auto 适合试听谱面和反馈，不用于测量真实输入延迟。自动演奏期间 A/D 与方向键不参与判定；准备阶段仍可空敲，ESC/失焦仍停止本轮。
 
-音效设置新增 191 个 [FluidR3 代表器乐 WAV](assets/audio_candidates/fluid_r3/SOURCES.md)，涵盖 120 种 GM 音色、49 个额外音区和 22 种小打击；保留现有鼓、镲及合成短敲，总计 204 项。五类敲击均可独立选择、试听、保存，Web 编辑器继续继承游戏配置。逐项文件见 [音色目录](assets/audio_candidates/fluid_r3/CATALOG.md)。这些是离线渲染的单声道 PCM 音效，游戏没有引入 MIDI 播放器。
+音效设置新增 191 个 [FluidR3 代表器乐 WAV](gp_rhythm_game_assets_audio_candidates_fluid_r3_sources.md)，涵盖 120 种 GM 音色、49 个额外音区和 22 种小打击；保留现有鼓、镲及合成短敲，总计 204 项。五类敲击均可独立选择、试听、保存，Web 编辑器继续继承游戏配置。逐项文件见 [音色目录](gp_rhythm_game_assets_audio_candidates_fluid_r3_catalog.md)。这些是离线渲染的单声道 PCM 音效，游戏没有引入 MIDI 播放器。
 
 ## 完整版 MIDI 4K
 
-谱面库选择 **BadApple_完整版_MIDI_4K**：5:17 完整原曲，138 BPM，网格起点 1308 ms，6891 个单击、0 长按、18 种代表乐器 WAV。最多同刻四押，不限制难度；超出四种声音时优先鼓和钢琴。同刻同音色合并，MIDI 缺少的一段 8 小节重复乐句已补齐，音频不拉伸。来源、对齐证据及生成规则见 [完整版说明](charts/bad_apple_full/SOURCE.md)。
+谱面库选择 **BadApple_完整版_MIDI_4K**：5:17 完整原曲，138 BPM，网格起点 1308 ms，6891 个单击、0 长按、18 种代表乐器 WAV。最多同刻四押，不限制难度；超出四种声音时优先鼓和钢琴。同刻同音色合并，MIDI 缺少的一段 8 小节重复乐句已补齐，音频不拉伸。来源、对齐证据及生成规则见 [完整版说明](../charts/bad_apple_full/SOURCE.md)。
 
 本地另存的 **BadApple_短版_MIDI_4K** 使用既有 `bad_apple/bad_apple.ogg`（3:37.705），保留 4819 个单击和 15 种器乐音效。根据两份音源的波形匹配，保留完整版工程第 `[0,64)`、`[128,352)`、`[384,511)`、`[639,结束]` 拍，分别按音源差异平移，再吸附至 1/64 网格；138 BPM、网格起点 83.5 ms。相对分段音频映射的额外量化误差不超过 7.42 ms，不代表实机总延迟。轨道和逐点音色沿用完整版，完整版工程与两份音源保持不变。短版与原测试素材同属本地未确认再发行许可内容，不随 Git 发布。
 
@@ -164,3 +162,15 @@ Auto 用原音频时钟和输入补偿调度，在后端每帧漏判检查前按
 每个曲目版本只维护一份正式歌曲文件，推荐保存在曲库 music/。PartyMusicSong.music 与工程 JSON 的 audio_file 应引用同一份音源；所有难度共享它，不嵌入音频或复制歌曲。工程 JSON 保存 res:// 音源路径，曲目资源绑定各难度 .tres，谱面资源再绑定 JSON。这是作者约定，不新增音源一致性检查。
 
 更换工程音乐后，作者须同步曲目资源的 music。保存现有 JSON 保持路径，改显示名不会破坏绑定；另存得到新 JSON 后，需要手动创建/调整谱面资源和歌曲绑定。包内未使用的正式文件仍会收集，候选素材应放 authoring/ 或由 export_ignore.txt 排除。
+
+## 包内开发文档
+
+未带 `res://` 的源码路径以本包根目录为基准。
+
+- [FluidR3 代表音色目录](gp_rhythm_game_assets_audio_candidates_fluid_r3_catalog.md)
+- [FluidR3 代表器乐音效](gp_rhythm_game_assets_audio_candidates_fluid_r3_sources.md)
+- [音游敲击音效候选与来源](gp_rhythm_game_assets_audio_candidates_sources.md)
+- [DUET 制谱工作台](gp_rhythm_game_authoring_guide.md)
+- [Bad Apple MIDI 规则试验](gp_rhythm_game_authoring_midi_rules.md)
+- [M06 霓虹节拍　A　依赖 G01，专用音频按 G03](gp_rhythm_game_development.md)
+- [音游敲击音效候选与来源](gp_rhythm_hit_sound_sources.md)

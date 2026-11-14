@@ -1,14 +1,16 @@
 # FluidR3 代表器乐音效
 
+素材文件名与未展开的相对路径以包内 `assets/audio_candidates/fluid_r3/`为基准。
+
 2026-10-26：新增 **191 个 WAV**，覆盖 GM 1–120 的 120 种乐器、合奏、合成音色；其中 49 种提供第二个代表音区，另外提供 22 种独立小打击。GM 121–128 的电话、直升机等生活音效不收录。保留原有 12 种 Virtuosity 鼓、镲及合成短敲，总选择数为 204。
 
 - 音源：Fluid (R3) GM v3.1，Frank Wen 与原库 README 中列出的贡献者。
 - 来源仓库：https://github.com/pianobooster/fluid-soundfont
 - 原始 SF2：https://github.com/pianobooster/fluid-soundfont/releases/download/v3.1/FluidR3_GM.sf2
 - 原始许可证：https://github.com/pianobooster/fluid-soundfont/blob/main/COPYING
-- 授权：MIT；完整副本见 [LICENSE.txt](LICENSE.txt)，作者与采样贡献说明见 [UPSTREAM_README.txt](UPSTREAM_README.txt)。
+- 授权：MIT；完整副本见 [LICENSE.txt](../assets/audio_candidates/fluid_r3/LICENSE.txt)，作者与采样贡献说明见 [UPSTREAM_README.txt](../assets/audio_candidates/fluid_r3/UPSTREAM_README.txt)。
 - 离线渲染：TinySoundFont v0.9，Bernhard Schelling，基于 Steve Folta 的 SFZero。https://github.com/schellingb/TinySoundFont
-- 渲染器许可：[TinySoundFont_LICENSE.txt](TinySoundFont_LICENSE.txt)。游戏不依赖其动态库、可执行文件或 MIDI 播放器。
+- 渲染器许可：[TinySoundFont_LICENSE.txt](../assets/audio_candidates/fluid_r3/TinySoundFont_LICENSE.txt)。游戏不依赖其动态库、可执行文件或 MIDI 播放器。
 
 ## 选择与用途
 
@@ -16,7 +18,7 @@
 
 这里提供代表性声音，不是完整的键盘音域或多力度采样。名称中的 C4 按 MIDI 60 定义；贝斯等使用 C3，钟琴等使用较高音区。标为“慢起音”的铺底、合唱、效果音更适合长按/段落色彩，不建议用作需要清晰瞬态的主要敲击反馈。弓弦、吹管也保留乐器本身的起音包络，未添加人工点击声。各音色的听感仍需结合 BGM 人工选用。
 
-逐项 WAV 链接见 [CATALOG.md](CATALOG.md)。[samples.json](samples.json) 保存每个文件的 bank、零起算 program、MIDI 音高、力度、note-on 时长、裁切、增益及测量结果，便于未来逐音符指定音效。
+逐项 WAV 链接见 [CATALOG.md](gp_rhythm_game_assets_audio_candidates_fluid_r3_catalog.md)。[samples.json](../assets/audio_candidates/fluid_r3/samples.json) 保存每个文件的 bank、零起算 program、MIDI 音高、力度、note-on 时长、裁切、增益及测量结果，便于未来逐音符指定音效。
 
 ## 渲染处理
 

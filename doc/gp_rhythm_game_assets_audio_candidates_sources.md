@@ -1,8 +1,10 @@
 # 音游敲击音效候选与来源
 
-2026-10-26：新增 [FluidR3 代表器乐 WAV](fluid_r3/SOURCES.md)，191 个候选覆盖键盘、吉他、贝斯、弦乐、铜管、木管、民族乐器、合成器及小打击，部分乐器提供多个代表音区。已接入五类敲击音效的选择、试听、保存与 Web 预览；完整列表见 [器乐目录](fluid_r3/CATALOG.md)。新 WAV 已做响度处理，以下“原始素材未归一化”的描述只针对旧候选素材。
+素材文件名与未展开的相对路径以包内 `assets/audio_candidates/`为基准。
 
-2026-10-26：新增 [FluidR3 代表器乐 WAV](fluid_r3/SOURCES.md)，191 个候选覆盖键盘、吉他、贝斯、弦乐、铜管、木管、民族乐器、合成器及小打击，部分乐器提供多个代表音区。已接入五类敲击音效的选择、试听、保存与 Web 预览；完整列表见 [器乐目录](fluid_r3/CATALOG.md)。新 WAV 已做响度处理，以下“原始素材未归一化”的描述只针对旧候选素材。
+2026-10-26：新增 [FluidR3 代表器乐 WAV](gp_rhythm_game_assets_audio_candidates_fluid_r3_sources.md)，191 个候选覆盖键盘、吉他、贝斯、弦乐、铜管、木管、民族乐器、合成器及小打击，部分乐器提供多个代表音区。已接入五类敲击音效的选择、试听、保存与 Web 预览；完整列表见 [器乐目录](gp_rhythm_game_assets_audio_candidates_fluid_r3_catalog.md)。新 WAV 已做响度处理，以下“原始素材未归一化”的描述只针对旧候选素材。
+
+2026-10-26：新增 [FluidR3 代表器乐 WAV](gp_rhythm_game_assets_audio_candidates_fluid_r3_sources.md)，191 个候选覆盖键盘、吉他、贝斯、弦乐、铜管、木管、民族乐器、合成器及小打击，部分乐器提供多个代表音区。已接入五类敲击音效的选择、试听、保存与 Web 预览；完整列表见 [器乐目录](gp_rhythm_game_assets_audio_candidates_fluid_r3_catalog.md)。新 WAV 已做响度处理，以下“原始素材未归一化”的描述只针对旧候选素材。
 
 整理日期：2026-10-22。首批 8 个候选作者为 Kenney；新增架子鼓采样来自 Versilian Studios 与 Karoryfer Samples。当前默认仍为自行合成的敲击声；12 个架子鼓候选已接入音效设置，8 个 Kenney 候选已从选择与播放目录移除，仅保留原始素材与来源记录，可分别用于成功敲击和空敲击。原始素材未剪辑、未归一化。
 
@@ -22,14 +24,14 @@
 
 | 文件（点击打开） | 来源标识 | 原始长度 | 建议用途 |
 | --- | --- | ---: | --- |
-| [click_001.ogg](../../authoring/audio_candidates/interface/click_001.ogg) | interface | 100 ms | 普通成功敲击的优先候选 |
-| [tick_001.ogg](../../authoring/audio_candidates/interface/tick_001.ogg) | interface | 23 ms | 空按、低存在感反馈候选 |
-| [pluck_001.ogg](../../authoring/audio_candidates/interface/pluck_001.ogg) | interface | 102 ms | 成功敲击的有音高候选，需检查与歌曲的协调 |
-| [impactGeneric_light_000.ogg](../../authoring/audio_candidates/impact/impactGeneric_light_000.ogg) | impact | 139 ms | 较有实体感的成功敲击候选 |
-| [impactWood_light_000.ogg](../../authoring/audio_candidates/impact/impactWood_light_000.ogg) | impact | 266 ms | 偏打击乐方向的替代候选 |
-| [impactPlate_light_000.ogg](../../authoring/audio_candidates/impact/impactPlate_light_000.ogg) | impact | 542 ms | 亮色叠加层候选，避免高频连击刺耳 |
-| [click1.ogg](../../authoring/audio_candidates/ui/click1.ogg) | ui | 94 ms | 普通短点击的替代候选 |
-| [mouseclick1.ogg](../../authoring/audio_candidates/ui/mouseclick1.ogg) | ui | 59 ms | 空按或机械按键风格候选 |
+| [click_001.ogg](../authoring/audio_candidates/interface/click_001.ogg) | interface | 100 ms | 普通成功敲击的优先候选 |
+| [tick_001.ogg](../authoring/audio_candidates/interface/tick_001.ogg) | interface | 23 ms | 空按、低存在感反馈候选 |
+| [pluck_001.ogg](../authoring/audio_candidates/interface/pluck_001.ogg) | interface | 102 ms | 成功敲击的有音高候选，需检查与歌曲的协调 |
+| [impactGeneric_light_000.ogg](../authoring/audio_candidates/impact/impactGeneric_light_000.ogg) | impact | 139 ms | 较有实体感的成功敲击候选 |
+| [impactWood_light_000.ogg](../authoring/audio_candidates/impact/impactWood_light_000.ogg) | impact | 266 ms | 偏打击乐方向的替代候选 |
+| [impactPlate_light_000.ogg](../authoring/audio_candidates/impact/impactPlate_light_000.ogg) | impact | 542 ms | 亮色叠加层候选，避免高频连击刺耳 |
+| [click1.ogg](../authoring/audio_candidates/ui/click1.ogg) | ui | 94 ms | 普通短点击的替代候选 |
+| [mouseclick1.ogg](../authoring/audio_candidates/ui/mouseclick1.ogg) | ui | 59 ms | 空按或机械按键风格候选 |
 
 ## 旧 Kenney 候选的历史初筛（已停用）
 
@@ -53,18 +55,18 @@
 
 | 素材（本地文件） | 原始长度 | 用途初筛 | 原始文件 |
 | --- | ---: | --- | --- |
-| [底鼓](../../authoring/audio_candidates/virtuosity/kick.flac) | 2.161 s | 低频重击 | [来源](https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/kick/mid_kick_snoff_vl3_rr1.flac) |
-| [军鼓](../../authoring/audio_candidates/virtuosity/snare.flac) | 1.671 s | 成功敲击主候选 | [来源](https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/snare/mid_snare_center_vl24.flac) |
-| [鼓边侧击](../../authoring/audio_candidates/virtuosity/cross_stick.flac) | 2.823 s | 空按或清晰短击候选 | [来源](https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/snare/mid_snare_crossstick_vl12.flac) |
-| [高通鼓](../../authoring/audio_candidates/virtuosity/high_tom.flac) | 1.809 s | 有鼓腔共鸣的击打 | [来源](https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/htom/mid_htom_center_vl12.flac) |
-| [低通鼓](../../authoring/audio_candidates/virtuosity/low_tom.flac) | 4.737 s | 较低沉的击打 | [来源](https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/ltom/mid_ltom_center_vl12.flac) |
-| [闭合踩镲](../../authoring/audio_candidates/virtuosity/closed_hat.flac) | 0.696 s | 空按或密集敲击候选 | [来源](https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/hh/mid_hh_closed_vl3_rr1.flac) |
-| [开放踩镲](../../authoring/audio_candidates/virtuosity/open_hat.flac) | 9.562 s | 较亮的重击，留意尾音 | [来源](https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/hh/mid_hh_open_vl3_rr1.flac) |
-| [踩镲脚踏](../../authoring/audio_candidates/virtuosity/pedal_hat.flac) | 1.950 s | 较轻的空按候选 | [来源](https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/hh/mid_hh_pedal_vl2_rr1.flac) |
-| [吊镲](../../authoring/audio_candidates/virtuosity/crash.flac) | 12.624 s | 段落重音，避免连续叠加长尾 | [来源](https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/crash/mid_crash_crash_vl2_rr1.flac) |
-| [叮叮镲](../../authoring/audio_candidates/virtuosity/ride.flac) | 8.445 s | 金属节奏音色 | [来源](https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/ride/mid_ride_ride_vl2_rr1.flac) |
-| [叮叮镲帽](../../authoring/audio_candidates/virtuosity/ride_bell.flac) | 5.828 s | 更有音高的金属重音 | [来源](https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/ride/mid_ride_bell_vl2_rr1.flac) |
-| [平顶叮叮镲](../../authoring/audio_candidates/virtuosity/flat_ride.flac) | 8.166 s | 另一种镲片音色对照 | [来源](https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/flatride/mid_flatride_ride_vl2_rr1.flac) |
+| [底鼓](../authoring/audio_candidates/virtuosity/kick.flac) | 2.161 s | 低频重击 | [来源](https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/kick/mid_kick_snoff_vl3_rr1.flac) |
+| [军鼓](../authoring/audio_candidates/virtuosity/snare.flac) | 1.671 s | 成功敲击主候选 | [来源](https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/snare/mid_snare_center_vl24.flac) |
+| [鼓边侧击](../authoring/audio_candidates/virtuosity/cross_stick.flac) | 2.823 s | 空按或清晰短击候选 | [来源](https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/snare/mid_snare_crossstick_vl12.flac) |
+| [高通鼓](../authoring/audio_candidates/virtuosity/high_tom.flac) | 1.809 s | 有鼓腔共鸣的击打 | [来源](https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/htom/mid_htom_center_vl12.flac) |
+| [低通鼓](../authoring/audio_candidates/virtuosity/low_tom.flac) | 4.737 s | 较低沉的击打 | [来源](https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/ltom/mid_ltom_center_vl12.flac) |
+| [闭合踩镲](../authoring/audio_candidates/virtuosity/closed_hat.flac) | 0.696 s | 空按或密集敲击候选 | [来源](https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/hh/mid_hh_closed_vl3_rr1.flac) |
+| [开放踩镲](../authoring/audio_candidates/virtuosity/open_hat.flac) | 9.562 s | 较亮的重击，留意尾音 | [来源](https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/hh/mid_hh_open_vl3_rr1.flac) |
+| [踩镲脚踏](../authoring/audio_candidates/virtuosity/pedal_hat.flac) | 1.950 s | 较轻的空按候选 | [来源](https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/hh/mid_hh_pedal_vl2_rr1.flac) |
+| [吊镲](../authoring/audio_candidates/virtuosity/crash.flac) | 12.624 s | 段落重音，避免连续叠加长尾 | [来源](https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/crash/mid_crash_crash_vl2_rr1.flac) |
+| [叮叮镲](../authoring/audio_candidates/virtuosity/ride.flac) | 8.445 s | 金属节奏音色 | [来源](https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/ride/mid_ride_ride_vl2_rr1.flac) |
+| [叮叮镲帽](../authoring/audio_candidates/virtuosity/ride_bell.flac) | 5.828 s | 更有音高的金属重音 | [来源](https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/ride/mid_ride_bell_vl2_rr1.flac) |
+| [平顶叮叮镲](../authoring/audio_candidates/virtuosity/flat_ride.flac) | 8.166 s | 另一种镲片音色对照 | [来源](https://raw.githubusercontent.com/sfzinstruments/virtuosity_drums/master/Samples/mid/flatride/mid_flatride_ride_vl2_rr1.flac) |
 
 优先试听组合：成功敲击用军鼓或鼓边侧击，空敲击用闭合踩镲或脚踏踩镲；希望更低沉可对比底鼓和通鼓。吊镲、开放踩镲、叮叮镲先作为音色参考：直接反复播放完整尾音容易堆叠，正式接入密集谱面时可另做短尾版本，保留原音并记录裁切、淡出和增益参数。接入只扩展音效目录，音画同步与判定逻辑不变。
 

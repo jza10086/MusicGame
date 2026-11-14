@@ -7,7 +7,7 @@
 
 工作台扫描 games/assets/ 下声明 special_type 为 rhythm_library 的资产包中的 music/ 与 charts/；正式玩法只读取 manifest.songs 列出的曲目资源。原生版默认打开排序后的第一份工程，下拉选择即可切换；新建时选择 2K / 4K。已有工程不自动改写，逐音符音效和来源字段保持。A–E 旧实验工具及对应谱面已移除。
 
-Python 文件仅供离线制谱与音色渲染使用，不作为编辑器或游戏的启动入口。MIDI 生成参数见 [MIDI 规则说明](MIDI_RULES.md)。
+Python 文件仅供离线制谱与音色渲染使用，不作为编辑器或游戏的启动入口。MIDI 生成参数见 [MIDI 规则说明](gp_rhythm_game_authoring_midi_rules.md)。
 
 ## 谱面文件操作
 
