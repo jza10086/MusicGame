@@ -38,7 +38,7 @@ var leaderboard_expanded: bool = true
 @onready var _leaderboard_accuracy: Label = $HUD/Leaderboard/Panel/Rows/Self/Accuracy
 
 @export var auto_start: bool = true
-@export var song: RhythmSong
+@export var song: PartyMusicSong
 @export var difficulty: String = "Normal"
 ## Explicit standalone synthetic exercise; ordinary gameplay requires a song resource.
 var synthetic_test: bool = false
@@ -100,7 +100,7 @@ func _ready() -> void:
 func read_selected_chart() -> Dictionary:
 	if song == null:
 		return {"ok": false, "error": "主游戏未绑定曲目 Resource"}
-	return song.read_chart(difficulty)
+	return Backend.Chart.read_song(song, difficulty)
 
 func start_game() -> void:
 	_begin_playback(false)

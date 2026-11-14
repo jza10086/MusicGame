@@ -2,4 +2,4 @@
 extends RefCounted
 
 static func party_definition() -> Dictionary:
-	return {"player_counts": [1, 2, 3, 4, 5, 6, 7, 8], "tags": ["original", "rhythm"]}
+	return {"player_counts": [1, 2, 3, 4, 5, 6, 7, 8], "tags": ["original", "rhythm"], "asset_types": ["rhythm_library"]}

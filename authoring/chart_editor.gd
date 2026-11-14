@@ -328,7 +328,7 @@ func _build_dialogs() -> void:
 	_file_dialog.filters = PackedStringArray(["*.wav, *.ogg ; 音乐 WAV / OGG"])
 	add_child(_file_dialog)
 	_file_dialog.file_selected.connect(func(source: String) -> void:
-		var result: Dictionary = library.import_audio(source)
+		var result: Dictionary = library.import_audio(source, path)
 		if result.ok: refresh_library(); status("音乐已导入："+result.path)
 		else: status(result.error,true))
 
@@ -386,7 +386,7 @@ func _open(next_path: String) -> void:
 func _install_audio(audio: AudioStream) -> void:
 	preview.stop_preview()
 	preview.song = audio
-	preview.audio_id = audio_path.trim_prefix(library.root+"/")
+	preview.audio_id = audio_path
 	preview.game.backend._audio.stream = audio
 	preview.game.backend._duration = audio.get_length()
 	_audition_player.stream = audio
@@ -400,7 +400,7 @@ func _refresh_references() -> void:
 	_reference_picker.clear()
 	_reference_picker.add_item("无参考")
 	for entry: Dictionary in library.charts:
-		if entry.path!=path and str(entry.path).get_base_dir().path_join(str(entry.data.get("audio_file","")))==audio_path:
+		if entry.path!=path and Document.Chart.audio_path_for(str(entry.path), str(entry.data.get("audio_file","")))==audio_path:
 			_reference_picker.add_item(str(entry.name))
 			_reference_picker.set_item_metadata(_reference_picker.item_count-1,entry)
 			if str(entry.path)==selected_path:
@@ -429,7 +429,7 @@ func _sync_document() -> void:
 	for lane: int in range(_lane_mutes.size()):
 		_lane_mutes[lane].visible = lane<document.key_count()
 	_preview_revision += 1
-	var result: Dictionary = preview.update_chart(document.compile(),_preview_revision,audio_path.trim_prefix(library.root+"/"))
+	var result: Dictionary = preview.update_chart(document.compile(),_preview_revision,audio_path)
 	if not result.ok:
 		status(result.error,true)
 	_sync_controls = true
@@ -701,7 +701,7 @@ func _apply_metadata() -> void:
 	for key: String in ["title","artist","difficulty"]:
 		if str(values[key]).is_empty(): status("请填写音乐名、音乐作者和难度",true); return
 	if _metadata_mode=="new":
-		var data: Dictionary = {"format_version":3,"key_count":2 if _metadata_keys.selected==0 else 4,"note_type":"tap_hold","audio_file":next_audio.get_file(),"notes_ms":[],"lanes":[],"durations_ms":[],"subs_ms":[],"editor":{"bpm":120.0,"offset_ms":0.0,"note_points":[],"beat_notes":[]}}
+		var data: Dictionary = {"format_version":3,"key_count":2 if _metadata_keys.selected==0 else 4,"note_type":"tap_hold","audio_file":next_audio,"notes_ms":[],"lanes":[],"durations_ms":[],"subs_ms":[],"editor":{"bpm":120.0,"offset_ms":0.0,"note_points":[],"beat_notes":[]}}
 		data.merge(values,true)
 		var fresh: Document = Document.new()
 		fresh.open(data,audio.get_length())
@@ -724,7 +724,7 @@ func _apply_metadata() -> void:
 	var before: Dictionary = document.snapshot()
 	var old_duration: float = document.duration
 	document.data.merge(values,true)
-	document.data.audio_file = next_audio.get_file()
+	document.data.audio_file = next_audio
 	document.duration = audio.get_length()
 	document.audio_path = next_audio
 	var error: String = document.commit(before)

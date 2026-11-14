@@ -7,4 +7,4 @@ static func root_directory() -> String:
 	return ROOT_SCRIPT.resource_path.get_base_dir()
 
 static func resolve(relative_path: String) -> String:
-	return root_directory().path_join(relative_path).simplify_path()
+	return relative_path if relative_path.is_absolute_path() else root_directory().path_join(relative_path).simplify_path()

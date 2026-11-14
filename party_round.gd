@@ -7,9 +7,7 @@ const Pages = preload("res://games/protocols/godot_party_default_protocol/round_
 const RandomPool = preload("res://games/protocols/godot_party_default_protocol/random/least_played_pool.gd")
 const SONG_TOPIC: StringName = &"rhythm/song"
 const SONG_REQUEST_TOPIC: StringName = &"rhythm/song_request"
-## The inherited Song is the first pool entry. Save every extra song as a package-local resource.
-@export var additional_songs: Array[RhythmSong] = []
-var _songs: Dictionary[String, RhythmSong] = {}
+var _songs: Dictionary[String, Dictionary] = {}
 var _song_pool: RandomPool
 var _selected_song: String = ""
 var _started: bool = false
@@ -71,23 +69,19 @@ func _ready() -> void:
 
 ## Initialize device-local counts before selection. No history is written until play begins.
 func _prepare_song_pool() -> bool:
-	var entries: Array[RhythmSong] = [song]
-	entries.append_array(additional_songs)
-	var root_path: String = Backend.Paths.root_directory() + "/"
 	var ids: Array[String] = []
-	for entry: RhythmSong in entries:
-		if entry == null or not entry.resource_path.begins_with(root_path) or entry.resource_path.get_extension() not in ["tres", "res"]:
-			_fail("曲目池必须绑定已保存到音游包目录内的曲目 Resource")
-			return false
-		var id: String = entry.resource_path.trim_prefix(root_path)
-		if _songs.has(id):
-			_fail("曲目池重复：" + id)
-			return false
-		_songs[id] = entry
-		ids.append(id)
+	for library: Dictionary in api.get_asset_libraries("rhythm_library"):
+		for path: String in library.songs:
+			var id: String = library.id + "/" + path
+			_songs[id] = {"package_id": library.id, "resource_path": path}
+			ids.append(id)
+	ids.sort()
+	if ids.is_empty():
+		_fail("房间没有可用的霓虹节拍曲库资产包")
+		return false
 	_song_pool = RandomPool.new(ids)
 	var path: String = api.input.storage_directory().path_join("minigame/%s/config/song_pool_stats.json" % api.package_id)
-	var error: Error = _song_pool.open_file(path)
+	var error: Error = _song_pool.open_file(path, true)
 	if error != OK:
 		_fail("无法读取曲目游玩统计：%s · %s" % [path, error_string(error)])
 		return false
@@ -113,7 +107,17 @@ func _select_song(id: String) -> void:
 			_fail("房主在同一轮中更换了已选曲目")
 		return
 	_selected_song = id
-	song = _songs[id]
+	var loaded: Resource = await api.load_asset_async(_songs[id])
+	if _stopped or not api.is_open():
+		return
+	if not loaded is PartyMusicSong:
+		_fail("曲目资源无效或加载失败：" + id)
+		return
+	song = loaded
+	if song.charts.is_empty() or song.charts[0] == null:
+		_fail("曲目未绑定谱面：" + id)
+		return
+	difficulty = song.charts[0].difficulty
 	_prepare_song()
 
 func _prepare_song() -> void:
@@ -123,8 +127,8 @@ func _prepare_song() -> void:
 		return
 	song_length = chart.duration
 	var options: Array[String] = []
-	for entry: RhythmSongChart in song.charts:
-		var variant_chart: Dictionary = song.read_chart(entry.difficulty)
+	for entry: PartyMusicChart in song.charts:
+		var variant_chart: Dictionary = Backend.Chart.read_song(song, entry.difficulty)
 		if not variant_chart.ok:
 			_fail(variant_chart.error)
 			return

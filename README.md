@@ -2,27 +2,21 @@
 
 支持 Windows 和 Android。触屏直接点击霓虹轨道，按谱面自动采用 2K / 4K，支持多指同时敲击、同轨交替连打和长按（含 sub 与尾判定）。每个手指绑定按下时的轨道，滑出轨道不切换，抬起或系统取消触摸才释放；同轨其他手指或键盘仍按住时保持长按。菜单、失焦及停止演奏会清理按压状态。触屏复用现有音频时钟、输入补偿、判定、敲击音效和高亮；Auto 不接收手动敲击。Android 实机延迟仍需在音画校准中按设备调节。
 
-## 曲目 Resource
+## 曲库资产包
 
-`RhythmSong`（`rhythm_song.gd`）保存一份 `music: AudioStream` 和 `charts: Array[RhythmSongChart]`。每个列表项填写 `difficulty`（例如 Easy / Normal / Hard）、`chart_path`（原生编辑器导出的 JSON）和 `base_score`（基准分数，正整数，默认 1,000,000）。可在 Inspector 新建、展开编辑并保存为 `.tres`；Resource 的 `resource_name` 可填写曲目显示名。谱面可各自采用 2K 或 4K。
+正式曲目来自独立资产包的 manifest.json：special_type 为 rhythm_library，songs 列出曲目 .tres/.res 的包内相对路径。music_game.tscn 不再预绑歌曲；正式回合按房主的候选曲库元数据构建随机池，再异步加载选中的一首。详见框架 [曲库制作与导出指南](../../../doc/api/external_resources.md)。
 
-可发行默认示例为 `charts/hold_test/song.tres`。选中 `music_game.tscn` 根节点，将 `.tres` 拖到 `Song`，`Difficulty` 填列表中完全一致的难度名称。`party_round.tscn` 继承这份配置，正式回合的音乐时长、连击上限和实际播放都读取同一曲目；也可在继承场景根节点覆盖曲目和难度。
+推荐目录为 music/ 保存音源、charts/<曲目>/ 保存 song.tres、各难度 .tres 和 JSON。目录是制作规范，不做硬性结构检查；正式发现只读取声明列表。曲目使用公共 PartyMusicSong（core/api/music/party_music_song.gd），music 绑定一份 AudioStream，charts 绑定 PartyMusicChart 资源。每个谱面资源填写 difficulty、chart_path（res:// JSON 路径）、base_score（默认 1,000,000）。资源名 resource_name 是曲目显示名。
 
-曲目绑定的音乐与难度用于实际播放和计分，优先于 JSON 中的音乐文件名与难度；不会改写 JSON，音符时间和音画补偿不变。难度重复、缺少音乐/谱面、所选难度不存在或音乐过短都会明确报错，不会自动换曲。`chart_path` 可使用 Inspector 选择的 `res://` 路径，或相对音游包根目录的路径。发布时需一并包含 `.tres`、音乐和引用的 JSON（字符串路径不会自动把 JSON 变成 Godot 资源依赖）。
+曲库不能依赖小游戏脚本。原创示例迁入 games/assets/gp_rhythm_original/；Bad Apple 短版和完整版在 games/assets/gp_rhythm_bad_apple/，由主仓库 .gitignore 整包排除，但本地编辑器仍可发现。源音乐和第三方谱面仍未确认再发行许可。
 
-单机测试仍可扫描原生编辑器的 JSON 谱面库，并将所选谱面及其音乐组成临时曲目 Resource，不需要先制作 `.tres`。
+房主把霓虹节拍加入房间池后，匹配类型的可用曲库进入开局依赖检查；客机额外安装的曲库不参与本局。所有候选曲库需要版本/构建匹配，下载更新后仍须重启。PCK 和音频不在此元数据检查阶段加载；选中曲目时才挂载所属包并后台读取资源。不会预载所有歌曲。
 
-正式对局的曲目池由 `party_round.tscn` 根节点的 `Song`（第一首）和 `Additional Songs`（额外曲目列表）组成，均绑定音游包目录内已保存的 `.tres` / `.res`。每首曲目须包含根节点 `Difficulty` 指定的初始难度（默认 Normal）；正式开局前各玩家仍可在下拉菜单中选择该曲目的其他难度。单独运行主游戏、单机测试或编辑器预览不会使用正式统计。
+每轮房主从本机累计次数最少的候选曲目中随机抽取，用回合种子打破平局；同步稳定 ID“资产包 ID/曲目资源路径”。客户端晚加载时请求当前选择，重复消息不重抽。准备页允许每位玩家独立选择绑定的难度；曲目先以列表第一项建立初始准备数据。
 
-随机池直接引用原版协议公开的 `random/least_played_pool.gd`，不依赖空白模板或保留包内副本。每轮房主只从本机累计游玩次数最少的曲目中等概率随机选择，用本轮种子打破同次数平局。房主在加载阶段确定并同步曲目；迟加载的客户端会请求当前选择，重复消息不重抽、不重建准备页。不同难度合并计为同一首曲目。
+真正进入演奏时，本机记录一次，准备期间退出不计数。主机、客机和观战端各自保存 minigame/gp_rhythm_game/config/song_pool_stats.json，--party-profile 隔离多实例数据。曲库增删保留历史，新曲从零开始；退役 ID 不参与抽取。损坏数据或写入失败明确结束本局，不自动清零。
 
-准备完成、真正进入演奏时，本机记录该首曲目一次；在准备阶段退出不计数，开始后退出不扣回。主机、客机和观战端各自累计本机历史，网络不覆盖其他设备的次数。统计保存到当前资料根目录的 `minigame/gp_rhythm_game/config/song_pool_stats.json`，多实例测试沿用 `--party-profile` 隔离。文件损坏或写入失败会明确结束本局，不自动清零。
-
-统计 ID 是曲目资源相对音游包根目录的路径。沿用模板的严格 ID 集合校验：添加、移除或重命名曲目后，需要明确更新已有统计的 `plays` 键（新曲可填 0），或由作者自行清除该统计文件重新计数；程序不自动迁移历史。当前本地曲目池只有 Bad Apple，新增歌曲后将按上述规则轮换。
-
-加载页使用 `assets/cover.png` 的原生霓虹舞台画面。难度菜单复用框架下拉框并固定向上展开，从当前曲目的 `charts` 读取难度，每位玩家可独立选择；左侧玩家行只增加难度文本，不添加“难度：”前缀。准备确认会同时提交并锁定难度，房主校验选项并广播；进入演奏后使用对应谱面，连击上限按该玩家选择校验。观战者不参与选择。
-
-本地首个歌曲示例为 `charts/bad_apple/song.tres`，绑定现有 Bad Apple 音源，提供原四轨 Easy（288 起点）、Normal（536 起点）、Hard（705 起点），默认 Normal。三张谱面保留 Gpop 原谱时序、长按及同时按键，不额外移动第零拍。源文件、转换谱面、该 `.tres` 及 `music_game.tscn` 对它的绑定属于本地测试配置，音乐与原谱未确认再发行许可，不上传这些素材或私有绑定。公开版本保留原创练习曲绑定。
+单人制作测试仍可扫描曲库中的 JSON 并组成临时曲目，无需每次重新导出。JSON 的 audio_file 可使用 res:// 路径访问 music/，正式玩法以曲目资源绑定的音乐和谱面资源的难度/基准分数为准。源 JSON 不会因游戏选曲而改写。
 
 ## 单人计分
 
@@ -44,9 +38,9 @@ HUD、排行榜与结算显示实时准确率：已获得权重 / 已判定权�
 
 ## 可移动目录与发布边界
 
-本目录保存音游场景、字体、音效和可发行谱面；动态谱面/音效路径通过 `rhythm_paths.gd` 从包内脚本位置解析。运行仍依赖 GodotParty 的公开 API 和原版协议，不是另一个独立 Godot 工程；安装包 ID `gp_rhythm_game` 保持不变，显示名称为“霓虹节拍”。
+本目录保存音游场景、字体、音效和制作工具；音乐与谱面由独立曲库资产包提供。动态谱面/音效路径通过 `rhythm_paths.gd` 从包内脚本位置解析。运行仍依赖 GodotParty 的公开 API 和原版协议，不是另一个独立 Godot 工程；安装包 ID `gp_rhythm_game` 保持不变，显示名称为“霓虹节拍”。
 
-在 Godot 编辑器中打开 `authoring/single_player_test.tscn` 并 F6 可选曲试玩；谱面库递归发现本目录 `charts/` 中的可播放 2K/4K 谱面。新位置需要先由 Godot 完成正常资源导入。
+在 Godot 编辑器中打开 `authoring/single_player_test.tscn` 并 F6 可选曲试玩；制作工具扫描标记为 rhythm_library 的资产包中的 charts/ 与 music/。新位置需要先由 Godot 完成正常资源导入。
 
 制谱时在 Godot 编辑器中打开 `authoring/chart_editor.tscn`，按 F6 运行当前场景；主游戏使用 `music_game.tscn`，选曲试玩使用 `authoring/single_player_test.tscn`，音画校准使用 `authoring/calibration_test.tscn`，均按 F6 运行。原生界面复用常驻霓虹舞台，编辑与游戏共享谱面、音效及校准配置，不需要外部启动脚本或 Web/Python 后端。操作见 [制谱说明](authoring/README.md)。原生保存恢复副本放在 `charts/.editor_recovery/`（不进入 Git）。
 
@@ -161,12 +155,12 @@ Auto 用原音频时钟和输入补偿调度，在后端每帧漏判检查前按
 
 ### 开发文件与发布边界
 
-`authoring/` 按目录名由发布收集器排除于源码交付和 PCK 收集；不使用 `.gdignore`，在 Godot 中正常显示并导入。谱面编辑器入口为 `authoring/chart_editor.tscn`，单机测试和独立校准场景也在同目录，SM 转换工具为 `authoring/convert_sm.py`。直接在 Godot 文件系统面板打开对应 `.tscn`，按 F6 运行。
+本包 `export_ignore.txt` 使用 Git ignore 语法，排除 authoring/ 和旧 charts/ 本地历史；不使用 `.gdignore`，在 Godot 中正常显示并导入。谱面编辑器入口为 `authoring/chart_editor.tscn`，单机测试和独立校准场景也在同目录，SM 转换工具为 `authoring/convert_sm.py`。直接在 Godot 文件系统面板打开对应 `.tscn`，按 F6 运行。
 
 已停用的 Kenney 候选和 Virtuosity 原始 FLAC 位于 `authoring/audio_candidates/`；运行时仅使用原路径的 WAV 和现用 FluidR3 音效，署名与许可证继续随正式素材发布。
 
 ### 曲目音乐绑定规范
 
-每个曲目版本只维护一份正式歌曲文件。`RhythmSong.music` 必须通过外部资源引用绑定与该曲目所有谱面工程 `audio_file` 相同的文件；同目录的多个难度工程只保存歌曲文件名引用，不嵌入音频、不复制歌曲。这是作者约定，不新增一致性校验。编辑器通过“工程信息”的音乐下拉框更换歌曲；更换后须人工同步曲目资源的音乐和谱面路径。具体保存与发布规则见 [曲目与工程的音乐引用约定](authoring/README.md#曲目与工程的音乐引用约定)。
+每个曲目版本只维护一份正式歌曲文件，推荐保存在曲库 music/。PartyMusicSong.music 与工程 JSON 的 audio_file 应引用同一份音源；所有难度共享它，不嵌入音频或复制歌曲。工程 JSON 保存 res:// 音源路径，曲目资源绑定各难度 .tres，谱面资源再绑定 JSON。这是作者约定，不新增音源一致性检查。
 
-导出不会按工程数复制歌曲，相同路径只收集一次；可玩 PCK 不重复包含已转换音频的原文件。包内未被曲目资源引用的正式文件仍会收集，候选歌曲和副本应放到 `authoring/`。
+更换工程音乐后，作者须同步曲目资源的 music。保存现有 JSON 保持路径，改显示名不会破坏绑定；另存得到新 JSON 后，需要手动创建/调整谱面资源和歌曲绑定。包内未使用的正式文件仍会收集，候选素材应放 authoring/ 或由 export_ignore.txt 排除。

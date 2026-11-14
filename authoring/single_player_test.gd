@@ -97,10 +97,10 @@ func start_game() -> void:
 		if not chart.ok:
 			$Menu/Duration.text = chart.error
 			return
-		var entry: RhythmSongChart = RhythmSongChart.new()
+		var entry: PartyMusicChart = PartyMusicChart.new()
 		entry.difficulty = chart.data.difficulty
 		entry.chart_path = path
-		game.song = RhythmSong.new()
+		game.song = PartyMusicSong.new()
 		game.song.resource_name = str(chart.data.get("project_name", chart.data.title))
 		game.song.music = chart.audio
 		game.song.charts = [entry]
@@ -170,7 +170,7 @@ func _update_binding_text() -> void:
 func _build_sound_settings() -> void:
 	_preview_bgm = AudioStreamPlayer.new()
 	_preview_bgm.name = "BgmPreview"
-	_preview_bgm.stream = preload("../charts/hold_test/hold_test.wav")
+	_preview_bgm.stream = load("res://games/assets/gp_rhythm_original/music/hold_test.wav")
 	add_child(_preview_bgm)
 	_sound_dialog = ConfirmationDialog.new()
 	_sound_dialog.transparent_bg = true
@@ -294,7 +294,3 @@ func _save_sound_settings() -> void:
 		_sound_dialog.hide()
 	else:
 		_sound_status.text = "保存失败：" + error_string(result)
-
-
-
-

@@ -2,14 +2,22 @@
 extends RefCounted
 const Paths = preload("../rhythm_paths.gd")
 const Document = preload("chart_document.gd")
-var root: String = Paths.resolve("charts")
+var root: String = "res://games/assets"
 var charts: Array[Dictionary] = []
 var audios: Array[String] = []
 
 func scan() -> void:
 	charts.clear()
 	audios.clear()
-	_scan(root)
+	for folder: String in DirAccess.get_directories_at(root):
+		var package_root: String = root.path_join(folder)
+		var manifest_path: String = package_root.path_join("manifest.json")
+		if not FileAccess.file_exists(manifest_path):
+			continue
+		var manifest: Variant = JSON.parse_string(FileAccess.get_file_as_string(manifest_path))
+		if manifest is Dictionary and manifest.get("special_type") == "rhythm_library":
+			_scan(package_root.path_join("music"))
+			_scan(package_root.path_join("charts"))
 	charts.sort_custom(func(a: Dictionary,b: Dictionary) -> bool: return str(a.name).naturalnocasecmp_to(str(b.name))<0)
 	audios.sort()
 
@@ -85,9 +93,7 @@ func open_chart(path: String) -> Dictionary:
 	if str(data.get("project_name","")).is_empty():
 		data.project_name = path.get_file().get_basename()
 	var name: String = str(data.get("audio_file",""))
-	if name.is_empty() or name!=name.get_file() or name.contains("..") or name.contains(":") or name.contains("\\"):
-		return {"ok":false,"error":"音源须在谱面同目录"}
-	var audio_path: String = path.get_base_dir().path_join(name)
+	var audio_path: String = Document.Chart.audio_path_for(path, name)
 	var audio: AudioStream = load_audio(audio_path)
 	if audio == null:
 		return {"ok":false,"error":"无法读取 WAV / OGG 音源："+audio_path}
@@ -140,13 +146,20 @@ func save(document: Document, original: String, audio_path: String, expected: St
 			error = "请填写音乐名、音乐作者和难度"
 	if not error.is_empty():
 		return {"ok":false,"error":error}
-	var target: String = audio_path.get_base_dir().path_join(filename(str(document.data.project_name)))
+	var package_root: String = _package_root(audio_path)
+	if package_root.is_empty():
+		return {"ok":false,"error":"请先把音乐放入曲库资产包"}
+	var folder: String = original.get_base_dir() if not create else package_root.path_join("charts").path_join(audio_path.get_file().get_basename())
+	var directory_error: Error = DirAccess.make_dir_recursive_absolute(folder)
+	if directory_error != OK:
+		return {"ok":false,"error":error_string(directory_error)}
+	var target: String = folder.path_join(filename(str(document.data.project_name))) if create else original
 	if not create and revision(original)!=expected:
 		return {"ok":false,"error":"文件已被其他程序修改，请重新打开或另存为"}
 	if FileAccess.file_exists(target) and (create or target!=original):
 		return {"ok":false,"error":"同名工程已存在"}
 	var output: Dictionary = document.stored()
-	output.audio_file = audio_path.get_file()
+	output.audio_file = audio_path
 	var temporary: String = target.get_base_dir().path_join(".native_editor_%s.tmp" % Time.get_ticks_usec())
 	var file: FileAccess = FileAccess.open(temporary,FileAccess.WRITE)
 	if file == null:
@@ -175,7 +188,7 @@ func save(document: Document, original: String, audio_path: String, expected: St
 func recover(path: String, expected: String) -> Dictionary:
 	if revision(path)!=expected or expected.is_empty():
 		return {"ok":false,"error":"文件已变化，请重新打开"}
-	var folder: String = root.path_join(".editor_recovery").path_join("%s_%s" % [int(Time.get_unix_time_from_system()),Time.get_ticks_usec()])
+	var folder: String = _package_root(path).path_join("authoring/.editor_recovery").path_join("%s_%s" % [int(Time.get_unix_time_from_system()),Time.get_ticks_usec()])
 	var error: Error = DirAccess.make_dir_recursive_absolute(folder)
 	if error!=OK:
 		return {"ok":false,"error":"无法创建恢复目录："+error_string(error)}
@@ -183,10 +196,13 @@ func recover(path: String, expected: String) -> Dictionary:
 	error = DirAccess.rename_absolute(path,target)
 	return {"ok":error==OK,"path":target,"error":"无法移动到恢复目录："+error_string(error)}
 
-func import_audio(source: String) -> Dictionary:
+func import_audio(source: String, current_chart: String) -> Dictionary:
 	if source.get_extension().to_lower() not in ["wav","ogg"]:
 		return {"ok":false,"error":"支持 WAV / OGG"}
-	var folder: String = root.path_join(source.get_file().get_basename())
+	var package_root: String = _package_root(current_chart)
+	if package_root.is_empty():
+		return {"ok":false,"error":"请先在资产包中创建曲库及谱面"}
+	var folder: String = package_root.path_join("music")
 	var target: String = folder.path_join(source.get_file())
 	if FileAccess.file_exists(target):
 		if ProjectSettings.globalize_path(target).simplify_path()==source.simplify_path():
@@ -196,3 +212,13 @@ func import_audio(source: String) -> Dictionary:
 	if error==OK:
 		error = DirAccess.copy_absolute(source,target)
 	return {"ok":error==OK,"path":target,"error":"导入失败："+error_string(error)}
+
+
+
+static func _package_root(path: String) -> String:
+	var directory: String = path.get_base_dir()
+	while directory.begins_with("res://games/assets/"):
+		if FileAccess.file_exists(directory.path_join("manifest.json")):
+			return directory
+		directory = directory.get_base_dir()
+	return ""

@@ -1,0 +1,9 @@
+# Gameplay ships separately from library assets and local authoring history.
+authoring/
+charts/
+tmp/
+.*
+*~*
+*.tmp
+*.bak
+*.pending

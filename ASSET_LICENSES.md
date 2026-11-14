@@ -12,7 +12,7 @@ CC0 仅适用于声明人有权处分的原创部分；第三方字体、采样�
 
 | 资产名称 | 作者 | 来源 | 许可协议 |
 | --- | --- | --- | --- |
-| `charts/hold_test/hold_test.wav` | GPT（代码生成） | 本项目制作；总登记 G28 | CC0-1.0 |
+| `games/assets/gp_rhythm_original/music/hold_test.wav`（已迁出） | GPT（代码生成） | 本项目制作；总登记 G28；许可随原创曲库保留 | CC0-1.0 |
 | `ui/icons/checked.svg` | GPT（代码生成） | 本项目制作；总登记 G28 | CC0-1.0 |
 | `ui/icons/chevron_down.svg` | GPT（代码生成） | 本项目制作；总登记 G28 | CC0-1.0 |
 | `ui/icons/chevron_up.svg` | GPT（代码生成） | 本项目制作；总登记 G28 | CC0-1.0 |

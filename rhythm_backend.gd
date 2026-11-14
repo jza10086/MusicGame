@@ -12,15 +12,9 @@ const Scoring = preload("rhythm_scoring.gd")
 var scoring: Scoring = Scoring.new()
 const Synth = preload("rhythm_audio.gd")
 const Chart = preload("rhythm_chart.gd")
-const DEFAULT_CHART: String = "charts/hold_test/chart.json"
+const DEFAULT_CHART: String = "res://games/assets/gp_rhythm_original/charts/hold_test/chart.json"
 const BGM_GAIN: float = 0.4
-const DEFAULT_CHART_ORDER: Array[String] = [DEFAULT_CHART,
-	"charts/bad_apple/Bad_Apple_4K_Normal.json",
-	"charts/bad_apple/chart.json",
-	"charts/bad_apple/normal.json",
-	"charts/bad_apple/hard.json",
-	"charts/bad_apple/authored.json",
-	"charts/bad_apple/authored_easy.json"]
+const DEFAULT_CHART_ORDER: Array[String] = [DEFAULT_CHART]
 var chart_paths: Array[String] = []
 var chart_names: Array[String] = []
 const DEFAULTS: Dictionary = Preferences.DEFAULTS
@@ -121,7 +115,7 @@ func _start(chart: Dictionary, skip_intro: bool = false, lead_in_seconds: float 
 	_note_subs.clear()
 	var stream: AudioStream
 	var chart_start: float = 0.0
-	var base_score: int = RhythmSongChart.DEFAULT_BASE_SCORE
+	var base_score: int = PartyMusicChart.DEFAULT_BASE_SCORE
 	_note_lanes.clear()
 	_note_ends.clear()
 	chart_sounds.clear()

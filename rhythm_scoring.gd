@@ -5,7 +5,7 @@ extends RefCounted
 const HOLD_BONUS: float = 0.5
 const QUALITY: Dictionary[String, float] = {"PERFECT": 1.0, "GOOD": 0.65, "OK": 0.30, "MISS": 0.0}
 
-var base_score: int = RhythmSongChart.DEFAULT_BASE_SCORE
+var base_score: int = PartyMusicChart.DEFAULT_BASE_SCORE
 var earned_weight: float = 0.0
 var judged_weight: float = 0.0
 var _included: Array[bool] = []

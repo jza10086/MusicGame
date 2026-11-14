@@ -2,8 +2,8 @@
 extends Control
 const Stage = preload("../music_game.gd")
 const STAGE_SCENE: PackedScene = preload("../music_game.tscn")
-var song: AudioStream = preload("../charts/hold_test/hold_test.wav")
-var audio_id: String = "hold_test/hold_test.wav"
+var song: AudioStream = load("res://games/assets/gp_rhythm_original/music/hold_test.wav")
+var audio_id: String = "res://games/assets/gp_rhythm_original/music/hold_test.wav"
 var game: Stage
 var current_chart: Dictionary = {}
 var chart_revision: int = -1
@@ -46,14 +46,14 @@ func _show_stage() -> void:
 	game._auto_active = true
 
 ## Resolve packaged chart audio safely; data updates keep the same stage instance.
-func update_chart(data: Dictionary, revision: int, next_audio_id: String = "hold_test/hold_test.wav") -> Dictionary:
+func update_chart(data: Dictionary, revision: int, next_audio_id: String = "res://games/assets/gp_rhythm_original/music/hold_test.wav") -> Dictionary:
 	if revision < chart_revision:
 		return {"ok": false, "error": "忽略过期的谱面修改"}
-	if next_audio_id.is_absolute_path() or next_audio_id.contains("..") or next_audio_id.contains(":") or next_audio_id.contains("\\") or next_audio_id.get_file() != str(data.get("audio_file", "")):
+	if not next_audio_id.begins_with("res://") or next_audio_id != next_audio_id.simplify_path():
 		return {"ok": false, "error": "预览音源路径无效"}
 	var next_song: AudioStream = song
 	if next_audio_id != audio_id:
-		var path: String = Stage.Backend.Paths.resolve("charts/" + next_audio_id)
+		var path: String = next_audio_id
 		next_song = Stage.Backend.Chart.load_audio(path)
 		if next_song == null:
 			return {"ok": false, "error": "预览音源无法加载"}
@@ -118,7 +118,7 @@ func _rebuild_at(audio_time: float, seeking: bool = false) -> void:
 	backend._combo = 0
 	backend._best_combo = 0
 	backend._total_units = 0
-	backend.scoring.reset(backend._notes, backend._note_ends, RhythmSongChart.DEFAULT_BASE_SCORE, judged_time, range_end)
+	backend.scoring.reset(backend._notes, backend._note_ends, PartyMusicChart.DEFAULT_BASE_SCORE, judged_time, range_end)
 	backend._raw_errors.clear()
 	game._auto_next = count
 	game._auto_release_at.fill(-INF)

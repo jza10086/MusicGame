@@ -14,14 +14,14 @@ static func read_chart(path: String, music: AudioStream = null) -> Dictionary:
 	if not report.ok:
 		return report
 	var data: Dictionary = parsed
-	var audio_path: String = path.get_base_dir().path_join(data.audio_file)
+	var audio_path: String = audio_path_for(path, data.audio_file)
 	var audio: AudioStream = music if music != null else load_audio(audio_path)
 	if audio == null:
 		return {"ok": false, "error": "无法加载谱面音源：" + audio_path}
 	var notes: Array[float] = report.notes
 	if audio.get_length() <= float(report.ends.max()) + 0.15:
 		return {"ok": false, "error": "音源长度不足，无法覆盖最后的音符判定窗口"}
-	return {"ok": true, "notes": notes, "lanes": report.lanes, "ends": report.ends, "subs": report.subs, "sounds": report.sounds, "audio": audio, "duration": audio.get_length(), "base_score": RhythmSongChart.DEFAULT_BASE_SCORE, "data": data}
+	return {"ok": true, "notes": notes, "lanes": report.lanes, "ends": report.ends, "subs": report.subs, "sounds": report.sounds, "audio": audio, "duration": audio.get_length(), "base_score": PartyMusicChart.DEFAULT_BASE_SCORE, "data": data}
 
 ## Load imported assets or newly copied authoring audio without requiring an editor import.
 static func load_audio(path: String) -> AudioStream:
@@ -44,8 +44,8 @@ static func validate(value: Variant) -> Dictionary:
 		if not data.get(key) is String or String(data[key]).is_empty():
 			return {"ok": false, "error": "缺少谱面文本字段：" + key}
 	var file: String = data.audio_file
-	if file != file.get_file() or file.contains(":") or file.contains("..") or file.contains("\\") or file.get_extension().to_lower() not in ["ogg", "wav"]:
-		return {"ok": false, "error": "音源必须是谱面目录内的 OGG / WAV 文件"}
+	if (not file.begins_with("res://") and file != file.get_file()) or file != file.simplify_path() or file.contains("\\") or file.get_extension().to_lower() not in ["ogg", "wav"]:
+		return {"ok": false, "error": "音源必须是 OGG / WAV 文件名或 res:// 资源路径"}
 	var raw: Variant = data.get("notes_ms")
 	if not raw is Array or raw.is_empty() or raw.size() > 100000:
 		return {"ok": false, "error": "音符数组为空或超过限制"}
@@ -137,24 +137,60 @@ static func sound_key(seconds: float, lane: int) -> String:
 
 
 
-## Discover only playable current-format charts; analysis JSON and empty drafts stay out.
-static func discover_paths(directory: String = "charts") -> Array[String]:
-	if not directory.is_absolute_path():
-		directory = Paths.resolve(directory)
+## Authoring-only JSON discovery. Runtime song selection uses manifest resource lists.
+static func discover_paths() -> Array[String]:
 	var result: Array[String] = []
-	var folder: DirAccess = DirAccess.open(directory)
-	if folder == null:
-		return result
-	for child: String in folder.get_directories():
-		if not child.begins_with("."):
-			result.append_array(discover_paths(directory.path_join(child)))
-	for file: String in folder.get_files():
-		if file.get_extension().to_lower() != "json":
+	for folder: String in DirAccess.get_directories_at("res://games/assets"):
+		var root: String = "res://games/assets/" + folder
+		var manifest_path: String = root.path_join("manifest.json")
+		if not FileAccess.file_exists(manifest_path):
 			continue
-		var path: String = directory.path_join(file)
-		var value: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
-		if validate(value).ok and ResourceLoader.exists(directory.path_join(str(value.audio_file))):
-			result.append(path)
+		var manifest: Variant = JSON.parse_string(FileAccess.get_file_as_string(manifest_path))
+		if manifest is Dictionary and manifest.get("special_type") == "rhythm_library":
+			_discover_charts(root.path_join("charts"), result)
 	result.sort()
 	return result
 
+static func _discover_charts(directory: String, result: Array[String]) -> void:
+	if not DirAccess.dir_exists_absolute(directory):
+		return
+	for folder: String in DirAccess.get_directories_at(directory):
+		if not folder.begins_with("."):
+			_discover_charts(directory.path_join(folder), result)
+	for file: String in DirAccess.get_files_at(directory):
+		if file.ends_with(".json"):
+			var path: String = directory.path_join(file)
+			var value: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+			if validate(value).ok:
+				result.append(path)
+
+static func audio_path_for(chart_path: String, audio: String) -> String:
+	return audio if audio.begins_with("res://") else chart_path.get_base_dir().path_join(audio)
+
+## Interpret a shared music resource only after this song is selected.
+static func read_song(song: PartyMusicSong, difficulty: String) -> Dictionary:
+	if song.music == null:
+		return {"ok": false, "error": "曲目未绑定音乐"}
+	if song.charts.is_empty():
+		return {"ok": false, "error": "曲目没有难度谱面"}
+	var selected: PartyMusicChart
+	var names: Array[String] = []
+	for entry: PartyMusicChart in song.charts:
+		if entry == null or entry.difficulty.strip_edges().is_empty() or entry.chart_path.is_empty():
+			return {"ok": false, "error": "曲目存在未填写的难度或谱面"}
+		if entry.base_score <= 0:
+			return {"ok": false, "error": "曲目基准分数必须大于 0：" + entry.difficulty}
+		if names.has(entry.difficulty):
+			return {"ok": false, "error": "曲目难度重复：" + entry.difficulty}
+		names.append(entry.difficulty)
+		if entry.difficulty == difficulty:
+			selected = entry
+	if selected == null:
+		return {"ok": false, "error": "曲目不包含难度：" + difficulty}
+	var chart: Dictionary = read_chart(selected.chart_path, song.music)
+	if chart.ok:
+		chart.data.difficulty = selected.difficulty
+		chart.base_score = selected.base_score
+		if not song.resource_name.is_empty():
+			chart.data.title = song.resource_name
+	return chart
