@@ -191,7 +191,6 @@ func _build_ui() -> void:
 	_button(files,"刷新库",refresh_library)
 	_button(files,"新建",func() -> void: _guard(func() -> void: show_metadata("new")))
 	_button(files,"另存为",func() -> void: show_metadata("save_as"))
-	_button(files,"更换音乐",func() -> void: show_metadata("audio"))
 	_button(files,"导入音乐",func() -> void: _file_dialog.popup_centered_ratio(0.75))
 	_button(files,"删除工程",delete_chart)
 	_save_button = _button(files,"保存",save)
@@ -673,13 +672,13 @@ func show_metadata(mode: String) -> void:
 	if document==null and mode!="new": return
 	pause()
 	_metadata_mode = mode
-	_metadata_dialog.title = {"new":"新建工程","edit":"工程信息","save_as":"另存为","audio":"更换音乐"}[mode]
+	_metadata_dialog.title = {"new":"新建工程","edit":"工程信息","save_as":"另存为"}[mode]
 	_metadata_audio.clear()
 	for audio: String in library.audios:
 		_metadata_audio.add_item(audio.trim_prefix(library.root+"/"))
 		_metadata_audio.set_item_metadata(_metadata_audio.item_count-1,audio)
 		if audio==audio_path: _metadata_audio.select(_metadata_audio.item_count-1)
-	_metadata_audio.disabled = mode not in ["new","audio"]
+	_metadata_audio.disabled = mode=="save_as"
 	_metadata_keys.disabled = mode!="new"
 	_metadata_keys.select(1 if document!=null and document.key_count()==4 else 0)
 	for key: String in _metadata_fields:
