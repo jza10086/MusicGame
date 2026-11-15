@@ -7,7 +7,7 @@ path="res://.godot/imported/flat_ride.wav-dc69fbb4fd3afd0ca46b1797c84b3af4.sampl
 
 [deps]
 
-source_file="res://games/minigame/gp_rhythm_game/assets/audio_candidates/virtuosity/flat_ride.wav"
+source_file="res://games/minigame/GP_rhythm_game/assets/audio_candidates/virtuosity/flat_ride.wav"
 dest_files=["res://.godot/imported/flat_ride.wav-dc69fbb4fd3afd0ca46b1797c84b3af4.sample"]
 
 [params]

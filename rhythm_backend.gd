@@ -12,7 +12,7 @@ const Scoring = preload("rhythm_scoring.gd")
 var scoring: Scoring = Scoring.new()
 const Synth = preload("rhythm_audio.gd")
 const Chart = preload("rhythm_chart.gd")
-const DEFAULT_CHART: String = "res://games/assets/gp_rhythm_original/charts/hold_test/chart.json"
+const DEFAULT_CHART: String = "res://games/assets/GP_rhythm_original/charts/hold_test/chart.json"
 const BGM_GAIN: float = 0.4
 const DEFAULT_CHART_ORDER: Array[String] = [DEFAULT_CHART]
 var chart_paths: Array[String] = []
@@ -428,7 +428,7 @@ func _load_settings() -> Error:
 	return apply_preferences(parser.data.local)
 
 static func preview_settings_path() -> String:
-	return PartyInput.installation_directory().path_join("minigame/gp_rhythm_game/config/authoring.json")
+	return PartyInput.installation_directory().path_join("minigame/GP_rhythm_game/config/authoring.json")
 
 func apply_preferences(values: Dictionary) -> Error:
 	var next: Dictionary = DEFAULTS.duplicate(true)

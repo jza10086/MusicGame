@@ -10,7 +10,7 @@ metadata={
 
 [deps]
 
-source_file="res://games/minigame/gp_rhythm_game/ui/icons/radio_checked.svg"
+source_file="res://games/minigame/GP_rhythm_game/ui/icons/radio_checked.svg"
 dest_files=["res://.godot/imported/radio_checked.svg-a039fbd930419e118b0e0d6ad39418aa.ctex"]
 
 [params]

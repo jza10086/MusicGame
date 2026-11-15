@@ -1,6 +1,6 @@
 # 音游敲击音效候选与来源
 
-2026-10-26：新增 191 个离线渲染的 FluidR3 GM 器乐 WAV。来源、许可、响度和渲染参数统一维护在 [包内说明](gp_rhythm_game_assets_audio_candidates_fluid_r3_sources.md)，[逐项目录](gp_rhythm_game_assets_audio_candidates_fluid_r3_catalog.md)可直接试听。现有鼓、镲保留，总选择数为 204。
+2026-10-26：新增 191 个离线渲染的 FluidR3 GM 器乐 WAV。来源、许可、响度和渲染参数统一维护在 [包内说明](GP_rhythm_game_assets_audio_candidates_fluid_r3_sources.md)，[逐项目录](GP_rhythm_game_assets_audio_candidates_fluid_r3_catalog.md)可直接试听。现有鼓、镲保留，总选择数为 204。
 
 整理日期：2026-10-22。首批 8 个候选作者为 Kenney；新增架子鼓采样来自 Versilian Studios 与 Karoryfer Samples。当前默认仍为自行合成的敲击声；12 个架子鼓候选已接入音效设置，8 个 Kenney 候选已从选择与播放目录移除，仅保留原始素材与来源记录，可分别用于成功敲击和空敲击。原始素材未剪辑、未归一化。
 
@@ -12,7 +12,7 @@
 | impact | [Impact Sounds 1.0](https://kenney.nl/assets/impact-sounds) | CC0 | `authoring/audio_candidates/impact/LICENSE.txt` |
 | ui | [UI Audio 1.0](https://kenney.nl/assets/ui-audio) | CC0 | `authoring/audio_candidates/ui/LICENSE.txt` |
 
-上述本地路径相对音游目录 `games/minigame/gp_rhythm_game/`。三包官网及压缩包许可证均已核对；原文允许个人、教育和商业项目使用，署名非强制，本项目仍保留作者与来源。许可原文：[CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/)。
+上述本地路径相对音游目录 `games/minigame/GP_rhythm_game/`。三包官网及压缩包许可证均已核对；原文允许个人、教育和商业项目使用，署名非强制，本项目仍保留作者与来源。许可原文：[CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/)。
 
 ## 候选文件
 
@@ -37,7 +37,7 @@
 
 ## 游戏内设置
 
-当前选项及保存行为见 [霓虹节拍说明](gp_rhythm_game_guide.md)。本页只维护候选素材的来源和试听限制。
+当前选项及保存行为见 [霓虹节拍说明](GP_rhythm_game_guide.md)。本页只维护候选素材的来源和试听限制。
 
 ## 真实架子鼓单次采样（Virtuosity Drums）
 

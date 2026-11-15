@@ -7,7 +7,7 @@ path="res://.godot/imported/kick.wav-55359faba33e4d26d7ebb7b16cf000c0.sample"
 
 [deps]
 
-source_file="res://games/minigame/gp_rhythm_game/assets/audio_candidates/virtuosity/kick.wav"
+source_file="res://games/minigame/GP_rhythm_game/assets/audio_candidates/virtuosity/kick.wav"
 dest_files=["res://.godot/imported/kick.wav-55359faba33e4d26d7ebb7b16cf000c0.sample"]
 
 [params]

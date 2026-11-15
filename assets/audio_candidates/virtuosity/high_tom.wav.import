@@ -7,7 +7,7 @@ path="res://.godot/imported/high_tom.wav-4dc14562aa8c3d9db6584d0cffa04fc5.sample
 
 [deps]
 
-source_file="res://games/minigame/gp_rhythm_game/assets/audio_candidates/virtuosity/high_tom.wav"
+source_file="res://games/minigame/GP_rhythm_game/assets/audio_candidates/virtuosity/high_tom.wav"
 dest_files=["res://.godot/imported/high_tom.wav-4dc14562aa8c3d9db6584d0cffa04fc5.sample"]
 
 [params]

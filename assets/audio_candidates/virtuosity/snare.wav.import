@@ -7,7 +7,7 @@ path="res://.godot/imported/snare.wav-308a307b43422260468107d764c0fb5b.sample"
 
 [deps]
 
-source_file="res://games/minigame/gp_rhythm_game/assets/audio_candidates/virtuosity/snare.wav"
+source_file="res://games/minigame/GP_rhythm_game/assets/audio_candidates/virtuosity/snare.wav"
 dest_files=["res://.godot/imported/snare.wav-308a307b43422260468107d764c0fb5b.sample"]
 
 [params]

@@ -7,7 +7,7 @@ path="res://.godot/imported/impactWood_light_000.ogg-fdd5466a7aae9e156128efa71a4
 
 [deps]
 
-source_file="res://games/minigame/gp_rhythm_game/authoring/audio_candidates/impact/impactWood_light_000.ogg"
+source_file="res://games/minigame/GP_rhythm_game/authoring/audio_candidates/impact/impactWood_light_000.ogg"
 dest_files=["res://.godot/imported/impactWood_light_000.ogg-fdd5466a7aae9e156128efa71a4bd196.oggvorbisstr"]
 
 [params]

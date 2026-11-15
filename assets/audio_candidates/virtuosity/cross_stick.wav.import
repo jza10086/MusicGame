@@ -7,7 +7,7 @@ path="res://.godot/imported/cross_stick.wav-7655b51e9bcaf8d8450874a1d122c89a.sam
 
 [deps]
 
-source_file="res://games/minigame/gp_rhythm_game/assets/audio_candidates/virtuosity/cross_stick.wav"
+source_file="res://games/minigame/GP_rhythm_game/assets/audio_candidates/virtuosity/cross_stick.wav"
 dest_files=["res://.godot/imported/cross_stick.wav-7655b51e9bcaf8d8450874a1d122c89a.sample"]
 
 [params]

@@ -10,7 +10,7 @@ metadata={
 
 [deps]
 
-source_file="res://games/minigame/gp_rhythm_game/ui/icons/slider_grabber.svg"
+source_file="res://games/minigame/GP_rhythm_game/ui/icons/slider_grabber.svg"
 dest_files=["res://.godot/imported/slider_grabber.svg-d2d21a9b3db72b2cb78ec6a4f1778c3a.ctex"]
 
 [params]

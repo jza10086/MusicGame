@@ -99,3 +99,6 @@ msgstr "本轮排名"
 
 msgid "round.menu_hint"
 msgstr "Esc：菜单"
+
+msgid "package.name"
+msgstr "霓虹节拍"

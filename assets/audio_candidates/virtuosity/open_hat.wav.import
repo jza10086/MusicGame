@@ -7,7 +7,7 @@ path="res://.godot/imported/open_hat.wav-62333a781f65beac651b687cae54cf86.sample
 
 [deps]
 
-source_file="res://games/minigame/gp_rhythm_game/assets/audio_candidates/virtuosity/open_hat.wav"
+source_file="res://games/minigame/GP_rhythm_game/assets/audio_candidates/virtuosity/open_hat.wav"
 dest_files=["res://.godot/imported/open_hat.wav-62333a781f65beac651b687cae54cf86.sample"]
 
 [params]

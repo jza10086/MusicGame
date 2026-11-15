@@ -1,4 +1,4 @@
-# gp_rhythm_game 许可范围
+# GP_rhythm_game 许可范围
 
 声明日期：2026-11-08；声明人：项目所有者 jza10086。依据项目所有者本次明确授权。
 
@@ -12,7 +12,7 @@ CC0 仅适用于声明人有权处分的原创部分；第三方字体、采样�
 
 | 资产名称 | 作者 | 来源 | 许可协议 |
 | --- | --- | --- | --- |
-| `games/assets/gp_rhythm_original/music/hold_test.wav`（已迁出） | GPT（代码生成） | 本项目制作；总登记 G28；许可随原创曲库保留 | CC0-1.0 |
+| `games/assets/GP_rhythm_original/music/hold_test.wav`（已迁出） | GPT（代码生成） | 本项目制作；总登记 G28；许可随原创曲库保留 | CC0-1.0 |
 | `ui/icons/checked.svg` | GPT（代码生成） | 本项目制作；总登记 G28 | CC0-1.0 |
 | `ui/icons/chevron_down.svg` | GPT（代码生成） | 本项目制作；总登记 G28 | CC0-1.0 |
 | `ui/icons/chevron_up.svg` | GPT（代码生成） | 本项目制作；总登记 G28 | CC0-1.0 |

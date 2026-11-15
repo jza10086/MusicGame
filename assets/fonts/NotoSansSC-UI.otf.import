@@ -7,7 +7,7 @@ path="res://.godot/imported/NotoSansSC-UI.otf-c8c86cd7b029de0c0c82e5cbe88fbadf.f
 
 [deps]
 
-source_file="res://games/minigame/gp_rhythm_game/assets/fonts/NotoSansSC-UI.otf"
+source_file="res://games/minigame/GP_rhythm_game/assets/fonts/NotoSansSC-UI.otf"
 dest_files=["res://.godot/imported/NotoSansSC-UI.otf-c8c86cd7b029de0c0c82e5cbe88fbadf.fontdata"]
 
 [params]

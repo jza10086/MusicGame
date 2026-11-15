@@ -1,10 +1,10 @@
 ## Standard original-protocol round. Each participant judges against their own audio clock.
-extends "res://games/minigame/gp_rhythm_game/music_game.gd"
+extends "res://games/minigame/GP_rhythm_game/music_game.gd"
 
 const REPORT_INTERVAL: float = 0.4
 const FINISH_GRACE_SECONDS: float = 20.0
-const Pages = preload("res://games/protocols/godot_party_default_protocol/round_pages.gd")
-const RandomPool = preload("res://games/protocols/godot_party_default_protocol/random/least_played_pool.gd")
+const Pages = preload("res://games/protocols/GP_default_protocol/round_pages.gd")
+const RandomPool = preload("res://games/protocols/GP_default_protocol/random/least_played_pool.gd")
 const SONG_TOPIC: StringName = &"rhythm/song"
 const SONG_REQUEST_TOPIC: StringName = &"rhythm/song_request"
 var _songs: Dictionary[String, Dictionary] = {}

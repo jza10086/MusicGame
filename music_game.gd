@@ -3,7 +3,7 @@ extends Control
 ## Only the embedded authoring preview may continue when its canvas loses focus.
 var editor_preview: bool = false
 var preview_end: float = INF
-const Backend = preload("res://games/minigame/gp_rhythm_game/rhythm_backend.gd")
+const Backend = preload("res://games/minigame/GP_rhythm_game/rhythm_backend.gd")
 const ACCENT: Color = Color("73f5eb")
 var backend: Backend
 @onready var skin: Control = $Backdrop/NeonStage

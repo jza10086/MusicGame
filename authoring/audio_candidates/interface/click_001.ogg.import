@@ -7,7 +7,7 @@ path="res://.godot/imported/click_001.ogg-3da9d14f220d785eeb157cdf76b315f7.oggvo
 
 [deps]
 
-source_file="res://games/minigame/gp_rhythm_game/authoring/audio_candidates/interface/click_001.ogg"
+source_file="res://games/minigame/GP_rhythm_game/authoring/audio_candidates/interface/click_001.ogg"
 dest_files=["res://.godot/imported/click_001.ogg-3da9d14f220d785eeb157cdf76b315f7.oggvorbisstr"]
 
 [params]

@@ -18,7 +18,7 @@
 
 这里提供代表性声音，不是完整的键盘音域或多力度采样。名称中的 C4 按 MIDI 60 定义；贝斯等使用 C3，钟琴等使用较高音区。标为“慢起音”的铺底、合唱、效果音更适合长按/段落色彩，不建议用作需要清晰瞬态的主要敲击反馈。弓弦、吹管也保留乐器本身的起音包络，未添加人工点击声。各音色的听感仍需结合 BGM 人工选用。
 
-逐项 WAV 链接见 [CATALOG.md](gp_rhythm_game_assets_audio_candidates_fluid_r3_catalog.md)。[samples.json](../assets/audio_candidates/fluid_r3/samples.json) 保存每个文件的 bank、零起算 program、MIDI 音高、力度、note-on 时长、裁切、增益及测量结果，便于未来逐音符指定音效。
+逐项 WAV 链接见 [CATALOG.md](GP_rhythm_game_assets_audio_candidates_fluid_r3_catalog.md)。[samples.json](../assets/audio_candidates/fluid_r3/samples.json) 保存每个文件的 bank、零起算 program、MIDI 音高、力度、note-on 时长、裁切、增益及测量结果，便于未来逐音符指定音效。
 
 ## 渲染处理
 
@@ -36,7 +36,7 @@
 在宿主项目根目录执行（包可移动，按实际相对路径修改命令前缀）：
 
 ```powershell
-python games/minigame/gp_rhythm_game/authoring/render_instruments.py --soundfont tmp/rhythm_instruments/FluidR3_GM.sf2 --tsf-header tmp/rhythm_instruments/tsf.h --work tmp/rhythm_instruments/render --catalog-output tmp/rhythm_instruments/rhythm_audio.gd
+python games/minigame/GP_rhythm_game/authoring/render_instruments.py --soundfont tmp/rhythm_instruments/FluidR3_GM.sf2 --tsf-header tmp/rhythm_instruments/tsf.h --work tmp/rhythm_instruments/render --catalog-output tmp/rhythm_instruments/rhythm_audio.gd
 ```
 
 脚本生成本目录 WAV、测量清单和目录，另生成待审阅的 `rhythm_audio.gd` 候选，包含原有音效及新增条目。将候选应用到包内同名脚本后刷新 Godot 资源。重新运行原生编辑器或游戏即可使用；无需修改判定或添加运行时插件。

@@ -2,9 +2,9 @@
 
 素材文件名与未展开的相对路径以包内 `assets/audio_candidates/`为基准。
 
-2026-10-26：新增 [FluidR3 代表器乐 WAV](gp_rhythm_game_assets_audio_candidates_fluid_r3_sources.md)，191 个候选覆盖键盘、吉他、贝斯、弦乐、铜管、木管、民族乐器、合成器及小打击，部分乐器提供多个代表音区。已接入五类敲击音效的选择、试听、保存与 Web 预览；完整列表见 [器乐目录](gp_rhythm_game_assets_audio_candidates_fluid_r3_catalog.md)。新 WAV 已做响度处理，以下“原始素材未归一化”的描述只针对旧候选素材。
+2026-10-26：新增 [FluidR3 代表器乐 WAV](GP_rhythm_game_assets_audio_candidates_fluid_r3_sources.md)，191 个候选覆盖键盘、吉他、贝斯、弦乐、铜管、木管、民族乐器、合成器及小打击，部分乐器提供多个代表音区。已接入五类敲击音效的选择、试听、保存与 Web 预览；完整列表见 [器乐目录](GP_rhythm_game_assets_audio_candidates_fluid_r3_catalog.md)。新 WAV 已做响度处理，以下“原始素材未归一化”的描述只针对旧候选素材。
 
-2026-10-26：新增 [FluidR3 代表器乐 WAV](gp_rhythm_game_assets_audio_candidates_fluid_r3_sources.md)，191 个候选覆盖键盘、吉他、贝斯、弦乐、铜管、木管、民族乐器、合成器及小打击，部分乐器提供多个代表音区。已接入五类敲击音效的选择、试听、保存与 Web 预览；完整列表见 [器乐目录](gp_rhythm_game_assets_audio_candidates_fluid_r3_catalog.md)。新 WAV 已做响度处理，以下“原始素材未归一化”的描述只针对旧候选素材。
+2026-10-26：新增 [FluidR3 代表器乐 WAV](GP_rhythm_game_assets_audio_candidates_fluid_r3_sources.md)，191 个候选覆盖键盘、吉他、贝斯、弦乐、铜管、木管、民族乐器、合成器及小打击，部分乐器提供多个代表音区。已接入五类敲击音效的选择、试听、保存与 Web 预览；完整列表见 [器乐目录](GP_rhythm_game_assets_audio_candidates_fluid_r3_catalog.md)。新 WAV 已做响度处理，以下“原始素材未归一化”的描述只针对旧候选素材。
 
 整理日期：2026-10-22。首批 8 个候选作者为 Kenney；新增架子鼓采样来自 Versilian Studios 与 Karoryfer Samples。当前默认仍为自行合成的敲击声；12 个架子鼓候选已接入音效设置，8 个 Kenney 候选已从选择与播放目录移除，仅保留原始素材与来源记录，可分别用于成功敲击和空敲击。原始素材未剪辑、未归一化。
 

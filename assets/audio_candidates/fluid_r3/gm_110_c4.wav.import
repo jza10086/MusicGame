@@ -7,7 +7,7 @@ path="res://.godot/imported/gm_110_c4.wav-caca2b1b4cc1a840e73244793dbabd18.sampl
 
 [deps]
 
-source_file="res://games/minigame/gp_rhythm_game/assets/audio_candidates/fluid_r3/gm_110_c4.wav"
+source_file="res://games/minigame/GP_rhythm_game/assets/audio_candidates/fluid_r3/gm_110_c4.wav"
 dest_files=["res://.godot/imported/gm_110_c4.wav-caca2b1b4cc1a840e73244793dbabd18.sample"]
 
 [params]

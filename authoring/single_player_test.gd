@@ -170,7 +170,7 @@ func _update_binding_text() -> void:
 func _build_sound_settings() -> void:
 	_preview_bgm = AudioStreamPlayer.new()
 	_preview_bgm.name = "BgmPreview"
-	_preview_bgm.stream = load("res://games/assets/gp_rhythm_original/music/hold_test.wav")
+	_preview_bgm.stream = load("res://games/assets/GP_rhythm_original/music/hold_test.wav")
 	add_child(_preview_bgm)
 	_sound_dialog = ConfirmationDialog.new()
 	_sound_dialog.transparent_bg = true
