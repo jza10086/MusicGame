@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://coysskd4f3541"
-path="res://.godot/imported/crash.wav-c39dd8e3b36eddf3fc5882417ee293d9.sample"
+path="res://.godot/imported/crash.wav-df46b550408e418b40434d9c0de2f3b0.sample"
 
 [deps]
 
 source_file="res://games/minigame/GP_rhythm_game/assets/audio_candidates/virtuosity/crash.wav"
-dest_files=["res://.godot/imported/crash.wav-c39dd8e3b36eddf3fc5882417ee293d9.sample"]
+dest_files=["res://.godot/imported/crash.wav-df46b550408e418b40434d9c0de2f3b0.sample"]
 
 [params]
 

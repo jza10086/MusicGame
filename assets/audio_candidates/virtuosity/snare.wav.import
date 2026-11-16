@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://bxr8m2j8x31xc"
-path="res://.godot/imported/snare.wav-308a307b43422260468107d764c0fb5b.sample"
+path="res://.godot/imported/snare.wav-ee008a42afcda51d098b453ee1c16f29.sample"
 
 [deps]
 
 source_file="res://games/minigame/GP_rhythm_game/assets/audio_candidates/virtuosity/snare.wav"
-dest_files=["res://.godot/imported/snare.wav-308a307b43422260468107d764c0fb5b.sample"]
+dest_files=["res://.godot/imported/snare.wav-ee008a42afcda51d098b453ee1c16f29.sample"]
 
 [params]
 

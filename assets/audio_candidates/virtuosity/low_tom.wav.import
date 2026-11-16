@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://cskjcv6nlo35l"
-path="res://.godot/imported/low_tom.wav-881bc1ce6d7f45a93c6771b803ccc6c4.sample"
+path="res://.godot/imported/low_tom.wav-ac980b4d86e221bceff20aff8ed99e2f.sample"
 
 [deps]
 
 source_file="res://games/minigame/GP_rhythm_game/assets/audio_candidates/virtuosity/low_tom.wav"
-dest_files=["res://.godot/imported/low_tom.wav-881bc1ce6d7f45a93c6771b803ccc6c4.sample"]
+dest_files=["res://.godot/imported/low_tom.wav-ac980b4d86e221bceff20aff8ed99e2f.sample"]
 
 [params]
 

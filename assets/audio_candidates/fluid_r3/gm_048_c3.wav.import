@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://di0chhyf7ec2o"
-path="res://.godot/imported/gm_048_c3.wav-a96c68c7ea3021be857917271370b2cf.sample"
+path="res://.godot/imported/gm_048_c3.wav-3a0e135f1e8937c601f909dc3ce219e0.sample"
 
 [deps]
 
 source_file="res://games/minigame/GP_rhythm_game/assets/audio_candidates/fluid_r3/gm_048_c3.wav"
-dest_files=["res://.godot/imported/gm_048_c3.wav-a96c68c7ea3021be857917271370b2cf.sample"]
+dest_files=["res://.godot/imported/gm_048_c3.wav-3a0e135f1e8937c601f909dc3ce219e0.sample"]
 
 [params]
 

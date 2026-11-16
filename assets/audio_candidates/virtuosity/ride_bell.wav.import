@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://jp31qv8yv0kv"
-path="res://.godot/imported/ride_bell.wav-cf9ec7e05628a589baf8b72d027aa720.sample"
+path="res://.godot/imported/ride_bell.wav-7d341d79f3df198a827950d89a49b7cc.sample"
 
 [deps]
 
 source_file="res://games/minigame/GP_rhythm_game/assets/audio_candidates/virtuosity/ride_bell.wav"
-dest_files=["res://.godot/imported/ride_bell.wav-cf9ec7e05628a589baf8b72d027aa720.sample"]
+dest_files=["res://.godot/imported/ride_bell.wav-7d341d79f3df198a827950d89a49b7cc.sample"]
 
 [params]
 

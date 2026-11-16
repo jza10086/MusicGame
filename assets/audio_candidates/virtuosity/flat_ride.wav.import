@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://b0hnf12y4w71p"
-path="res://.godot/imported/flat_ride.wav-dc69fbb4fd3afd0ca46b1797c84b3af4.sample"
+path="res://.godot/imported/flat_ride.wav-9bb4d6cf9775cbda143ce7c28a91cb61.sample"
 
 [deps]
 
 source_file="res://games/minigame/GP_rhythm_game/assets/audio_candidates/virtuosity/flat_ride.wav"
-dest_files=["res://.godot/imported/flat_ride.wav-dc69fbb4fd3afd0ca46b1797c84b3af4.sample"]
+dest_files=["res://.godot/imported/flat_ride.wav-9bb4d6cf9775cbda143ce7c28a91cb61.sample"]
 
 [params]
 

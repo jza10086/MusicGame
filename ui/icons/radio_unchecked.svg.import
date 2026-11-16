@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ly3wv37072wl"
-path="res://.godot/imported/radio_unchecked.svg-15565dbfddcc32823ab159ee3f8e074b.ctex"
+path="res://.godot/imported/radio_unchecked.svg-9edf87672c02682920dff50671134cad.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://games/minigame/GP_rhythm_game/ui/icons/radio_unchecked.svg"
-dest_files=["res://.godot/imported/radio_unchecked.svg-15565dbfddcc32823ab159ee3f8e074b.ctex"]
+dest_files=["res://.godot/imported/radio_unchecked.svg-9edf87672c02682920dff50671134cad.ctex"]
 
 [params]
 

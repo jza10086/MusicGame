@@ -3,12 +3,12 @@
 importer="font_data_dynamic"
 type="FontFile"
 uid="uid://l4m53dd205j0"
-path="res://.godot/imported/Chinese.ttc-6a571d628166ce7ac76a8078ac477482.fontdata"
+path="res://.godot/imported/Chinese.ttc-3205cec927382bdde06b7894f345b818.fontdata"
 
 [deps]
 
 source_file="res://games/minigame/GP_rhythm_game/assets/Chinese.ttc"
-dest_files=["res://.godot/imported/Chinese.ttc-6a571d628166ce7ac76a8078ac477482.fontdata"]
+dest_files=["res://.godot/imported/Chinese.ttc-3205cec927382bdde06b7894f345b818.fontdata"]
 
 [params]
 

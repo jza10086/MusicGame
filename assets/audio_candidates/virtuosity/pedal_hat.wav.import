@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://yoxj7ykbu5c3"
-path="res://.godot/imported/pedal_hat.wav-dc67eabda74bdc6ad10a66caff4acb0c.sample"
+path="res://.godot/imported/pedal_hat.wav-f5fea738a93aa79358e5607a45ad3dc9.sample"
 
 [deps]
 
 source_file="res://games/minigame/GP_rhythm_game/assets/audio_candidates/virtuosity/pedal_hat.wav"
-dest_files=["res://.godot/imported/pedal_hat.wav-dc67eabda74bdc6ad10a66caff4acb0c.sample"]
+dest_files=["res://.godot/imported/pedal_hat.wav-f5fea738a93aa79358e5607a45ad3dc9.sample"]
 
 [params]
 

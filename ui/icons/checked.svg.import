@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b241qquay6nwl"
-path="res://.godot/imported/checked.svg-135c1b0c782f3ddd08b6de0d714cbf72.ctex"
+path="res://.godot/imported/checked.svg-fa45c1d431e672a9fd6e24b80e6e81ef.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://games/minigame/GP_rhythm_game/ui/icons/checked.svg"
-dest_files=["res://.godot/imported/checked.svg-135c1b0c782f3ddd08b6de0d714cbf72.ctex"]
+dest_files=["res://.godot/imported/checked.svg-fa45c1d431e672a9fd6e24b80e6e81ef.ctex"]
 
 [params]
 

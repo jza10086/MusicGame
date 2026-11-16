@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://c1y1qajfkb7v"
-path="res://.godot/imported/kick.wav-55359faba33e4d26d7ebb7b16cf000c0.sample"
+path="res://.godot/imported/kick.wav-4a8fa8472935973bc65352a5c9e51ff4.sample"
 
 [deps]
 
 source_file="res://games/minigame/GP_rhythm_game/assets/audio_candidates/virtuosity/kick.wav"
-dest_files=["res://.godot/imported/kick.wav-55359faba33e4d26d7ebb7b16cf000c0.sample"]
+dest_files=["res://.godot/imported/kick.wav-4a8fa8472935973bc65352a5c9e51ff4.sample"]
 
 [params]
 

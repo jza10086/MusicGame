@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://cq11pi0m3lcmx"
-path="res://.godot/imported/closed_hat.wav-042855d0685007b85eb6e2111c801a9e.sample"
+path="res://.godot/imported/closed_hat.wav-e9da9322cd57698c2452b23419e12b40.sample"
 
 [deps]
 
 source_file="res://games/minigame/GP_rhythm_game/assets/audio_candidates/virtuosity/closed_hat.wav"
-dest_files=["res://.godot/imported/closed_hat.wav-042855d0685007b85eb6e2111c801a9e.sample"]
+dest_files=["res://.godot/imported/closed_hat.wav-e9da9322cd57698c2452b23419e12b40.sample"]
 
 [params]
 

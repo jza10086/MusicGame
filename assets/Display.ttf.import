@@ -3,12 +3,12 @@
 importer="font_data_dynamic"
 type="FontFile"
 uid="uid://dwktifr15pn0e"
-path="res://.godot/imported/Display.ttf-7484f4e0e2a78712281266aa2441165e.fontdata"
+path="res://.godot/imported/Display.ttf-17c05f2403f4cef2bbd26689211ea373.fontdata"
 
 [deps]
 
 source_file="res://games/minigame/GP_rhythm_game/assets/Display.ttf"
-dest_files=["res://.godot/imported/Display.ttf-7484f4e0e2a78712281266aa2441165e.fontdata"]
+dest_files=["res://.godot/imported/Display.ttf-17c05f2403f4cef2bbd26689211ea373.fontdata"]
 
 [params]
 
