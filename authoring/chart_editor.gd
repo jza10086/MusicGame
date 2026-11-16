@@ -904,7 +904,7 @@ func show_help() -> void:
 	dialog.transparent_bg = true
 	dialog.title = "编辑快捷键"
 	dialog.ok_button_text = "关闭"
-	dialog.dialog_text = "4K：Q W E R 单击 / A S D F 长按标识\n2K：W E 单击 / S D 长按标识\n同类删除、异类覆盖；长按内单击自动成为 Sub\n← →：吸附移动，边缘翻页    [ ]：切换吸附\n滚轮：光标中心缩放    Ctrl+滚轮：平移\n中键拖动：平移视野    音频区左键拖动：吸附定位\n框选后拖动：移动时间 / 跨轨覆盖    右键：删除点\nCtrl+C / X / V：复制 / 剪切 / 粘贴\nCtrl+A：全选    Delete：删除    M：轨道镜像\nCtrl+Z / Shift+Z / Y：撤销 / 重做\nShift+F / G：选中长按头尾后填充 / 清除 Sub\nI / O：设置起止    Space：播放暂停    Esc：停止\nCtrl+S：保存    Enter：结束单行输入"
+	dialog.dialog_text = "4K：Q W E R 单击 / A S D G 长按标识\n2K：W E 单击 / S D 长按标识\n同类删除、异类覆盖；长按内单击自动成为 Sub\n← →：吸附移动，边缘翻页    [ ]：切换吸附\n滚轮：光标中心缩放    Ctrl+滚轮：平移\n中键拖动：平移视野    音频区左键拖动：吸附定位\n框选后拖动：移动时间 / 跨轨覆盖    右键：删除点\nCtrl+C / X / V：复制 / 剪切 / 粘贴\nCtrl+A：全选    Delete：删除    F：轨道镜像（1↔4、2↔3）\nCtrl+Z / Shift+Z / Y：撤销 / 重做\nShift+F / G：选中长按头尾后填充 / 清除 Sub\nI / O：设置起止    Space：播放暂停    Esc：停止\nCtrl+S：保存    Enter：结束单行输入"
 	add_child(dialog)
 	dialog.confirmed.connect(dialog.queue_free)
 	dialog.canceled.connect(dialog.queue_free)
@@ -963,7 +963,8 @@ func _input(event: InputEvent) -> void:
 		play()
 	elif key.keycode in [KEY_DELETE,KEY_BACKSPACE]:
 		_edit(document.erase_selected)
-	elif key.keycode==KEY_M and not key.echo:
+	elif key.keycode==KEY_F and not key.shift_pressed and not key.alt_pressed:
+		if key.echo: return
 		_edit(document.mirror)
 	elif key.keycode in [KEY_I,KEY_O]:
 		set_marker(key.keycode==KEY_O,cursor)
@@ -972,7 +973,7 @@ func _input(event: InputEvent) -> void:
 	else:
 		if key.echo or key.shift_pressed or key.alt_pressed: return
 		var taps: Array = [KEY_W,KEY_E] if document.key_count()==2 else [KEY_Q,KEY_W,KEY_E,KEY_R]
-		var holds: Array = [KEY_S,KEY_D] if document.key_count()==2 else [KEY_A,KEY_S,KEY_D,KEY_F]
+		var holds: Array = [KEY_S,KEY_D] if document.key_count()==2 else [KEY_A,KEY_S,KEY_D,KEY_G]
 		var code: int = key.physical_keycode if key.physical_keycode!=0 else key.keycode
 		var lane: int = taps.find(code)
 		var hold: bool = false
