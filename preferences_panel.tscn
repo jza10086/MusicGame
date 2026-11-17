@@ -1,0 +1,10 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="preferences_panel.gd" id="script"]
+
+[node name="RhythmPreferences" type="Control"]
+visible = false
+script = ExtResource("script")
+
+[node name="Preview" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true

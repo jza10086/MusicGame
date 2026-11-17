@@ -7,6 +7,7 @@ var editor_preview: bool = false
 const Paths = preload("rhythm_paths.gd")
 const Preferences = preload("settings.gd")
 var party_config: PartyConfig
+var master_gain: float = 1.0
 const Timing = preload("rhythm_timing.gd")
 const Scoring = preload("rhythm_scoring.gd")
 var scoring: Scoring = Scoring.new()
@@ -396,7 +397,7 @@ static func validate_play_keys(value: Variant) -> bool:
 	return true
 
 func _apply_volume() -> void:
-	_audio.volume_linear = float(settings.volume) * BGM_GAIN
+	_audio.volume_linear = float(settings.volume) * BGM_GAIN * master_gain
 
 ## Formal values are supplied by the active scope; authoring persistence is opt-in and separate.
 func _load_settings() -> Error:

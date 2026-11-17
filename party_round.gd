@@ -53,6 +53,8 @@ func _ready() -> void:
 	if not backend.last_error.is_empty():
 		_fail(backend.last_error)
 		return
+	_apply_master_volume()
+	api.config.effective_changed.connect(_local_settings_changed)
 	if not _prepare_song_pool():
 		return
 	api.net.message_received.connect(_receive)
@@ -66,6 +68,18 @@ func _ready() -> void:
 		var error: Error = api.net.send_to_host(SONG_REQUEST_TOPIC, _song_envelope())
 		if error != OK:
 			_fail("无法请求本轮曲目：" + error_string(error))
+
+## Only the protocol master controls this game's mix; category levels belong to rhythm.
+func _apply_master_volume() -> void:
+	var gain: float = float(api.config.get_common(&"audio.master"))
+	backend.master_gain = gain
+	backend._apply_volume()
+	for bus: StringName in _tap_buses:
+		AudioServer.set_bus_volume_linear(AudioServer.get_bus_index(bus), gain)
+
+func _local_settings_changed(common_keys: PackedStringArray, _own_keys: PackedStringArray) -> void:
+	if "audio.master" in common_keys:
+		_apply_master_volume()
 
 ## Initialize device-local counts before selection. No history is written until play begins.
 func _prepare_song_pool() -> bool:
