@@ -14,6 +14,7 @@ var _slots: Dictionary[String, Array] = {}
 var _has_protocol: bool
 var _protocol_master: float = 1.0
 var _editable: bool
+var _calibration_settings: Dictionary = {}
 @onready var _preview: AudioStreamPlayer = %Preview
 
 func configure(value: Dictionary, editable: bool, context: Dictionary) -> void:
@@ -26,7 +27,13 @@ func configure(value: Dictionary, editable: bool, context: Dictionary) -> void:
 		_keys[mode] = draft.get(mode, Backend.DEFAULTS[mode]).duplicate()
 		fields.erase(mode)
 		draft.erase(mode)
-	var audio_layout: Array = []
+	# Synthetic calibration is an authoring concern, not a formal gameplay preference.
+	fields.erase("bpm")
+	if draft.has("bpm"):
+		_calibration_settings["bpm"] = draft.bpm
+		draft.erase("bpm")
+	var volume_layout: Array = []
+	var sound_layout: Array = []
 	if _has_protocol:
 		_protocol_master = float(context.base["audio.master"])
 		fields["inherit_master"] = {"type": "bool", "default": true, "title": "继承协议总音量", "audience": "local", "apply": "immediate"}
@@ -35,22 +42,25 @@ func configure(value: Dictionary, editable: bool, context: Dictionary) -> void:
 		fields.master_volume.default = _protocol_master
 		draft.inherit_master = not value.common.has("audio.master")
 		draft.master_volume = value.common.get("audio.master", _protocol_master)
-		audio_layout.append({"field": "inherit_master", "children": [{"field": "master_volume", "enabled_when": {"field": "inherit_master", "equals": false}}]})
-	audio_layout.append({"field": "volume"})
-	audio_layout.append({"field": "use_chart_sounds"})
+		volume_layout.append({"field": "inherit_master", "children": [{"field": "master_volume", "enabled_when": {"field": "inherit_master", "equals": false}}]})
+	volume_layout.append({"field": "volume"})
+	sound_layout.append({"field": "use_chart_sounds"})
 	for kind: String in SOUND_KINDS:
 		var field: Dictionary = fields[kind + "_sound"]
 		field.labels = []
 		for id: String in field.values:
 			field.labels.append(Backend.Synth.TAP_NAMES[id])
-		audio_layout.append({"field": kind + "_sound", "children": [{"field": kind + "_volume"}]})
+		sound_layout.append({"field": kind + "_sound", "children": [{"field": kind + "_volume"}]})
 	_form = preload("res://core/ui/party_config_form.tscn").instantiate()
 	_form.configure(draft, editable, {"audience": "local", "schema": {
 		"schema_format": 3, "settings_version": 1, "fields": fields,
 		"layout": [
-			{"id": "audio", "title": "音效", "children": audio_layout},
+			{"id": "audio", "title": "音效", "children": [
+				{"id": "volume", "title": "音量", "children": volume_layout},
+				{"id": "hit_sounds", "title": "敲击音效", "children": sound_layout}]},
 			{"id": "timing", "title": "音画同步", "children": [
-				{"field": "visual_ms"}, {"field": "input_ms"}, {"field": "approach"}, {"field": "bpm"}]}
+				{"id": "offsets", "title": "时间补偿", "children": [{"field": "visual_ms"}, {"field": "input_ms"}]},
+				{"id": "scroll", "title": "下落显示", "children": [{"field": "approach"}]}]}
 		]}})
 	_form.rebuilt.connect(_attach_previews)
 	_attach_previews()
@@ -70,6 +80,7 @@ func configure(value: Dictionary, editable: bool, context: Dictionary) -> void:
 func get_value() -> Dictionary:
 	_preview.stop()
 	var own: Dictionary = _form.get_value()
+	own.merge(_calibration_settings)
 	var common: Dictionary = {}
 	var common_keys: Array = []
 	if _has_protocol:
