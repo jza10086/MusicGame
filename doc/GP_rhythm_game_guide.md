@@ -8,7 +8,7 @@
 
 推荐目录为 music/ 保存音源、charts/<曲目>/ 保存 song.tres、各难度 .tres 和 JSON。目录是制作规范，不做硬性结构检查；正式发现只读取声明列表。曲目使用公共 PartyMusicSong（core/api/music/party_music_song.gd），music 绑定一份 AudioStream，charts 绑定 PartyMusicChart 资源。每个谱面资源填写 difficulty、chart_path（res:// JSON 路径）、base_score（默认 1,000,000）。资源名 resource_name 是曲目显示名。
 
-曲库不能依赖小游戏脚本。原创示例迁入 games/assets/GP_rhythm_original/；Bad Apple 短版和完整版在 games/assets/GP_rhythm_bad_apple/，由主仓库 .gitignore 整包排除，但本地编辑器仍可发现。源音乐和第三方谱面仍未确认再发行许可。
+曲库不能依赖小游戏脚本。当前只保留 Bad Apple 曲库，原创长按测试曲和单机合成测试选项已移除；Bad Apple 短版和完整版在 games/assets/GP_rhythm_bad_apple/，由主仓库 .gitignore 整包排除，但本地编辑器仍可发现。源音乐和第三方谱面仍未确认再发行许可。
 
 房主把霓虹节拍加入房间池后，匹配类型的可用曲库进入开局依赖检查；客机额外安装的曲库不参与本局。所有候选曲库需要版本/构建匹配，下载更新后仍须重启。PCK 和音频不在此元数据检查阶段加载；选中曲目时才挂载所属包并后台读取资源。不会预载所有歌曲。
 
@@ -105,7 +105,7 @@ HUD、排行榜与结算显示实时准确率：已获得权重 / 已判定权�
 
 ## 可选本地 Bad Apple!! 谱面测试
 
-两个 Bad Apple 曲目目录仅供本地选曲，独立仓库默认提供原创练习曲。点击开始播放整首，或点击“从首音前 3 秒测试”跳过约 14 秒无音符前奏。跳过前奏只改变起播位置，谱面仍使用绝对音频时间。歌曲 BPM 不受合成 BPM 控件影响，播放至音源结尾后完成。
+当前曲库只保留 Bad Apple 短版和完整版，原有谱面均保留；校准仍使用运行时合成节拍，不作为选曲项。点击开始播放整首，或点击“从首音前 3 秒测试”跳过约 14 秒无音符前奏。跳过前奏只改变起播位置，谱面仍使用绝对音频时间。歌曲 BPM 不受合成 BPM 控件影响，播放至音源结尾后完成。
 
 下拉选择支持 Easy（287 音符）、Normal（532 音符）、Hard（704 音符）及合成节拍。Normal 对应原谱 Medium；三种难度共用配套音源。切换会停止当前播放并清空本轮音符和成绩，保留按压补偿、画面提前量等调校参数；点击开始进入所选难度。Bad Apple 三档按原左/下列映射左轨、上/右列映射右轨；跨轨同刻音符保留双押，同轨重合合并，节奏时点与音源保持原样；双轨合成测试左右交替，听音校准仍在左轨使用均匀节拍。谱面与音源的作者、原文件和转换规则见 charts/bad_apple/SOURCE.md。
 
@@ -174,3 +174,12 @@ Auto 用原音频时钟和输入补偿调度，在后端每帧漏判检查前按
 - [Bad Apple MIDI 规则试验](GP_rhythm_game_authoring_midi_rules.md)
 - [M06 霓虹节拍　A　依赖 G01，专用音频按 G03](GP_rhythm_game_development.md)
 - [音游敲击音效候选与来源](gp_rhythm_hit_sound_sources.md)
+
+## 手动调整当前曲库
+
+- 曲库根目录：`res://games/assets/GP_rhythm_bad_apple/`。
+- `manifest.json`：曲目列表 `songs`。
+- `music/bad_apple.ogg`、`music/bad_apple_full.ogg`：短版／完整版音源。
+- `charts/bad_apple_short/song.tres`、`charts/bad_apple_full/song.tres`：歌曲、显示名和难度资源列表。
+- 对应曲目文件夹中的各难度 `.tres`：难度名称、基准分、JSON 谱面引用；`.json` 是编辑工程。
+- 小游戏原 `charts/` 中的 Bad Apple 文件为迁移前保留副本，不是当前曲库扫描和发布入口。

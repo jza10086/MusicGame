@@ -41,7 +41,6 @@ var leaderboard_expanded: bool = true
 @export var song: PartyMusicSong
 @export var difficulty: String = "Normal"
 ## Explicit standalone synthetic exercise; ordinary gameplay requires a song resource.
-var synthetic_test: bool = false
 @export var show_return_button: bool = false
 var skip_intro: bool = false
 var listen_calibration: bool = false
@@ -117,7 +116,7 @@ func _begin_playback(calibration: bool = false) -> void:
 	backend.set_process_input(false)
 	backend._set_calibration(calibration and listen_calibration)
 	var chart: Dictionary = {}
-	if not calibration and not synthetic_test:
+	if not calibration:
 		chart = read_selected_chart()
 		if not chart.ok:
 			stop_playback()

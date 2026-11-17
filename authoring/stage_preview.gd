@@ -2,8 +2,8 @@
 extends Control
 const Stage = preload("../music_game.gd")
 const STAGE_SCENE: PackedScene = preload("../music_game.tscn")
-var song: AudioStream = load("res://games/assets/GP_rhythm_original/music/hold_test.wav")
-var audio_id: String = "res://games/assets/GP_rhythm_original/music/hold_test.wav"
+var song: AudioStream
+var audio_id: String = ""
 var game: Stage
 var current_chart: Dictionary = {}
 var chart_revision: int = -1
@@ -46,7 +46,7 @@ func _show_stage() -> void:
 	game._auto_active = true
 
 ## Resolve packaged chart audio safely; data updates keep the same stage instance.
-func update_chart(data: Dictionary, revision: int, next_audio_id: String = "res://games/assets/GP_rhythm_original/music/hold_test.wav") -> Dictionary:
+func update_chart(data: Dictionary, revision: int, next_audio_id: String) -> Dictionary:
 	if revision < chart_revision:
 		return {"ok": false, "error": "忽略过期的谱面修改"}
 	if not next_audio_id.begins_with("res://") or next_audio_id != next_audio_id.simplify_path():

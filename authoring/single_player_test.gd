@@ -91,20 +91,18 @@ func show_menu() -> void:
 
 func start_game() -> void:
 	var path: String = str(track_choice.get_item_metadata(difficulty))
-	game.synthetic_test = path.is_empty()
-	if not game.synthetic_test:
-		var chart: Dictionary = Backend.Chart.read_chart(path)
-		if not chart.ok:
-			$Menu/Duration.text = chart.error
-			return
-		var entry: PartyMusicChart = PartyMusicChart.new()
-		entry.difficulty = chart.data.difficulty
-		entry.chart_path = path
-		game.song = PartyMusicSong.new()
-		game.song.resource_name = str(chart.data.get("project_name", chart.data.title))
-		game.song.music = chart.audio
-		game.song.charts = [entry]
-		game.difficulty = entry.difficulty
+	var chart: Dictionary = Backend.Chart.read_chart(path)
+	if not chart.ok:
+		$Menu/Duration.text = chart.error
+		return
+	var entry: PartyMusicChart = PartyMusicChart.new()
+	entry.difficulty = chart.data.difficulty
+	entry.chart_path = path
+	game.song = PartyMusicSong.new()
+	game.song.resource_name = str(chart.data.get("project_name", chart.data.title))
+	game.song.music = chart.audio
+	game.song.charts = [entry]
+	game.difficulty = entry.difficulty
 	game.skip_intro = skip_intro.button_pressed
 	$Header.hide()
 	$Menu.hide()
@@ -118,16 +116,16 @@ func open_calibration() -> void:
 		push_error("无法打开音画校准：" + error_string(error))
 
 func refresh_chart_library() -> void:
-	var chosen: String = str(track_choice.get_item_metadata(difficulty)) if track_choice.item_count > difficulty else Backend.Paths.resolve(Backend.DEFAULT_CHART)
+	var chosen: String = str(track_choice.get_item_metadata(difficulty)) if track_choice.item_count > difficulty else ""
 	backend.refresh_chart_library()
 	track_choice.clear()
-	# Keep the familiar three originals at the front when present; all files are discovered.
-	for path: String in backend.chart_paths.slice(0, mini(3, backend.chart_paths.size())):
+	for path: String in backend.chart_paths:
 		_add_chart_choice(path)
-	track_choice.add_item("双轨合成测试（含长按）")
-	track_choice.set_item_metadata(track_choice.item_count - 1, "")
-	for path: String in backend.chart_paths.slice(mini(3, backend.chart_paths.size())):
-		_add_chart_choice(path)
+	$Menu/Begin.disabled = track_choice.item_count == 0
+	if track_choice.item_count == 0:
+		_preview_bgm.stream = null
+		$Menu/Duration.text = ""
+		return
 	var selection: int = 0
 	for index: int in range(track_choice.item_count):
 		if str(track_choice.get_item_metadata(index)) == chosen:
@@ -139,13 +137,11 @@ func _add_chart_choice(path: String) -> void:
 	track_choice.add_item(backend.chart_names[index])
 	track_choice.set_item_metadata(track_choice.item_count - 1, path)
 
-func _selected_backend_track() -> int:
-	var path: String = str(track_choice.get_item_metadata(difficulty))
-	return 0 if path.is_empty() else backend.chart_paths.find(path) + 1
+
 
 func set_difficulty(value: int) -> void:
 	difficulty = clampi(value, 0, track_choice.item_count - 1)
-	backend._select_track(_selected_backend_track())
+	backend._select_track(difficulty + 1)
 	track_choice.select(difficulty)
 	$Header/Tag.text = "单机测试 / %d KEY RHYTHM" % backend.key_count
 	$Menu/Eyebrow.text = "%d KEYS. ONE MOMENT." % backend.key_count
@@ -153,11 +149,9 @@ func set_difficulty(value: int) -> void:
 	game.configure_lane_feedback()
 	_update_binding_text()
 	var path: String = str(track_choice.get_item_metadata(difficulty))
-	if path.is_empty():
-		$Menu/Duration.text = "双轨练习 · 含长按"
-	else:
-		var chart: Dictionary = Backend.Chart.read_chart(path)
-		$Menu/Duration.text = "%d 起点 · %s" % [chart.notes.size(), chart.data.difficulty] if chart.ok else chart.error
+	var chart: Dictionary = Backend.Chart.read_chart(path)
+	_preview_bgm.stream = chart.audio if chart.ok else null
+	$Menu/Duration.text = "%d 起点 · %s" % [chart.notes.size(), chart.data.difficulty] if chart.ok else chart.error
 
 func _update_binding_text() -> void:
 	var labels: PackedStringArray = []
@@ -170,7 +164,6 @@ func _update_binding_text() -> void:
 func _build_sound_settings() -> void:
 	_preview_bgm = AudioStreamPlayer.new()
 	_preview_bgm.name = "BgmPreview"
-	_preview_bgm.stream = load("res://games/assets/GP_rhythm_original/music/hold_test.wav")
 	add_child(_preview_bgm)
 	_sound_dialog = ConfirmationDialog.new()
 	_sound_dialog.transparent_bg = true

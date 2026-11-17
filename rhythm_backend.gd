@@ -12,9 +12,7 @@ const Scoring = preload("rhythm_scoring.gd")
 var scoring: Scoring = Scoring.new()
 const Synth = preload("rhythm_audio.gd")
 const Chart = preload("rhythm_chart.gd")
-const DEFAULT_CHART: String = "res://games/assets/GP_rhythm_original/charts/hold_test/chart.json"
 const BGM_GAIN: float = 0.4
-const DEFAULT_CHART_ORDER: Array[String] = [DEFAULT_CHART]
 var chart_paths: Array[String] = []
 var chart_names: Array[String] = []
 const DEFAULTS: Dictionary = Preferences.DEFAULTS
@@ -73,15 +71,7 @@ func _ready() -> void:
 	configure_lanes(2)
 
 func refresh_chart_library() -> void:
-	var found: Array[String] = Chart.discover_paths()
-	chart_paths.clear()
-	for relative_path: String in DEFAULT_CHART_ORDER:
-		var path: String = Paths.resolve(relative_path)
-		if found.has(path):
-			chart_paths.append(path)
-	for path: String in found:
-		if not chart_paths.has(path):
-			chart_paths.append(path)
+	chart_paths = Chart.discover_paths()
 	chart_names.clear()
 	for path: String in chart_paths:
 		var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(path))
