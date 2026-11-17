@@ -44,12 +44,14 @@ func configure(value: Dictionary, editable: bool, context: Dictionary) -> void:
 		for id: String in field.values:
 			field.labels.append(Backend.Synth.TAP_NAMES[id])
 		audio_layout.append({"field": kind + "_sound", "children": [{"field": kind + "_volume"}]})
-	audio_layout.append({"id": "timing", "title": "音画校准", "expanded": false, "children": [
-		{"field": "visual_ms"}, {"field": "input_ms"}, {"field": "approach"}, {"field": "bpm"}]})
 	_form = preload("res://core/ui/party_config_form.tscn").instantiate()
 	_form.configure(draft, editable, {"audience": "local", "schema": {
 		"schema_format": 3, "settings_version": 1, "fields": fields,
-		"layout": [{"id": "audio", "title": "音效", "children": audio_layout}]}})
+		"layout": [
+			{"id": "audio", "title": "音效", "children": audio_layout},
+			{"id": "timing", "title": "音画同步", "children": [
+				{"field": "visual_ms"}, {"field": "input_ms"}, {"field": "approach"}, {"field": "bpm"}]}
+		]}})
 	_form.rebuilt.connect(_attach_previews)
 	_attach_previews()
 	_form.field_changed.connect(func(_key: String, _value: Variant) -> void: _preview.stop())
