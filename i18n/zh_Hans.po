@@ -38,10 +38,34 @@ msgid "round.combo"
 msgstr "最长连击"
 
 msgid "settings.keys_2k"
-msgstr "2K 按键码"
+msgstr "2K 按键"
 
 msgid "settings.keys_4k"
-msgstr "4K 按键码"
+msgstr "4K 按键"
+
+msgid "keys.left_primary"
+msgstr "左轨 · 主键"
+
+msgid "keys.left_alt"
+msgstr "左轨 · 备用键"
+
+msgid "keys.right_primary"
+msgstr "右轨 · 主键"
+
+msgid "keys.right_alt"
+msgstr "右轨 · 备用键"
+
+msgid "keys.outer_left"
+msgstr "左外轨"
+
+msgid "keys.inner_left"
+msgstr "左内轨"
+
+msgid "keys.inner_right"
+msgstr "右内轨"
+
+msgid "keys.outer_right"
+msgstr "右外轨"
 
 msgid "settings.use_chart_sounds"
 msgstr "使用谱面音效"
