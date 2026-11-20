@@ -29,6 +29,7 @@ var _auto_active: bool = false
 var _auto_next: int = 0
 var _auto_release_at: Array[float] = [-INF, -INF]
 var view_notes: Array[Dictionary] = []
+var _missed_holds: Array[int] = []
 var mouse_lane: int = -1
 var _tap_streams: Dictionary[String, AudioStream] = {}
 var _hold_players: Array[Dictionary] = [{}, {}, {}, {}]
@@ -61,6 +62,7 @@ func _ready() -> void:
 		return
 	backend.set_process_input(false)
 	backend.note_judged.connect(_on_judged)
+	backend.hold_missed.connect(_on_hold_missed)
 	backend.hit_feedback.connect(_on_hit_feedback)
 	backend.press_feedback.connect(_on_press_feedback)
 	var tap: AudioStreamWAV = Backend.Synth.build_tap()
@@ -132,6 +134,7 @@ func _begin_playback(calibration: bool = false) -> void:
 		playback_failed.emit(message)
 		return
 	view_notes.clear()
+	_missed_holds.clear()
 	for index: int in range(backend._notes.size()):
 		view_notes.append({"time": backend._notes[index], "end": backend._note_ends[index], "subs": backend._note_subs[index], "sub_next": 0, "holding": false, "lane": backend._note_lanes[index], "hit": false, "missed": false})
 	effects.clear()
@@ -268,11 +271,15 @@ func _update_hud() -> void:
 	timing_error.modulate.a = $HUD/Judgment.modulate.a
 	$HUD/Countdown.text = str(ceili(preparation_remaining)) if preparation_remaining > 0.0 else ""
 
+func _on_hold_missed(index: int) -> void:
+	view_notes[index].missed = true
+	_missed_holds.append(index)
+
 func _update_skin() -> void:
 	if not is_instance_valid(skin) or backend == null:
 		return
 	# Sorted chart times bound rendering work to the visible approach window.
-	# Active holds remain visible even when their heads precede that window.
+	# Active and missed holds remain visible until their tails leave the playfield.
 	var song_time: float = backend.Timing.visual_time(_presentation_time(backend._clock()), float(backend.settings.visual_ms))
 	var first: int = backend._notes.bsearch(song_time - 0.16)
 	var last: int = backend._notes.bsearch(song_time + float(backend.settings.approach), false)
@@ -280,12 +287,18 @@ func _update_skin() -> void:
 	for active: int in backend._active_holds:
 		if active >= 0 and active < first:
 			indices.append(active)
+	for slot: int in range(_missed_holds.size() - 1, -1, -1):
+		var missed: int = _missed_holds[slot]
+		if float(view_notes[missed].end) <= song_time:
+			_missed_holds.remove_at(slot)
+		elif missed < first:
+			indices.append(missed)
 	for index: int in range(first, mini(last, view_notes.size())):
 		indices.append(index)
 	indices.sort()
 	var visible_notes: Array[Dictionary] = []
 	for index: int in indices:
-		view_notes[index].hit = backend._judged[index]
+		view_notes[index].hit = backend._judged[index] and not view_notes[index].missed
 		view_notes[index].holding = backend._active_holds.has(index)
 		view_notes[index].sub_next = backend._sub_next[index]
 		visible_notes.append(view_notes[index])
@@ -443,6 +456,7 @@ func stop_playback() -> void:
 	effects.clear()
 	press_ages.fill(1.0)
 	view_notes.clear()
+	_missed_holds.clear()
 	mode = "idle"
 	$HUD.hide()
 	$Modal.hide()

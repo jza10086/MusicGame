@@ -242,13 +242,16 @@ func _draw_notes() -> void:
 	var notes: Array = state.get("notes", [])
 	for entry: Variant in notes:
 		var note: Dictionary = entry
-		if bool(note.get("hit", false)) or bool(note.get("missed", false)):
+		var missed: bool = bool(note.get("missed", false))
+		if bool(note.get("hit", false)):
 			continue
 		var dt: float = float(note.get("time", 0.0)) - now
 		var end_dt: float = float(note.get("end", note.get("time", 0.0))) - now
 		var holding: bool = bool(note.get("holding", false))
 		var is_hold: bool = float(note.get("end", 0.0)) > float(note.get("time", 0.0))
-		if holding:
+		if missed and (not is_hold or end_dt <= 0.0):
+			continue
+		if holding or (missed and dt < 0.0):
 			dt = 0.0
 		if dt > travel or (not holding and dt < -0.16):
 			continue
@@ -260,27 +263,31 @@ func _draw_notes() -> void:
 		var w: float = _lane_width(p) * 0.84
 		var h: float = maxf(7.0, 23.0 * _lane_width(p) / NEAR_LANE_WIDTH)
 		var col: Color = lane_color(lane)
+		var opacity: float = 0.30 if missed else 1.0
+		if missed:
+			col = col.lerp(Color(0.36, 0.40, 0.48), 0.80)
 		if is_hold:
 			var tail_p: float = project_progress(1.0 - clampf(end_dt, 0.0, travel) / travel)
 			var head_p: float = minf(p, 1.0)
 			var strip: PackedVector2Array = _lane_quad(lane, tail_p, head_p, 0.64)
 			if tail_p < head_p - 0.0001:
-				draw_colored_polygon(strip, _a(col, 0.62 if holding else 0.32))
-			draw_line(strip[0], strip[3], _a(col, 0.95), 2.5, true)
-			draw_line(strip[1], strip[2], _a(col, 0.95), 2.5, true)
+				draw_colored_polygon(strip, _a(col, (0.62 if holding else 0.32) * opacity))
+			draw_line(strip[0], strip[3], _a(col, 0.95 * opacity), 2.5, true)
+			draw_line(strip[1], strip[2], _a(col, 0.95 * opacity), 2.5, true)
 			if end_dt <= travel:
-				_draw_note_body(_lane_point(lane, 0.0, tail_p), _lane_width(tail_p) * 0.70, 8.0, col)
+				_draw_note_body(_lane_point(lane, 0.0, tail_p), _lane_width(tail_p) * 0.70, 8.0, col, opacity)
 			var subs: Array = note.get("subs", [])
-			for sub_index: int in range(int(note.get("sub_next", 0)), subs.size()):
+			for sub_index: int in range(0 if missed else int(note.get("sub_next", 0)), subs.size()):
 				var sub_dt: float = float(subs[sub_index]) - now
 				if sub_dt < 0.0 or sub_dt > travel:
 					continue
 				var sub_p: float = project_progress(1.0 - sub_dt / travel)
-				_draw_note_body(note_position(lane, sub_dt), _lane_width(sub_p) * 0.50, 6.0, Color.WHITE, 0.90)
+				_draw_note_body(note_position(lane, sub_dt), _lane_width(sub_p) * 0.50, 6.0, col if missed else Color.WHITE, 0.90 * opacity)
 			if holding:
 				draw_texture_rect(_light_texture, Rect2(x - w * 0.60, HIT_Y - 45.0, w * 1.20, 90.0), false, _a(col, 0.50))
-		draw_texture_rect(_light_texture, Rect2(x - w * 0.56, y - h * 2.0, w * 1.12, h * 4.0), false, _a(col, 0.22))
-		_draw_note_body(position, w, h, col)
+		if not missed:
+			draw_texture_rect(_light_texture, Rect2(x - w * 0.56, y - h * 2.0, w * 1.12, h * 4.0), false, _a(col, 0.22))
+		_draw_note_body(position, w, h, col, opacity)
 
 ## Shared silhouette keeps the hit transition attached to the note the player saw.
 func _draw_note_body(center: Vector2, width: float, height: float, color: Color, alpha: float = 1.0, flash: float = 0.0) -> void:

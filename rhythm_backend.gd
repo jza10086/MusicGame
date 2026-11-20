@@ -23,6 +23,8 @@ signal hold_feedback(lane: int, kind: String)
 signal hit_feedback(lane: int, kind: String, chart_time: float)
 var chart_sounds: Dictionary = {}
 signal note_judged(lane: int, grade: String, error_ms: float, seconds_until: float)
+## A failed hold remains a visual remnant; judgment has already made it inert.
+signal hold_missed(index: int)
 
 enum State { IDLE, PLAYING, FINISHED }
 
@@ -511,7 +513,9 @@ func _complete_hold(lane: int, broken: bool) -> void:
 		_sub_next[index] += 1
 		_record("MISS", 0.0, lane)
 	_record("MISS" if broken else "PERFECT", 0.0, lane, INF if broken else 0.0)
-	if not broken:
+	if broken:
+		hold_missed.emit(index)
+	else:
 		hold_feedback.emit(lane, "hold_end")
 		hit_feedback.emit(lane, "hold_end", _note_ends[index])
 
@@ -524,6 +528,7 @@ func _miss_note(index: int) -> void:
 			_record("MISS", 0.0, _note_lanes[index])
 		_record("MISS", 0.0, _note_lanes[index])
 		_sub_next[index] = _note_subs[index].size()
+		hold_missed.emit(index)
 
 ## Called once immediately after _start by the party entry. Later judgment uses only the audio clock.
 ## A late arrival seeks forward once; never rescale playback speed or repeatedly reset song time.

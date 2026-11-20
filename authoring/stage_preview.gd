@@ -123,6 +123,7 @@ func _rebuild_at(audio_time: float, seeking: bool = false) -> void:
 	game._auto_next = count
 	game._auto_release_at.fill(-INF)
 	game.view_notes.clear()
+	game._missed_holds.clear()
 	for index: int in range(count):
 		var head: float = backend._notes[index]
 		var tail: float = backend._note_ends[index]
