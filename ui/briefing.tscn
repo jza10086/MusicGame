@@ -1,13 +1,45 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3]
 
 [ext_resource type="PackedScene" path="res://games/protocols/GP_default_protocol/briefing/briefing_page.tscn" id="1"]
+[ext_resource type="Script" path="res://games/minigame/GP_rhythm_game/ui/rhythm_briefing_view.gd" id="2_rhythm_view"]
+[ext_resource type="PackedScene" path="res://core/ui/ambient_reveal/components/option_button.tscn" id="3_option"]
 
 [node name="Briefing" instance=ExtResource("1")]
 
-[node name="Title" parent="View/Layout/Center/Content" index="0"]
+[node name="View" parent="." index="0"]
+script = ExtResource("2_rhythm_view")
+
+[node name="Title" parent="View/Layout/Columns/LeftColumn/PreviewPanel/TitleInset" index="0"]
 text = "霓虹节拍"
 
-[node name="Introduction" parent="View/Layout/Center/Content/Columns/RightColumn/InformationPanel/InformationMargin/Information/Rules/InformationScroll" index="0"]
+[node name="Introduction" parent="View/Layout/Columns/RightColumn/InformationPanel/Information/Rules/InformationScroll" index="0"]
 text = "1–8 人同场演奏，各自选择难度，按基准分数 × 准确率排名。"
 
+[node name="ExtraSlot" parent="View/Layout/Columns/RightColumn/ActionCard/ActionColumn" index="0"]
+visible = true
+
+[node name="ChoiceRow" type="HBoxContainer" parent="View/Layout/Columns/RightColumn/ActionCard/ActionColumn/ExtraSlot"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="ChoiceTitle" type="Label" parent="View/Layout/Columns/RightColumn/ActionCard/ActionColumn/ExtraSlot/ChoiceRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"AccentLabel"
+theme_override_font_sizes/font_size = 20
+text = "难度"
+vertical_alignment = 1
+
+[node name="PlayerChoice" parent="View/Layout/Columns/RightColumn/ActionCard/ActionColumn/ExtraSlot/ChoiceRow" instance=ExtResource("3_option")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(210, 48)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+
+[node name="ClosingMenu" parent="View/Layout/Columns/RightColumn/ActionCard/ActionColumn/ExtraSlot/ChoiceRow/PlayerChoice" index="2"]
+open_upwards = true
+
 [editable path="View"]
+[editable path="View/Layout/Columns/RightColumn/ActionCard/ActionColumn/ExtraSlot/ChoiceRow/PlayerChoice"]
